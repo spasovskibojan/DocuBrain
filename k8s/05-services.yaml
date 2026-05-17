@@ -1,0 +1,34 @@
+# ============================================================
+# Backend ClusterIP Service
+# ============================================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+  namespace: docubrain
+spec:
+  selector:
+    app: backend
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000
+  type: ClusterIP
+
+---
+# ============================================================
+# Frontend ClusterIP Service
+# ============================================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+  namespace: docubrain
+spec:
+  selector:
+    app: frontend
+  ports:
+    - name: http
+      port: 80
+      targetPort: 5173
+  type: ClusterIP

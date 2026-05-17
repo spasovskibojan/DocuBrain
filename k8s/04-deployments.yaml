@@ -1,0 +1,114 @@
+# ============================================================
+# Backend Deployment
+# Replace YOUR_DOCKERHUB_USERNAME with your actual username
+# ============================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: docubrain
+  labels:
+    app: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: spasovskibojan/docubrain-backend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: docubrain-secrets
+                  key: postgres-user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: docubrain-secrets
+                  key: postgres-password
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: docubrain-secrets
+                  key: postgres-db
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: docubrain-secrets
+                  key: redis-password
+            - name: GROQ_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: docubrain-secrets
+                  key: groq-api-key
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: docubrain-secrets
+                  key: secret-key
+            - name: DATABASE_URL
+              value: "postgresql+asyncpg://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@postgres-service:5432/$(POSTGRES_DB)"
+            - name: SYNC_DATABASE_URL
+              value: "postgresql+psycopg2://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@postgres-service:5432/$(POSTGRES_DB)"
+            - name: REDIS_URL
+              value: "redis://:$(REDIS_PASSWORD)@redis-service:6379/0"
+            - name: QDRANT_HOST
+              value: "qdrant-service"
+            - name: QDRANT_PORT
+              value: "6333"
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 15
+
+---
+# ============================================================
+# Frontend Deployment
+# ============================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: docubrain
+  labels:
+    app: frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: spasovskibojan/docubrain-frontend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5173
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 5173
+            initialDelaySeconds: 10
+            periodSeconds: 10
