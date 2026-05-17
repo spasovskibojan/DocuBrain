@@ -17,7 +17,6 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/proxy-body-size: "50m"  # Allow large PDF uploads
 spec:
-  ingressClassName: nginx
   rules:
     # Frontend - serves the React SPA
     - host: docubrain.local
