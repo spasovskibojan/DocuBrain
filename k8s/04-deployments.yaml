@@ -21,8 +21,8 @@ spec:
     spec:
       containers:
         - name: backend
-          image: spasovskibojan/docubrain-backend:latest
-          imagePullPolicy: Always
+          image: kiiproject-backend:latest
+          imagePullPolicy: Never
           ports:
             - containerPort: 8000
           env:
@@ -102,8 +102,8 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: spasovskibojan/docubrain-frontend:latest
-          imagePullPolicy: Always
+          image: kiiproject-frontend:latest
+          imagePullPolicy: Never
           ports:
             - containerPort: 5173
           readinessProbe:
