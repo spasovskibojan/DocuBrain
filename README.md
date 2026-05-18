@@ -112,6 +112,3 @@ bash k8s/deploy.sh
 - **Frontend:** React 18, Vite, Bootstrap 5, Lucide Icons
 - **Infrastructure:** Docker, Docker Compose, GitHub Actions, Kubernetes
 
----
-
-*University Project — CI/CD & Container Orchestration*
