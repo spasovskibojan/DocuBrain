@@ -80,10 +80,10 @@ jobs:
         include:
           - name: Backend
             context: ./backend
-            image: ${{ secrets.DOCKERHUB_USERNAME }}/docubrain-backend
+            image_suffix: docubrain-backend
           - name: Frontend
             context: ./frontend
-            image: ${{ secrets.DOCKERHUB_USERNAME }}/docubrain-frontend
+            image_suffix: docubrain-frontend
 
     steps:
       - name: Checkout code
@@ -104,10 +104,10 @@ jobs:
           context: ${{ matrix.context }}
           push: true
           tags: |
-            ${{ matrix.image }}:latest
-            ${{ matrix.image }}:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.image_suffix }}:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.image_suffix }}:${{ github.sha }}
           cache-from: type=gha,scope=${{ matrix.name }}
           cache-to: type=gha,mode=max,scope=${{ matrix.name }}
 
       - name: Image digest summary
-        run: echo "✅ ${{ matrix.name }} pushed: ${{ matrix.image }}:${{ github.sha }}"
+        run: echo "${{ matrix.name }} pushed - ${{ github.sha }}"
