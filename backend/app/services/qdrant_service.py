@@ -6,7 +6,6 @@ from qdrant_client.http import models
 
 from app.core.config import settings
 
-# Connect to Qdrant Docker container
 qdrant_client = AsyncQdrantClient(host=settings.QDRANT_HOST, port=settings.QDRANT_PORT)
 
 # The vector size must match the output size of our embedding model (all-MiniLM-L6-v2)
@@ -37,7 +36,7 @@ async def upsert_document_chunks(
     points = []
     for i, (chunk, embedding) in enumerate(zip(chunks, embeddings)):
         point = models.PointStruct(
-            id=str(uuid.uuid4()), # Unique ID for this specific chunk
+            id=str(uuid.uuid4()),
             vector=embedding,
             payload={
                 "document_id": str(document_id),

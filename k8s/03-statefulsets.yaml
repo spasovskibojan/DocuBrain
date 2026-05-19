@@ -1,8 +1,3 @@
-# ============================================================
-# PostgreSQL StatefulSet + Service
-# StatefulSet is required for databases because it guarantees
-# stable network identity and persistent storage across restarts.
-# ============================================================
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -68,12 +63,8 @@ spec:
   ports:
     - port: 5432
       targetPort: 5432
-  clusterIP: None  # Headless service for StatefulSet
-
+  clusterIP: None
 ---
-# ============================================================
-# Qdrant StatefulSet + Service (Vector Database)
-# ============================================================
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -119,11 +110,7 @@ spec:
     - port: 6333
       targetPort: 6333
   clusterIP: None
-
 ---
-# ============================================================
-# Redis StatefulSet + Service (Cache)
-# ============================================================
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:

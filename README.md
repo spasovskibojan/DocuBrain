@@ -1,114 +1,154 @@
-# DocuBrain AI 🧠
+# DocuBrain AI
 
-**An Enterprise-Grade AI Document Intelligence Platform for Accounting Firms**
+**An AI-powered document intelligence platform built with RAG, vector search, and agentic workflows.**
 
-Built as a university capstone project demonstrating modern AI engineering: RAG pipelines, vector databases, agentic workflows, and production-grade DevOps.
+DocuBrain lets users upload PDFs and interact with them through natural language — asking questions, extracting structured data, comparing contracts, and generating executive summaries. Built as a university capstone project, the goal was to apply production-grade engineering practices to a non-trivial AI system.
 
 ---
 
-## 🏗️ Architecture
+## What it does
 
-| Service | Technology | Purpose |
+| Feature | Description |
+|---|---|
+| **Document Chat** | Upload a PDF and ask questions. Answers are grounded strictly in the document — no hallucination. |
+| **Invoice Extractor** | Agentic workflow that pulls structured fields (Vendor, Date, Total, Tax) from any invoice. |
+| **Contract Diff** | Side-by-side AI comparison of legal clauses across two documents. |
+| **Executive Brief** | Generates a 3-bullet financial summary from any uploaded document. |
+
+---
+
+## Architecture
+
+```
+┌─────────────┐     HTTP/JWT      ┌──────────────────────────────────────┐
+│  React SPA  │ ◄────────────────► │           FastAPI Backend            │
+│  (Vite 5)   │                   │                                      │
+└─────────────┘                   │  ┌─────────┐  ┌──────────────────┐  │
+                                  │  │ LangGraph│  │ Sentence         │  │
+                                  │  │ Workflows│  │ Transformers     │  │
+                                  │  └────┬─────┘  │ all-MiniLM-L6-v2│  │
+                                  │       │         └────────┬─────────┘  │
+                                  └───────┼──────────────────┼────────────┘
+                                          │                  │
+               ┌──────────────────────────┼──────────────────┼──────────┐
+               │                          │                  │          │
+          ┌────▼─────┐             ┌──────▼──────┐   ┌──────▼──────┐   │
+          │  Groq    │             │   Qdrant    │   │  PostgreSQL │   │
+          │  LLM API │             │ Vector DB   │   │  (metadata) │   │
+          └──────────┘             └─────────────┘   └─────────────┘   │
+                                                                         │
+                                                            ┌──────────┐ │
+                                                            │  Redis   │ │
+                                                            │  cache   │ │
+                                                            └──────────┘ │
+                                                                         │
+               └─────────────────────────────────────────────────────────┘
+```
+
+**Request flow for document chat:**
+1. User uploads PDF → `pdfplumber` extracts text → chunked with `RecursiveCharacterTextSplitter` (512 chars, 50 overlap)
+2. Chunks embedded with `all-MiniLM-L6-v2` (384-dim) → stored in a per-user Qdrant collection
+3. On query: question embedded → top-50 semantic results from Qdrant → cross-encoder reranked to top-5 → sent to Groq LLM for generation
+4. Answer + source chunks saved to PostgreSQL query history
+
+---
+
+## Tech Stack
+
+| Layer | Technology | Why |
 |---|---|---|
-| **Frontend** | React + Vite | SPA User Interface |
-| **Backend** | FastAPI + LangGraph | AI Orchestration & API |
-| **PostgreSQL** | Postgres 16 | User data & chat history |
-| **Qdrant** | Qdrant Vector DB | Semantic document search |
-| **Redis** | Redis 7 | API caching & rate limiting |
+| **Backend** | FastAPI + async SQLAlchemy | Native async I/O — no thread-pool blocking for DB or vector queries |
+| **AI orchestration** | LangGraph | Stateful agentic workflows with retry logic and conditional branching |
+| **Embeddings** | Sentence Transformers (`all-MiniLM-L6-v2`) | Fast, self-hosted, no per-query API cost |
+| **Vector DB** | Qdrant | Per-user collection isolation; async Python client |
+| **Reranking** | `cross-encoder/ms-marco-MiniLM-L-6-v2` | Reranking 50→5 candidates improves retrieval precision significantly over cosine alone |
+| **LLM** | Groq (llama-3.1-8b-instant) | Sub-second inference latency; free tier sufficient for a demo |
+| **Database** | PostgreSQL 16 + asyncpg | JSONB for source-chunk citations in query history |
+| **Cache** | Redis 7 | Rate limiting and response caching on repeated queries |
+| **Frontend** | React 19 + Vite | Fast HMR in dev; lightweight bundle for a utility-focused app |
+| **Auth** | JWT (python-jose) + bcrypt | Stateless, no session store needed |
 
-## ✨ Features
+---
 
-- 🔐 **Secure Multi-Tenant Auth** — JWT-based authentication
-- 📄 **RAG Document Chat** — Hybrid search with cross-encoder reranking
-- 🧾 **Invoice Extractor** — Automatic structured data extraction (Vendor, Date, Total, Tax)
-- ⚖️ **Contract Diff** — AI-powered legal clause comparison
-- ⚡ **Executive Brief** — Instant 3-bullet financial summaries
-- 🚫 **Zero Hallucination** — Strict RAG with verifiable source citations
+## Running locally
 
-## 🚀 Quick Start (Local)
-
-### Prerequisites
-- Docker & Docker Compose
-- A [Groq API Key](https://console.groq.com) (free)
-
-### 1. Clone and configure
+**Prerequisites:** Docker, Docker Compose, a free [Groq API key](https://console.groq.com)
 
 ```bash
 git clone https://github.com/spasovskibojan/DocuBrain.git
 cd DocuBrain
 ```
 
-Create a `.env` file in the root:
+Create `.env` in the project root:
 ```env
-GROQ_API_KEY=your_groq_api_key_here
+GROQ_API_KEY=your_key_here
 ```
-
-### 2. Start all services
 
 ```bash
 docker compose up --build -d
 ```
 
-### 3. Access the app
-
 | Service | URL |
 |---|---|
 | Frontend | http://localhost:5173 |
-| Backend API Docs | http://localhost:8000/docs |
+| Backend API docs | http://localhost:8000/docs |
+| Qdrant dashboard | http://localhost:6333/dashboard |
 
 ---
 
-## 🔄 CI/CD Pipeline (GitHub Actions)
+## CI/CD
 
-On every push to `main`:
-1. ✅ Runs backend `pytest` tests
-2. 🐳 Builds Docker images for Backend and Frontend
-3. 📦 Pushes images to DockerHub with `latest` and `git-sha` tags
+GitHub Actions pipeline on every push to `main`:
 
-**Required GitHub Secrets:**
-| Secret | Description |
+1. **Test** — runs `pytest` against a live Postgres service container
+2. **Build** — builds backend and frontend Docker images
+3. **Push** — publishes to DockerHub with `latest` and `git-sha` tags
+
+Required secrets: `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`, `GROQ_API_KEY`
+
+---
+
+## Kubernetes deployment
+
+All manifests live in `k8s/`. The stack runs on k3d locally but targets any standard Kubernetes cluster.
+
+```bash
+k3d cluster create docubrain --port "80:80@loadbalancer" --port "443:443@loadbalancer"
+docker build -t kiiproject-backend:latest ./backend
+docker build -t kiiproject-frontend:latest ./frontend
+k3d image import kiiproject-backend:latest kiiproject-frontend:latest -c docubrain
+kubectl apply -f k8s/
+```
+
+| Manifest | Resources |
 |---|---|
-| `DOCKERHUB_USERNAME` | Your DockerHub username |
-| `DOCKERHUB_TOKEN` | Your DockerHub access token |
-| `GROQ_API_KEY` | Your Groq API key for tests |
+| `00-namespace.yaml` | `docubrain` namespace |
+| `01-secrets.yaml` | API keys and passwords |
+| `02-configmap.yaml` | Non-sensitive config |
+| `03-statefulsets.yaml` | Postgres, Qdrant, Redis — each with a PersistentVolumeClaim |
+| `04-deployments.yaml` | Backend × 2 replicas, Frontend × 2 replicas |
+| `05-services.yaml` | ClusterIP for backend and frontend |
+| `06-ingress.yaml` | Routes `docubrain.local` → frontend, `api.docubrain.local` → backend |
 
 ---
 
-## ☸️ Kubernetes Deployment
+## Project structure
 
-All manifests are in the `k8s/` directory.
-
-```bash
-# Deploy to your cluster (Minikube, Kind, or cloud)
-bash k8s/deploy.sh
 ```
-
-**Manifest Overview:**
-
-| File | Resource | Description |
-|---|---|---|
-| `00-namespace.yaml` | Namespace | `docubrain` isolation |
-| `01-secrets.yaml` | Secret | Encrypted API keys & passwords |
-| `02-configmap.yaml` | ConfigMap | Non-sensitive configuration |
-| `03-statefulsets.yaml` | StatefulSet × 3 | Postgres, Qdrant, Redis with PVCs |
-| `04-deployments.yaml` | Deployment × 2 | Backend (2 replicas), Frontend (2 replicas) |
-| `05-services.yaml` | Service × 2 | ClusterIP for Backend & Frontend |
-| `06-ingress.yaml` | Ingress | Routes `docubrain.local` → Frontend, `api.docubrain.local` → Backend |
-
-### Local Minikube Testing
-```bash
-minikube start
-minikube addons enable ingress
-bash k8s/deploy.sh
-# Add to /etc/hosts: <minikube ip> docubrain.local api.docubrain.local
+├── backend/
+│   ├── app/
+│   │   ├── api/          # Route handlers (auth, documents, query, workflows)
+│   │   ├── core/         # Config, DB session, security, Redis client
+│   │   ├── models/       # SQLAlchemy ORM models
+│   │   ├── schemas/      # Pydantic request/response schemas
+│   │   └── services/     # RAG pipeline, embeddings, reranker, Qdrant, PDF parser
+│   ├── tests/
+│   └── main.py
+├── frontend/
+│   └── src/
+│       ├── pages/        # Login, Dashboard, Chat, Upload, Workflows, Extractor, Diff, Brief
+│       ├── components/
+│       └── services/     # Axios API client with JWT interceptor
+├── k8s/                  # Kubernetes manifests
+└── docker-compose.yml
 ```
-
----
-
-## 🛠️ Tech Stack
-
-- **AI:** LangGraph, LangChain, Groq (llama-3.1-8b-instant), Sentence Transformers
-- **Backend:** FastAPI, SQLAlchemy (async), Alembic, Pydantic v2
-- **Frontend:** React 18, Vite, Bootstrap 5, Lucide Icons
-- **Infrastructure:** Docker, Docker Compose, GitHub Actions, Kubernetes
-

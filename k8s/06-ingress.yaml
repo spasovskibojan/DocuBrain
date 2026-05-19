@@ -1,13 +1,3 @@
-# ============================================================
-# Ingress - Routes public traffic to the correct service
-# Requires nginx-ingress-controller to be installed:
-#   kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.9.4/deploy/static/provider/cloud/deploy.yaml
-#
-# For local Minikube testing:
-#   minikube addons enable ingress
-#   minikube ip  (use this IP in your /etc/hosts file)
-#   Add: <MINIKUBE_IP>  docubrain.local
-# ============================================================
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -15,10 +5,9 @@ metadata:
   namespace: docubrain
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
-    nginx.ingress.kubernetes.io/proxy-body-size: "50m"  # Allow large PDF uploads
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m" 
 spec:
   rules:
-    # Frontend - serves the React SPA
     - host: docubrain.local
       http:
         paths:
@@ -29,7 +18,6 @@ spec:
                 name: frontend-service
                 port:
                   number: 80
-    # Backend API - serves all /api/* requests
     - host: api.docubrain.local
       http:
         paths:

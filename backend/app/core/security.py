@@ -6,7 +6,6 @@ from passlib.context import CryptContext
 
 from app.core.config import settings
 
-# bcrypt is the industry-standard password hashing algorithm
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 

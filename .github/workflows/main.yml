@@ -12,9 +12,6 @@ env:
   FRONTEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/docubrain-frontend
 
 jobs:
-  # ─────────────────────────────────────────────
-  # JOB 1: Run backend tests (CI)
-  # ─────────────────────────────────────────────
   test:
     name: Run Backend Tests
     runs-on: ubuntu-latest
@@ -64,11 +61,6 @@ jobs:
           cd backend
           pytest tests/ -v --tb=short || echo "No tests found, skipping."
 
-  # ─────────────────────────────────────────────
-  # JOB 2: Build and Push Docker images (CD)
-  # Runs only on push to main, after tests pass
-  # Both images are built in parallel via matrix
-  # ─────────────────────────────────────────────
   build-and-push:
     name: Build & Push ${{ matrix.name }} to DockerHub
     runs-on: ubuntu-latest

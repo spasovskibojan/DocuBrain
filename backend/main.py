@@ -13,14 +13,9 @@ from app.api.workflows import router as workflows_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """
-    Lifespan events: things that happen when the server starts and stops.
-    """
-    # Startup
     await redis_client.connect()
     print("✅ Connected to Redis")
     yield
-    # Shutdown
     await redis_client.disconnect()
     print("🛑 Disconnected from Redis")
 
@@ -31,7 +26,6 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS middleware to allow React frontend to communicate with FastAPI
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # In production, change this to your actual frontend domain
@@ -40,7 +34,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# API Routers
 app.include_router(auth_router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(documents_router, prefix="/api/documents", tags=["Documents"])
 app.include_router(query_router, prefix="/api/query", tags=["AI Query"])
