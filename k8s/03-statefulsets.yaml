@@ -1,3 +1,55 @@
+# hostPath volumes pre-bound to the StatefulSet claims, so the data outlives the cluster (see start.ps1)
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-pv
+spec:
+  capacity:
+    storage: 2Gi
+  accessModes: ["ReadWriteOnce"]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-path
+  claimRef:
+    namespace: docubrain
+    name: postgres-storage-postgres-0
+  hostPath:
+    path: /var/lib/docubrain/postgres
+    type: DirectoryOrCreate
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: qdrant-pv
+spec:
+  capacity:
+    storage: 2Gi
+  accessModes: ["ReadWriteOnce"]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-path
+  claimRef:
+    namespace: docubrain
+    name: qdrant-storage-qdrant-0
+  hostPath:
+    path: /var/lib/docubrain/qdrant
+    type: DirectoryOrCreate
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: redis-pv
+spec:
+  capacity:
+    storage: 512Mi
+  accessModes: ["ReadWriteOnce"]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-path
+  claimRef:
+    namespace: docubrain
+    name: redis-storage-redis-0
+  hostPath:
+    path: /var/lib/docubrain/redis
+    type: DirectoryOrCreate
+---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:

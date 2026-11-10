@@ -8,7 +8,7 @@ from app.core.config import settings
 
 qdrant_client = AsyncQdrantClient(host=settings.QDRANT_HOST, port=settings.QDRANT_PORT)
 
-# The vector size must match the output size of our embedding model (all-MiniLM-L6-v2)
+# Output size of all-MiniLM-L6-v2
 VECTOR_SIZE = 384 
 
 async def ensure_collection_exists(collection_name: str) -> None:

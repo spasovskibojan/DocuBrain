@@ -3,7 +3,6 @@ from sentence_transformers import SentenceTransformer
 
 from app.core.config import settings
 
-# singleton — model stays loaded between requests
 try:
     embedding_model = SentenceTransformer(settings.EMBEDDING_MODEL)
 except Exception as e:

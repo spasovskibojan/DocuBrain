@@ -9,24 +9,20 @@ from app.services.qdrant_service import qdrant_client
 from app.services.reranker import rerank_documents
 
 
-# 1. Define the State that flows through our Graph
 class GraphState(TypedDict):
     question: str
     collection_name: str
-    document_id: str | None # Optional filter
+    document_id: str | None
     retrieved_docs: List[dict]
     reranked_docs: List[dict]
     answer: str
 
 
-# 2. Node: Retrieval from Qdrant
 async def retrieve_node(state: GraphState):
     question = state["question"]
     
-    # Generate vector for the question
     question_vector = generate_embeddings([question])[0]
     
-    # Optional filtering by specific document
     filter_params = None
     if state["document_id"]:
         from qdrant_client.http import models
@@ -39,7 +35,6 @@ async def retrieve_node(state: GraphState):
             ]
         )
 
-    # Search Qdrant for top 50 matches (broad search)
     search_result = await qdrant_client.search(
         collection_name=state["collection_name"],
         query_vector=question_vector,
@@ -47,27 +42,22 @@ async def retrieve_node(state: GraphState):
         limit=settings.TOP_K_RETRIEVAL,
     )
     
-    # Convert points to dicts
     docs = [{"payload": p.payload, "score": p.score} for p in search_result]
     return {"retrieved_docs": docs}
 
 
-# 3. Node: Reranking
 async def rerank_node(state: GraphState):
     question = state["question"]
     docs = state["retrieved_docs"]
     
-    # Cross-encoder reduces 50 broad chunks down to the 5 absolute best
     best_docs = rerank_documents(question, docs, top_k=settings.TOP_K_RERANK)
     return {"reranked_docs": best_docs}
 
 
-# 4. Node: Generation (LLM)
 async def generate_node(state: GraphState):
     question = state["question"]
     docs = state["reranked_docs"]
     
-    # Format the context text
     context_text = "\n\n---\n\n".join([d["payload"]["text"] for d in docs])
     
     prompt = ChatPromptTemplate.from_template(
@@ -79,11 +69,11 @@ async def generate_node(state: GraphState):
         "Answer:"
     )
     
-    # Initialize Groq
     llm = ChatGroq(
         model=settings.GROQ_MODEL,
         groq_api_key=settings.GROQ_API_KEY,
-        temperature=0.0
+        temperature=0.0,
+        model_kwargs={"reasoning_effort": "low"}
     )
     
     chain = prompt | llm
@@ -92,7 +82,6 @@ async def generate_node(state: GraphState):
     return {"answer": response.content}
 
 
-# 5. Build the LangGraph
 workflow = StateGraph(GraphState)
 
 workflow.add_node("retrieve", retrieve_node)
@@ -104,5 +93,4 @@ workflow.add_edge("retrieve", "rerank")
 workflow.add_edge("rerank", "generate")
 workflow.add_edge("generate", END)
 
-# Compile the graph
 rag_app = workflow.compile()

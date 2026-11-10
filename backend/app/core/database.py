@@ -13,16 +13,14 @@ class Base(DeclarativeBase):
     pass
 
 
-# Async engine — used by the running FastAPI app
 engine = create_async_engine(
     settings.DATABASE_URL,
     echo=settings.DEBUG,
-    pool_pre_ping=True,   # test connection before using it from pool
+    pool_pre_ping=True,
     pool_size=10,
     max_overflow=20,
 )
 
-# Session factory
 AsyncSessionLocal = async_sessionmaker(
     engine,
     class_=AsyncSession,

@@ -17,7 +17,6 @@ async def register_user(
     user_in: UserCreate, db: Annotated[AsyncSession, Depends(get_db)]
 ):
     """Register a new user."""
-    # Check if user already exists
     result = await db.execute(select(User).where(User.email == user_in.email))
     if result.scalar_one_or_none():
         raise HTTPException(
@@ -25,7 +24,6 @@ async def register_user(
             detail="User with this email already exists",
         )
 
-    # Create new user
     new_user = User(
         email=user_in.email,
         hashed_password=hash_password(user_in.password),
@@ -43,7 +41,6 @@ async def login(
     login_data: LoginRequest, db: Annotated[AsyncSession, Depends(get_db)]
 ):
     """Authenticate user and return a JWT token."""
-    # Find user by email
     result = await db.execute(select(User).where(User.email == login_data.email))
     user = result.scalar_one_or_none()
 
@@ -60,7 +57,6 @@ async def login(
             detail="User account is deactivated",
         )
 
-    # Generate JWT
     access_token = create_access_token(subject=str(user.id))
 
     return {

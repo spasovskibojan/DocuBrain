@@ -16,14 +16,12 @@ export default function Register() {
     setError('');
     
     try {
-      // Step 1: Register User
       await api.post('/auth/register', {
         email: email,
         password: password,
         company_name: companyName
       });
       
-      // Step 2: Auto-login after successful registration
       const formData = new URLSearchParams();
       formData.append('username', email);
       formData.append('password', password);

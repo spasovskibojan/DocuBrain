@@ -10,7 +10,6 @@ import Extractor from './pages/Extractor';
 import Brief from './pages/Brief';
 import Diff from './pages/Diff';
 
-// Protected Route Wrapper
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
   if (!token) return <Navigate to="/login" replace />;

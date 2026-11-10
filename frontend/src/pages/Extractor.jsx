@@ -63,9 +63,7 @@ export default function Extractor() {
       const response = await api.post('/documents/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      // Refresh documents list
       await fetchDocuments();
-      // Auto-select the newly uploaded document
       setSelectedDocId(response.data.id);
     } catch (err) {
       setError(err.response?.data?.detail || 'Failed to upload document');

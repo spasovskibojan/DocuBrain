@@ -1,41 +1,45 @@
-# ── Web Framework ──────────────────────────────────────────────────────────────
+# Web Framework
 fastapi==0.111.1
 uvicorn[standard]==0.30.1
 python-multipart==0.0.9
 
-# ── Data Validation ────────────────────────────────────────────────────────────
+# Data Validation
 pydantic==2.7.4
 pydantic-settings==2.3.3
 email-validator==2.2.0
 
-# ── Database ───────────────────────────────────────────────────────────────────
+# Database
 sqlalchemy[asyncio]==2.0.30
 asyncpg==0.29.0
 alembic==1.13.1
 psycopg2-binary==2.9.9
 
-# ── Auth & Security ────────────────────────────────────────────────────────────
+# Auth & Security
 python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
 bcrypt==4.0.1
 
-# ── Cache ──────────────────────────────────────────────────────────────────────
+# Cache
 redis[asyncio]==5.0.6
 
-# ── AI / ML ────────────────────────────────────────────────────────────────────
+# AI / ML
 langchain==0.2.5
 langgraph==0.1.5
 langchain-groq==0.1.5
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.12.0+cpu
+transformers==4.57.6
 sentence-transformers==3.0.1
 qdrant-client==1.9.1
 
-# ── Document Parsing ───────────────────────────────────────────────────────────
+# Document Parsing
 pdfplumber==0.11.1
 
-# ── Evaluation ─────────────────────────────────────────────────────────────────
+# Evaluation
 ragas==0.1.10
+pyarrow==24.0.0  # 25+ needs numpy 2, langchain 0.2 needs numpy 1.x
 
-# ── Testing ────────────────────────────────────────────────────────────────────
+# Testing
 pytest==8.2.2
 pytest-asyncio==0.23.7
 httpx==0.27.0

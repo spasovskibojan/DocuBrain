@@ -59,7 +59,7 @@ jobs:
           REDIS_URL: redis://localhost:6379/0
         run: |
           cd backend
-          pytest tests/ -v --tb=short || echo "No tests found, skipping."
+          pytest tests/ -v --tb=short
 
   build-and-push:
     name: Build & Push ${{ matrix.name }} to DockerHub

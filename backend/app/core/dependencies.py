@@ -6,11 +6,12 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import settings
 from app.core.database import get_db
+from app.core.redis_client import redis_client
 from app.core.security import decode_access_token
 from app.models.user import User
 
-# Extracts Bearer token from Authorization header automatically
 bearer_scheme = HTTPBearer()
 
 
@@ -41,3 +42,28 @@ async def get_current_user(
         )
 
     return user
+
+
+async def rate_limit(
+    current_user: Annotated[User, Depends(get_current_user)],
+) -> None:
+    """
+    Per-user fixed-window rate limit for AI endpoints.
+    Fails open: if Redis is down, the request is allowed.
+    """
+    result = await redis_client.hit_rate_limit(
+        current_user.id.hex, settings.RATE_LIMIT_WINDOW_SECONDS
+    )
+    if result is None:
+        return
+
+    count, retry_after = result
+    if count > settings.RATE_LIMIT_REQUESTS:
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail=(
+                f"Rate limit exceeded: {settings.RATE_LIMIT_REQUESTS} AI requests per "
+                f"{settings.RATE_LIMIT_WINDOW_SECONDS}s. Try again in {retry_after}s."
+            ),
+            headers={"Retry-After": str(retry_after)},
+        )

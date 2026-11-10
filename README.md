@@ -112,13 +112,12 @@ Required secrets: `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`, `GROQ_API_KEY`
 
 All manifests live in `k8s/`. The stack runs on k3d locally but targets any standard Kubernetes cluster.
 
-```bash
-k3d cluster create docubrain --port "80:80@loadbalancer" --port "443:443@loadbalancer"
-docker build -t kiiproject-backend:latest ./backend
-docker build -t kiiproject-frontend:latest ./frontend
-k3d image import kiiproject-backend:latest kiiproject-frontend:latest -c docubrain
-kubectl apply -f k8s/
+```powershell
+.\k8s\start.ps1   # builds images, creates the cluster, deploys, port-forwards, opens http://localhost:5173
+.\k8s\stop.ps1    # stops port-forwards and deletes the cluster
 ```
+
+The committed `01-secrets.yaml` holds placeholder values only; `start.ps1` patches the real `GROQ_API_KEY` from `.env` into the cluster Secret.
 
 | Manifest | Resources |
 |---|---|

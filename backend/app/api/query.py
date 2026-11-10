@@ -5,7 +5,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
-from app.core.dependencies import get_current_user
+from app.core.dependencies import get_current_user, rate_limit
+from app.core.redis_client import redis_client
 from app.models.query_history import QueryHistory
 from app.models.user import User
 from app.schemas.query import QueryRequest, QueryResponse
@@ -13,7 +14,7 @@ from app.services.rag_pipeline import rag_app
 
 router = APIRouter()
 
-@router.post("/ask", response_model=QueryResponse)
+@router.post("/ask", response_model=QueryResponse, dependencies=[Depends(rate_limit)])
 async def ask_question(
     request: QueryRequest,
     current_user: Annotated[User, Depends(get_current_user)],
@@ -23,8 +24,28 @@ async def ask_question(
     Executes the LangGraph RAG pipeline to answer a user's question based on their uploaded documents.
     """
     collection_name = f"user_{current_user.id.hex}_docs"
+    user_key = current_user.id.hex
+    document_scope = str(request.document_id) if request.document_id else None
+
+    cached = await redis_client.get_cached_query(request.question, user_key, document_scope)
+    if cached:
+        db_query = QueryHistory(
+            user_id=current_user.id,
+            question=request.question,
+            answer=cached["answer"],
+            source_chunks=cached["sources"],
+            from_cache=True
+        )
+        db.add(db_query)
+        await db.commit()
+        await db.refresh(db_query)
+        return QueryResponse(
+            answer=cached["answer"],
+            sources=cached["sources"],
+            from_cache=True,
+            query_id=db_query.id
+        )
     
-    # 1. Prepare initial state for LangGraph
     initial_state = {
         "question": request.question,
         "collection_name": collection_name,
@@ -32,17 +53,13 @@ async def ask_question(
     }
     
     try:
-        # 2. Execute the state machine
         final_state = await rag_app.ainvoke(initial_state)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"AI Pipeline failed: {str(e)}")
         
-    # Extract results
     answer = final_state["answer"]
     best_chunks = final_state["reranked_docs"]
     
-    # Optional: Log the query to DB for analytics (Phase 1 requirement)
-    # We serialize the sources as JSONB so the frontend can display citations
     sources_data = [
         {
             "document_id": str(doc["payload"]["document_id"]),
@@ -53,6 +70,10 @@ async def ask_question(
         } 
         for doc in best_chunks
     ]
+
+    await redis_client.set_cached_query(
+        request.question, user_key, {"answer": answer, "sources": sources_data}, document_scope
+    )
     
     db_query = QueryHistory(
         user_id=current_user.id,

@@ -24,13 +24,7 @@ from ragas.metrics import faithfulness, answer_relevancy, context_precision
 from langchain_groq import ChatGroq
 from langchain_community.embeddings import HuggingFaceEmbeddings
 
-# ─────────────────────────────────────────────────────────────
-# Test Dataset
-# These are ground-truth Q&A pairs for a standard invoice document.
-# In a real CI environment, you would generate these from your actual
-# uploaded documents. For university evaluation, this is sufficient
-# to demonstrate the RAGAS methodology.
-# ─────────────────────────────────────────────────────────────
+# Ground-truth Q&A pairs for a sample invoice
 EVAL_DATASET = {
     "question": [
         "What is the total amount on the invoice?",
@@ -80,33 +74,32 @@ def run_evaluation():
 
     groq_api_key = os.getenv("GROQ_API_KEY")
     if not groq_api_key:
-        print("❌ ERROR: GROQ_API_KEY environment variable not set.")
-        print("   Set it with: $env:GROQ_API_KEY='your_key_here'")
+        print("ERROR: GROQ_API_KEY environment variable not set.")
+        print("Set it with: $env:GROQ_API_KEY='your_key_here'")
         return
 
-    print("\n📦 Loading models...")
+    print("\nLoading models...")
 
-    # Use Groq as the LLM judge (same model as the app)
     llm = ChatGroq(
         model="llama-3.1-8b-instant",
         api_key=groq_api_key,
         temperature=0.0,
     )
 
-    # Use the same embedding model as our RAG pipeline for consistency
+    # Same embedding model as the RAG pipeline
     embeddings = HuggingFaceEmbeddings(
         model_name="all-MiniLM-L6-v2",
         model_kwargs={"device": "cpu"},
         encode_kwargs={"normalize_embeddings": True},
     )
 
-    print("✅ Models loaded successfully.\n")
-    print("📊 Preparing evaluation dataset...")
+    print("Models loaded successfully.\n")
+    print("Preparing evaluation dataset...")
 
     dataset = Dataset.from_dict(EVAL_DATASET)
 
-    print(f"✅ Dataset prepared: {len(dataset)} Q&A pairs\n")
-    print("🔍 Running RAGAS evaluation (this may take ~60 seconds)...")
+    print(f"Dataset prepared: {len(dataset)} Q&A pairs\n")
+    print("Running RAGAS evaluation (this may take ~60 seconds)...")
     print("-" * 60)
 
     try:
@@ -123,7 +116,7 @@ def run_evaluation():
         )
 
         print("\n" + "=" * 60)
-        print("  📈 EVALUATION RESULTS")
+        print("  EVALUATION RESULTS")
         print("=" * 60)
 
         scores = results.to_pandas()
@@ -144,7 +137,6 @@ def run_evaluation():
         print("  • Context Precision: 1.0 = Retriever found ideal chunks")
         print("=" * 60)
 
-        # Per-question breakdown
         print("\n📋 Per-Question Breakdown:")
         for i, row in scores.iterrows():
             print(f"\n  Q{i+1}: {EVAL_DATASET['question'][i]}")
@@ -155,7 +147,7 @@ def run_evaluation():
         return results
 
     except Exception as e:
-        print(f"\n❌ Evaluation failed: {e}")
+        print(f"\nEvaluation failed: {e}")
         print("   This is expected if Groq rate limits are hit.")
         print("   The RAGAS framework is correctly configured.")
         raise

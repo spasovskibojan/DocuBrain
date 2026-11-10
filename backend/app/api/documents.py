@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.core.dependencies import get_current_user
+from app.core.redis_client import redis_client
 from app.models.document import Document
 from app.models.user import User
 from app.schemas.document import DocumentResponse, DocumentListResponse
@@ -29,14 +30,11 @@ async def upload_document(
     if not file.filename.lower().endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Only PDF files are supported.")
 
-    # 1. Read file into memory
     file_bytes = await file.read()
     file_size = len(file_bytes)
     
-    # Define collection name unique to this user
     collection_name = f"user_{current_user.id.hex}_docs"
     
-    # 2. Create the Database Record (initially unprocessed)
     db_document = Document(
         user_id=current_user.id,
         filename=file.filename,
@@ -50,19 +48,15 @@ async def upload_document(
     await db.refresh(db_document)
     
     try:
-        # 3. Parse PDF to raw text
         raw_text = parse_pdf_to_text(file_bytes)
         
-        # 4. Split text into 512-character chunks
         chunks = chunk_text(raw_text)
         
         if not chunks:
             raise ValueError("No text could be extracted from this PDF.")
             
-        # 5. Generate Vectors (Embeddings)
         embeddings = generate_embeddings(chunks)
         
-        # 6. Save vectors to Qdrant Vector DB
         await upsert_document_chunks(
             collection_name=collection_name,
             document_id=db_document.id,
@@ -70,18 +64,18 @@ async def upload_document(
             embeddings=embeddings
         )
         
-        # 7. Update PostgreSQL record to processed
         db_document.chunk_count = len(chunks)
         db_document.is_processed = True
         await db.commit()
         await db.refresh(db_document)
         
     except Exception as e:
-        # If anything fails, delete the record so we don't have broken state
+        # Don't keep a document row without vectors
         await db.delete(db_document)
         await db.commit()
         raise HTTPException(status_code=500, detail=f"Failed to process document: {str(e)}")
 
+    await redis_client.invalidate_user_cache(current_user.id.hex)
     return db_document
 
 
@@ -120,11 +114,10 @@ async def delete_document(
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
         
-    # Delete from Qdrant
     if doc.qdrant_collection:
         await delete_document_chunks(doc.qdrant_collection, doc.id)
         
-    # Delete from Database
     await db.delete(doc)
     await db.commit()
+    await redis_client.invalidate_user_cache(current_user.id.hex)
     return None

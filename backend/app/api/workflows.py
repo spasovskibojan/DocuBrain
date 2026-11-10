@@ -7,7 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
-from app.core.dependencies import get_current_user
+from app.core.dependencies import get_current_user, rate_limit
 from app.models.document import Document
 from app.models.user import User
 from app.services.qdrant_service import qdrant_client
@@ -16,13 +16,13 @@ from qdrant_client.http import models
 from langchain_groq import ChatGroq
 from app.core.config import settings
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(rate_limit)])
 
-# Initialize LLM
 llm = ChatGroq(
     model=settings.GROQ_MODEL,
     api_key=settings.GROQ_API_KEY,
-    temperature=0.0
+    temperature=0.0,
+    model_kwargs={"reasoning_effort": "low"}
 )
 
 @router.post("/extract-invoice")
@@ -34,7 +34,6 @@ async def extract_invoice(
     """
     Agentic Workflow: Extracts structured JSON data (Vendor, Date, Total, Tax) from an invoice.
     """
-    # 1. Verify user owns document
     result = await db.execute(
         select(Document)
         .where(Document.id == document_id)
@@ -45,7 +44,6 @@ async def extract_invoice(
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
         
-    # 2. Fetch all chunks for this document from Qdrant
     collection_name = doc.qdrant_collection
     try:
         points, _ = await qdrant_client.scroll(
@@ -58,7 +56,7 @@ async def extract_invoice(
                     )
                 ]
             ),
-            limit=10,  # Reduced from 50 to 10 to fit within Groq's 6000 TPM free tier limit. Invoices are usually 1-2 pages anyway.
+            limit=10,  # Groq free tier: 6000 TPM
             with_payload=True,
             with_vectors=False
         )
@@ -68,10 +66,8 @@ async def extract_invoice(
     if not points:
         raise HTTPException(status_code=400, detail="No text found in document")
 
-    # Combine text
     full_text = "\n\n".join([p.payload.get("text", "") for p in points])
 
-    # 3. LangChain Prompt for Structured Output
     system_prompt = """You are an expert accounting AI. Your job is to extract data from the provided invoice text.
 You MUST respond with valid JSON only. Do not include markdown code blocks or explanations.
 
@@ -91,7 +87,6 @@ Use this exact JSON schema:
         
         response = await llm.ainvoke(messages)
         
-        # 4. Parse the JSON
         response_text = response.content.strip()
         # Clean up if the model accidentally includes markdown
         if response_text.startswith("```json"):

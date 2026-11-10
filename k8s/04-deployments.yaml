@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: kiiproject-backend:latest
+          image: docubrain-backend:latest
           imagePullPolicy: Never
           ports:
             - containerPort: 8000
@@ -59,9 +59,15 @@ spec:
             - name: REDIS_URL
               value: "redis://:$(REDIS_PASSWORD)@redis-service:6379/0"
             - name: QDRANT_HOST
-              value: "qdrant-service"
+              valueFrom:
+                configMapKeyRef:
+                  name: docubrain-config
+                  key: QDRANT_HOST
             - name: QDRANT_PORT
-              value: "6333"
+              valueFrom:
+                configMapKeyRef:
+                  name: docubrain-config
+                  key: QDRANT_PORT
           readinessProbe:
             httpGet:
               path: /api/health
@@ -94,7 +100,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: kiiproject-frontend:latest
+          image: docubrain-frontend:latest
           imagePullPolicy: Never
           ports:
             - containerPort: 5173
