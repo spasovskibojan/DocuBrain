@@ -1,7 +1,7 @@
 # Builds the images and runs DocuBrain on a local k3d cluster. Stop with .\k8s\stop.ps1
 # Needs Docker Desktop, k3d and kubectl. The Groq key is read from .env.
 
-$ClusterName = "docubrain"
+$ClusterName = "docubrain-portfolio"
 $Namespace = "docubrain"
 
 function Assert-Ok($step) {
@@ -10,9 +10,9 @@ function Assert-Ok($step) {
 
 Set-Location (Split-Path $PSScriptRoot -Parent)
 
-Write-Host "[1/7] Building docubrain-backend and docubrain-frontend images..." -ForegroundColor Cyan
+Write-Host "[1/7] Building docubrain-portfolio-backend and docubrain-portfolio-frontend images..." -ForegroundColor Cyan
 # Ports 8000/5173 are needed for the port-forwards, so the compose stack has to be stopped
-if (docker ps -q --filter "name=docubrain_backend") {
+if (docker ps -q --filter "name=docubrain-portfolio-backend") {
     docker compose stop
 }
 docker compose build backend frontend
@@ -21,7 +21,7 @@ Assert-Ok "docker compose build"
 Write-Host "[2/7] Recreating a clean cluster..." -ForegroundColor Cyan
 k3d cluster delete $ClusterName
 # The databases live in a Docker volume, so they survive deleting the cluster
-k3d cluster create $ClusterName --api-port "127.0.0.1:6445" --volume "docubrain_k8s_data:/var/lib/docubrain@server:0" --wait
+k3d cluster create $ClusterName --api-port "127.0.0.1:6446" --volume "docubrain_portfolio_k8s_data:/var/lib/docubrain@server:0" --wait
 Assert-Ok "k3d cluster create"
 
 Write-Host "[3/7] Waiting for the API server..." -ForegroundColor Cyan
@@ -34,7 +34,7 @@ kubectl get nodes
 Assert-Ok "kubectl get nodes"
 
 Write-Host "[4/7] Importing local images into the cluster (~1 min)..." -ForegroundColor Cyan
-k3d image import docubrain-backend:latest docubrain-frontend:latest -c $ClusterName
+k3d image import docubrain-portfolio-backend:latest docubrain-portfolio-frontend:latest -c $ClusterName
 Assert-Ok "k3d image import"
 
 Write-Host "[5/7] Namespace, Secret, ConfigMap and databases..." -ForegroundColor Cyan

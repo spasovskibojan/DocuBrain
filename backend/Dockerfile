@@ -16,6 +16,7 @@ RUN pip install --upgrade pip \
 
 # Bake the models into the image so containers do not download them on start
 RUN python -c "from sentence_transformers import SentenceTransformer, CrossEncoder; SentenceTransformer('all-MiniLM-L6-v2'); CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')"
+ENV HF_HUB_OFFLINE=1
 
 COPY . /app/
 

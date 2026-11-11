@@ -6,7 +6,7 @@
   --bg-secondary: #ffffff;
   --text-primary: #0f172a;
   --text-secondary: #64748b;
-  --accent-color: #0f2744; /* Deep Navy */
+  --accent-color: #0f2744;
   --accent-hover: #1e3a8a;
   --border-color: #e2e8f0;
   --success-color: #059669;
@@ -69,6 +69,15 @@ body {
   border-radius: 18px 18px 18px 0;
   padding: 12px 18px;
   max-width: 85%;
+}
+
+.chat-avatar {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .source-badge {

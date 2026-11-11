@@ -2,7 +2,7 @@ import json
 import uuid
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, Header, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -25,15 +25,17 @@ llm = ChatGroq(
     model_kwargs={"reasoning_effort": "low"}
 )
 
+
+def _response_language(accept_language: str | None) -> str:
+    return "Macedonian" if (accept_language or "").lower().startswith("mk") else "English"
+
 @router.post("/extract-invoice")
 async def extract_invoice(
     document_id: uuid.UUID,
     current_user: Annotated[User, Depends(get_current_user)],
     db: Annotated[AsyncSession, Depends(get_db)]
 ):
-    """
-    Agentic Workflow: Extracts structured JSON data (Vendor, Date, Total, Tax) from an invoice.
-    """
+    """Extract vendor, date, total and tax from an invoice as JSON."""
     result = await db.execute(
         select(Document)
         .where(Document.id == document_id)
@@ -56,7 +58,7 @@ async def extract_invoice(
                     )
                 ]
             ),
-            limit=10,  # Groq free tier: 6000 TPM
+            limit=10,  # Groq free tier is 6000 TPM
             with_payload=True,
             with_vectors=False
         )
@@ -88,7 +90,6 @@ Use this exact JSON schema:
         response = await llm.ainvoke(messages)
         
         response_text = response.content.strip()
-        # Clean up if the model accidentally includes markdown
         if response_text.startswith("```json"):
             response_text = response_text[7:]
         if response_text.endswith("```"):
@@ -127,10 +128,12 @@ async def _get_doc_text(db: AsyncSession, user_id: uuid.UUID, document_id: uuid.
 async def executive_brief(
     document_id: uuid.UUID,
     current_user: Annotated[User, Depends(get_current_user)],
-    db: Annotated[AsyncSession, Depends(get_db)]
+    db: Annotated[AsyncSession, Depends(get_db)],
+    accept_language: Annotated[str | None, Header()] = None
 ):
-    full_text = await _get_doc_text(db, current_user.id, document_id, limit=8) # 8 chunks fits free tier limits
-    system_prompt = "You are an expert financial analyst. Read the following document excerpt and provide a highly professional, 3-bullet point executive summary. Focus only on the most critical information. Use markdown formatting."
+    full_text = await _get_doc_text(db, current_user.id, document_id, limit=8)
+    system_prompt = "You are an expert financial analyst. Read the following document excerpt and provide a highly professional, 3-bullet point executive summary. Focus only on the most critical information. Use markdown formatting. "
+    system_prompt += f"Respond in {_response_language(accept_language)}."
     
     try:
         response = await llm.ainvoke([("system", system_prompt), ("human", full_text)])
@@ -143,12 +146,14 @@ async def contract_diff(
     doc1_id: uuid.UUID,
     doc2_id: uuid.UUID,
     current_user: Annotated[User, Depends(get_current_user)],
-    db: Annotated[AsyncSession, Depends(get_db)]
+    db: Annotated[AsyncSession, Depends(get_db)],
+    accept_language: Annotated[str | None, Header()] = None
 ):
-    text1 = await _get_doc_text(db, current_user.id, doc1_id, limit=5) # 5 chunks per doc fits free tier limits
+    text1 = await _get_doc_text(db, current_user.id, doc1_id, limit=5)
     text2 = await _get_doc_text(db, current_user.id, doc2_id, limit=5)
     
-    system_prompt = "You are an expert legal auditor. Compare the two document excerpts below. Identify exactly what has changed between Document 1 and Document 2. Provide a clear markdown list of the differences."
+    system_prompt = "You are an expert legal auditor. Compare the two document excerpts below. Identify exactly what has changed between Document 1 and Document 2. Provide a clear markdown list of the differences. "
+    system_prompt += f"Respond in {_response_language(accept_language)}."
     human_prompt = f"### Document 1:\n{text1}\n\n### Document 2:\n{text2}"
     
     try:

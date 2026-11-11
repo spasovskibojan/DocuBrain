@@ -2,15 +2,17 @@ import json
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import settings
 from app.core.database import get_db
 from app.core.dependencies import get_current_user, rate_limit
 from app.core.redis_client import redis_client
 from app.models.query_history import QueryHistory
 from app.models.user import User
 from app.schemas.query import QueryRequest, QueryResponse
-from app.services.rag_pipeline import rag_app
+from app.services.rag_pipeline import condense_question, rag_app, reformat_answer
 
 router = APIRouter()
 
@@ -20,14 +22,45 @@ async def ask_question(
     current_user: Annotated[User, Depends(get_current_user)],
     db: Annotated[AsyncSession, Depends(get_db)]
 ):
-    """
-    Executes the LangGraph RAG pipeline to answer a user's question based on their uploaded documents.
-    """
     collection_name = f"user_{current_user.id.hex}_docs"
     user_key = current_user.id.hex
     document_scope = str(request.document_id) if request.document_id else None
 
-    cached = await redis_client.get_cached_query(request.question, user_key, document_scope)
+    recent = await db.execute(
+        select(QueryHistory)
+        .where(QueryHistory.user_id == current_user.id)
+        .order_by(QueryHistory.created_at.desc())
+        .limit(settings.CHAT_HISTORY_TURNS)
+    )
+    history_rows = list(reversed(recent.scalars().all()))
+    history = [{"question": h.question, "answer": h.answer} for h in history_rows]
+    question, language, is_reformat = await condense_question(request.question, history)
+
+    if is_reformat:
+        try:
+            answer = await reformat_answer(history[-1]["answer"], request.question, language)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"AI Pipeline failed: {str(e)}")
+        sources_data = history_rows[-1].source_chunks or []
+        db_query = QueryHistory(
+            user_id=current_user.id,
+            question=request.question,
+            answer=answer,
+            source_chunks=sources_data
+        )
+        db.add(db_query)
+        await db.commit()
+        await db.refresh(db_query)
+        return QueryResponse(
+            answer=answer,
+            sources=sources_data,
+            from_cache=False,
+            query_id=db_query.id
+        )
+
+    cache_question = f"{language}:{question}"
+
+    cached = await redis_client.get_cached_query(cache_question, user_key, document_scope)
     if cached:
         db_query = QueryHistory(
             user_id=current_user.id,
@@ -45,9 +78,10 @@ async def ask_question(
             from_cache=True,
             query_id=db_query.id
         )
-    
+
     initial_state = {
-        "question": request.question,
+        "question": question,
+        "language": language,
         "collection_name": collection_name,
         "document_id": str(request.document_id) if request.document_id else None
     }
@@ -70,10 +104,6 @@ async def ask_question(
         } 
         for doc in best_chunks
     ]
-
-    await redis_client.set_cached_query(
-        request.question, user_key, {"answer": answer, "sources": sources_data}, document_scope
-    )
     
     db_query = QueryHistory(
         user_id=current_user.id,
@@ -84,6 +114,10 @@ async def ask_question(
     db.add(db_query)
     await db.commit()
     await db.refresh(db_query)
+
+    await redis_client.set_cached_query(
+        cache_question, user_key, {"answer": answer, "sources": sources_data}, document_scope
+    )
     
     return QueryResponse(
         answer=answer,
@@ -109,7 +143,6 @@ async def get_query_history(
         .order_by(QueryHistory.created_at.desc())
         .limit(10)
     )
-    # Reverse so they are chronologically ordered for the UI
     history = result.scalars().all()
     return history[::-1]
 

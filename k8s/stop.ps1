@@ -1,7 +1,7 @@
 # Stops the port-forwards and deletes the k3d cluster. The data stays in the
-# docubrain_k8s_data Docker volume; wipe it with: docker volume rm docubrain_k8s_data
+# docubrain_portfolio_k8s_data Docker volume; wipe it with: docker volume rm docubrain_portfolio_k8s_data
 
-$ClusterName = "docubrain"
+$ClusterName = "docubrain-portfolio"
 
 Write-Host "Stopping port-forwards..." -ForegroundColor Cyan
 Get-Process kubectl -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue

@@ -98,11 +98,11 @@ export default function Chat() {
           {messages.map((msg, idx) => (
             <div key={idx} className={`d-flex flex-column ${msg.role === 'user' ? 'align-items-end' : 'align-items-start'}`}>
               <div className="d-flex align-items-end gap-2 mb-1">
-                {msg.role === 'ai' && <div className="bg-primary bg-opacity-25 rounded-circle flex-shrink-0 d-flex align-items-center justify-content-center" style={{width: 32, height: 32}}><Bot size={16} className="text-primary" /></div>}
+                {msg.role === 'ai' && <div className="chat-avatar bg-primary bg-opacity-25 rounded-circle"><Bot size={16} className="text-primary" /></div>}
                 <div className={msg.role === 'user' ? 'chat-user' : 'chat-ai'}>
                   <div style={{whiteSpace: 'pre-wrap'}}>{msg.content}</div>
                 </div>
-                {msg.role === 'user' && <div className="bg-secondary rounded-circle flex-shrink-0 d-flex align-items-center justify-content-center" style={{width: 32, height: 32}}><User size={16} className="text-white" /></div>}
+                {msg.role === 'user' && <div className="chat-avatar bg-secondary rounded-circle"><User size={16} className="text-white" /></div>}
               </div>
 
               {msg.sources && msg.sources.length > 0 && (
@@ -120,7 +120,7 @@ export default function Chat() {
           ))}
           {loading && (
             <div className="d-flex align-items-end gap-2">
-              <div className="bg-primary bg-opacity-25 p-2 rounded-circle"><Bot size={16} className="text-primary" /></div>
+              <div className="chat-avatar bg-primary bg-opacity-25 rounded-circle"><Bot size={16} className="text-primary" /></div>
               <div className="chat-ai text-secondary">
                 <div className="spinner-grow spinner-grow-sm me-1" role="status"></div>
                 <div className="spinner-grow spinner-grow-sm me-1" role="status"></div>

@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: docubrain-backend:latest
+          image: docubrain-portfolio-backend:latest
           imagePullPolicy: Never
           ports:
             - containerPort: 8000
@@ -100,7 +100,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: docubrain-frontend:latest
+          image: docubrain-portfolio-frontend:latest
           imagePullPolicy: Never
           ports:
             - containerPort: 5173

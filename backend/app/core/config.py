@@ -31,6 +31,9 @@ class Settings(BaseSettings):
     CHUNK_OVERLAP: int = 50
     TOP_K_RETRIEVAL: int = 50
     TOP_K_RERANK: int = 5
+    RELEVANCE_THRESHOLD: float = -3.0
+    MAX_QUERY_REWRITES: int = 1
+    CHAT_HISTORY_TURNS: int = 3
 
     model_config = SettingsConfigDict(
         env_file=".env",
