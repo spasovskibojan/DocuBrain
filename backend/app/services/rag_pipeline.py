@@ -134,12 +134,21 @@ async def generate_node(state: GraphState):
     question = state["question"]
     docs = state["reranked_docs"]
     
-    context_text = "\n\n---\n\n".join([d["payload"]["text"] for d in docs])
-    
+    grouped: dict[str, List[dict]] = {}
+    for d in docs:
+        grouped.setdefault(str(d["payload"]["document_id"]), []).append(d)
+    sections = []
+    for chunks in grouped.values():
+        chunks.sort(key=lambda d: d["payload"].get("chunk_index", 0))
+        sections.append("\n".join(c["payload"]["text"] for c in chunks))
+    context_text = "\n\n===== NEXT DOCUMENT =====\n\n".join(sections)
+
     prompt = ChatPromptTemplate.from_template(
         "You are an expert AI assistant for an accounting firm. "
         "Use the following pieces of retrieved context from the firm's documents to answer the question. "
+        "Documents are separated by '===== NEXT DOCUMENT ====='; never mix facts between documents. "
         "Answer only from the context, never from general knowledge. "
+        "Use totals and amounts exactly as stated in the documents; do not recalculate them. "
         "If the context does not contain the answer, just say that you don't know. Do not hallucinate. "
         "Refer to the context as 'your documents', never as 'context' or 'retrieved context'. "
         "Respond in {language}.\n\n"
@@ -149,7 +158,7 @@ async def generate_node(state: GraphState):
     )
     
     llm = ChatGroq(
-        model=settings.GROQ_MODEL,
+        model=settings.GROQ_ANSWER_MODEL,
         groq_api_key=settings.GROQ_API_KEY,
         temperature=0.0,
         model_kwargs={"reasoning_effort": "low"}
@@ -198,7 +207,7 @@ def route_after_rerank(state: GraphState):
         return "generate"
     if (state.get("rewrite_attempts") or 0) < settings.MAX_QUERY_REWRITES:
         return "rewrite_query"
-    return "no_answer"
+    return "generate" if docs else "no_answer"
 
 
 workflow = StateGraph(GraphState)

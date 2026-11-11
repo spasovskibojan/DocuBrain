@@ -9,6 +9,7 @@ from app.core.config import settings
 from app.core.database import get_db
 from app.core.dependencies import get_current_user, rate_limit
 from app.core.redis_client import redis_client
+from app.models.document import Document
 from app.models.query_history import QueryHistory
 from app.models.user import User
 from app.schemas.query import QueryRequest, QueryResponse
@@ -93,11 +94,21 @@ async def ask_question(
         
     answer = final_state["answer"]
     best_chunks = final_state["reranked_docs"]
-    
+
+    missing_ids = {doc["payload"]["document_id"] for doc in best_chunks if not doc["payload"].get("filename")}
+    names = {}
+    if missing_ids:
+        rows = await db.execute(
+            select(Document.id, Document.original_filename)
+            .where(Document.id.in_(missing_ids))
+            .where(Document.user_id == current_user.id)
+        )
+        names = {str(doc_id): name for doc_id, name in rows.all()}
+
     sources_data = [
         {
             "document_id": str(doc["payload"]["document_id"]),
-            "document_name": doc["payload"].get("filename", "Uploaded Document"),
+            "document_name": doc["payload"].get("filename") or names.get(str(doc["payload"]["document_id"]), "Uploaded Document"),
             "page_number": doc["payload"].get("page_number", 1),
             "chunk_text": doc["payload"]["text"],
             "relevance_score": doc["relevance_score"]

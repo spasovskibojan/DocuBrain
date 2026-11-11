@@ -24,6 +24,7 @@ class Settings(BaseSettings):
 
     GROQ_API_KEY: str = ""
     GROQ_MODEL: str = "openai/gpt-oss-20b"
+    GROQ_ANSWER_MODEL: str = "openai/gpt-oss-120b"
     EMBEDDING_MODEL: str = "all-MiniLM-L6-v2"
     RERANKER_MODEL: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"
 

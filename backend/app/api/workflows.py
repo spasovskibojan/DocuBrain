@@ -19,7 +19,7 @@ from app.core.config import settings
 router = APIRouter(dependencies=[Depends(rate_limit)])
 
 llm = ChatGroq(
-    model=settings.GROQ_MODEL,
+    model=settings.GROQ_ANSWER_MODEL,
     api_key=settings.GROQ_API_KEY,
     temperature=0.0,
     model_kwargs={"reasoning_effort": "low"}
@@ -68,18 +68,19 @@ async def extract_invoice(
     if not points:
         raise HTTPException(status_code=400, detail="No text found in document")
 
+    points.sort(key=lambda p: p.payload.get("chunk_index", 0))
     full_text = "\n\n".join([p.payload.get("text", "") for p in points])
 
     system_prompt = """You are an expert accounting AI. Your job is to extract data from the provided invoice text.
-You MUST respond with valid JSON only. Do not include markdown code blocks or explanations.
+            You MUST respond with valid JSON only. Do not include markdown code blocks or explanations.
 
-Use this exact JSON schema:
-{
-    "vendor_name": "string or null",
-    "invoice_date": "string or null",
-    "total_amount": "string or null",
-    "tax_amount": "string or null"
-}"""
+            Use this exact JSON schema:
+            {
+                "vendor_name": "string or null",
+                "invoice_date": "string or null",
+                "total_amount": "string or null",
+                "tax_amount": "string or null"
+            }"""
 
     try:
         messages = [
@@ -122,6 +123,7 @@ async def _get_doc_text(db: AsyncSession, user_id: uuid.UUID, document_id: uuid.
 
     if not points:
         raise HTTPException(status_code=400, detail="No text found in document")
+    points.sort(key=lambda p: p.payload.get("chunk_index", 0))
     return "\n\n".join([p.payload.get("text", "") for p in points])
 
 @router.post("/executive-brief")

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, FileText, Trash2 } from 'lucide-react';
+import Markdown from '../components/Markdown';
 import api from '../services/api';
 
 export default function Chat() {
@@ -100,7 +101,7 @@ export default function Chat() {
               <div className="d-flex align-items-end gap-2 mb-1">
                 {msg.role === 'ai' && <div className="chat-avatar bg-primary bg-opacity-25 rounded-circle"><Bot size={16} className="text-primary" /></div>}
                 <div className={msg.role === 'user' ? 'chat-user' : 'chat-ai'}>
-                  <div style={{whiteSpace: 'pre-wrap'}}>{msg.content}</div>
+                  {msg.role === 'ai' ? <Markdown>{msg.content}</Markdown> : <div style={{whiteSpace: 'pre-wrap'}}>{msg.content}</div>}
                 </div>
                 {msg.role === 'user' && <div className="chat-avatar bg-secondary rounded-circle"><User size={16} className="text-white" /></div>}
               </div>

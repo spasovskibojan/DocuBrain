@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Scale } from 'lucide-react';
+import Markdown from '../components/Markdown';
 import api from '../services/api';
 
 export default function Diff() {
@@ -66,8 +67,8 @@ export default function Diff() {
         <div className="col-md-8">
           <div className="glass-card p-4 h-100">
             <h5 className="fw-bold mb-3">Audit Results</h5>
-            <div className="bg-light rounded p-3" style={{minHeight: '200px', whiteSpace: 'pre-wrap'}}>
-              {result || (comparing ? 'Analyzing semantic differences...' : 'Waiting for documents...')}
+            <div className="bg-light rounded p-3" style={{minHeight: '200px'}}>
+              {result ? <Markdown>{result}</Markdown> : (comparing ? 'Analyzing semantic differences...' : 'Waiting for documents...')}
             </div>
           </div>
         </div>

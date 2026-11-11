@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Zap } from 'lucide-react';
+import Markdown from '../components/Markdown';
 import api from '../services/api';
 
 export default function Brief() {
@@ -59,8 +60,8 @@ export default function Brief() {
         <div className="col-md-8">
           <div className="glass-card p-4 h-100">
             <h5 className="fw-bold mb-3">AI Summary</h5>
-            <div className="bg-light rounded p-3" style={{minHeight: '200px', whiteSpace: 'pre-wrap'}}>
-              {result || (generating ? 'Reading document...' : 'Waiting for document...')}
+            <div className="bg-light rounded p-3" style={{minHeight: '200px'}}>
+              {result ? <Markdown>{result}</Markdown> : (generating ? 'Reading document...' : 'Waiting for document...')}
             </div>
           </div>
         </div>

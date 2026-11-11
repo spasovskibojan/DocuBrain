@@ -61,7 +61,8 @@ async def upload_document(
             collection_name=collection_name,
             document_id=db_document.id,
             chunks=chunks,
-            embeddings=embeddings
+            embeddings=embeddings,
+            filename=db_document.original_filename
         )
         
         db_document.chunk_count = len(chunks)
