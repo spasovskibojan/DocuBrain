@@ -5,6 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
+from app.core.dependencies import auth_rate_limit
 from app.core.security import create_access_token, hash_password, verify_password
 from app.models.user import User
 from app.schemas.user import LoginRequest, TokenResponse, UserCreate, UserResponse
@@ -12,7 +13,12 @@ from app.schemas.user import LoginRequest, TokenResponse, UserCreate, UserRespon
 router = APIRouter()
 
 
-@router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/register",
+    response_model=UserResponse,
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(auth_rate_limit)],
+)
 async def register_user(
     user_in: UserCreate, db: Annotated[AsyncSession, Depends(get_db)]
 ):
@@ -36,7 +42,7 @@ async def register_user(
     return new_user
 
 
-@router.post("/login", response_model=TokenResponse)
+@router.post("/login", response_model=TokenResponse, dependencies=[Depends(auth_rate_limit)])
 async def login(
     login_data: LoginRequest, db: Annotated[AsyncSession, Depends(get_db)]
 ):

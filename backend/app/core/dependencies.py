@@ -1,7 +1,7 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -65,5 +65,26 @@ async def rate_limit(
                 f"Rate limit exceeded: {settings.RATE_LIMIT_REQUESTS} AI requests per "
                 f"{settings.RATE_LIMIT_WINDOW_SECONDS}s. Try again in {retry_after}s."
             ),
+            headers={"Retry-After": str(retry_after)},
+        )
+
+
+async def auth_rate_limit(request: Request) -> None:
+    """
+    Per-IP fixed-window rate limit for login and registration, to slow down password guessing.
+    Fails open: if Redis is down, the request is allowed.
+    """
+    client_ip = request.client.host if request.client else "unknown"
+    result = await redis_client.hit_rate_limit(
+        f"auth:{client_ip}", settings.RATE_LIMIT_WINDOW_SECONDS
+    )
+    if result is None:
+        return
+
+    count, retry_after = result
+    if count > settings.AUTH_RATE_LIMIT_REQUESTS:
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail=f"Too many attempts. Try again in {retry_after}s.",
             headers={"Retry-After": str(retry_after)},
         )

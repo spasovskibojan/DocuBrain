@@ -1,8 +1,8 @@
-import json
+import logging
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
@@ -12,8 +12,10 @@ from app.core.redis_client import redis_client
 from app.models.document import Document
 from app.models.query_history import QueryHistory
 from app.models.user import User
-from app.schemas.query import QueryRequest, QueryResponse
+from app.schemas.query import QueryHistoryResponse, QueryRequest, QueryResponse
 from app.services.rag_pipeline import condense_question, rag_app, reformat_answer
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -26,6 +28,15 @@ async def ask_question(
     collection_name = f"user_{current_user.id.hex}_docs"
     user_key = current_user.id.hex
     document_scope = str(request.document_id) if request.document_id else None
+
+    if request.document_id:
+        owned = await db.execute(
+            select(Document.id)
+            .where(Document.id == request.document_id)
+            .where(Document.user_id == current_user.id)
+        )
+        if owned.scalar_one_or_none() is None:
+            raise HTTPException(status_code=404, detail="Document not found")
 
     recent = await db.execute(
         select(QueryHistory)
@@ -40,11 +51,13 @@ async def ask_question(
     if is_reformat:
         try:
             answer = await reformat_answer(history[-1]["answer"], request.question, language)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=f"AI Pipeline failed: {str(e)}")
+        except Exception:
+            logger.exception("Reformatting the previous answer failed")
+            raise HTTPException(status_code=500, detail="AI pipeline failed.")
         sources_data = history_rows[-1].source_chunks or []
         db_query = QueryHistory(
             user_id=current_user.id,
+            document_id=request.document_id,
             question=request.question,
             answer=answer,
             source_chunks=sources_data
@@ -65,6 +78,7 @@ async def ask_question(
     if cached:
         db_query = QueryHistory(
             user_id=current_user.id,
+            document_id=request.document_id,
             question=request.question,
             answer=cached["answer"],
             source_chunks=cached["sources"],
@@ -89,8 +103,9 @@ async def ask_question(
     
     try:
         final_state = await rag_app.ainvoke(initial_state)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"AI Pipeline failed: {str(e)}")
+    except Exception:
+        logger.exception("RAG pipeline failed")
+        raise HTTPException(status_code=500, detail="AI pipeline failed.")
         
     answer = final_state["answer"]
     best_chunks = final_state["reranked_docs"]
@@ -109,7 +124,7 @@ async def ask_question(
         {
             "document_id": str(doc["payload"]["document_id"]),
             "document_name": doc["payload"].get("filename") or names.get(str(doc["payload"]["document_id"]), "Uploaded Document"),
-            "page_number": doc["payload"].get("page_number", 1),
+            "page_number": doc["payload"].get("page_number") or 1,
             "chunk_text": doc["payload"]["text"],
             "relevance_score": doc["relevance_score"]
         } 
@@ -118,6 +133,7 @@ async def ask_question(
     
     db_query = QueryHistory(
         user_id=current_user.id,
+        document_id=request.document_id,
         question=request.question,
         answer=answer,
         source_chunks=sources_data
@@ -137,17 +153,12 @@ async def ask_question(
         query_id=db_query.id
     )
 
-from app.schemas.query import QueryHistoryResponse
-
 @router.get("/history", response_model=list[QueryHistoryResponse])
 async def get_query_history(
     current_user: Annotated[User, Depends(get_current_user)],
     db: Annotated[AsyncSession, Depends(get_db)]
 ):
     """Retrieve the user's past chat questions and answers."""
-    from sqlalchemy import select
-    from app.schemas.query import QueryHistoryResponse
-    
     result = await db.execute(
         select(QueryHistory)
         .where(QueryHistory.user_id == current_user.id)
@@ -163,7 +174,6 @@ async def clear_query_history(
     db: Annotated[AsyncSession, Depends(get_db)]
 ):
     """Deletes all chat history for the current user."""
-    from sqlalchemy import delete
     await db.execute(
         delete(QueryHistory)
         .where(QueryHistory.user_id == current_user.id)

@@ -2,6 +2,10 @@ import uuid
 
 import pytest
 
+from app.core.config import settings
+from app.core.redis_client import redis_client
+from app.services.qdrant_service import qdrant_client
+
 pytestmark = pytest.mark.asyncio
 
 PASSWORD = "Str0ngPassw0rd"
@@ -80,3 +84,32 @@ async def test_new_user_has_empty_library(client):
     response = await client.get("/api/documents/", headers={"Authorization": f"Bearer {token}"})
     assert response.status_code == 200
     assert response.json() == {"documents": [], "total": 0}
+
+
+async def test_readiness_follows_qdrant_availability(client, monkeypatch):
+    async def up():
+        return None
+
+    async def down():
+        raise ConnectionError("qdrant is down")
+
+    monkeypatch.setattr(qdrant_client, "get_collections", up)
+    ready = await client.get("/api/health/ready")
+    assert ready.status_code == 200
+    assert ready.json() == {"status": "ready", "postgres": True, "qdrant": True}
+
+    monkeypatch.setattr(qdrant_client, "get_collections", down)
+    unavailable = await client.get("/api/health/ready")
+    assert unavailable.status_code == 503
+    assert unavailable.json()["qdrant"] is False
+
+
+async def test_login_is_rate_limited(client, monkeypatch):
+    async def over_limit(key, window_seconds):
+        return settings.AUTH_RATE_LIMIT_REQUESTS + 1, 30
+
+    monkeypatch.setattr(redis_client, "hit_rate_limit", over_limit)
+
+    response = await _login(client, _new_email())
+    assert response.status_code == 429
+    assert response.headers["Retry-After"] == "30"
