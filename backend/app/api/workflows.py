@@ -1,8 +1,9 @@
-import json
+import logging
 import uuid
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Header, HTTPException
+from pydantic import ValidationError
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -10,13 +11,18 @@ from app.core.database import get_db
 from app.core.dependencies import get_current_user, rate_limit
 from app.models.document import Document
 from app.models.user import User
+from app.schemas.workflow import InvoiceData
 from app.services.qdrant_service import qdrant_client
 from qdrant_client.http import models
 
 from langchain_groq import ChatGroq
 from app.core.config import settings
 
+logger = logging.getLogger(__name__)
+
 router = APIRouter(dependencies=[Depends(rate_limit)])
+
+EXTRACTION_ATTEMPTS = 2
 
 llm = ChatGroq(
     model=settings.GROQ_ANSWER_MODEL,
@@ -29,7 +35,17 @@ llm = ChatGroq(
 def _response_language(accept_language: str | None) -> str:
     return "Macedonian" if (accept_language or "").lower().startswith("mk") else "English"
 
-@router.post("/extract-invoice")
+
+def _first_chunks_filter(document_id: uuid.UUID, limit: int) -> models.Filter:
+    # Scroll returns points in ID order and the IDs are random, so the first chunks are picked by chunk_index
+    return models.Filter(
+        must=[
+            models.FieldCondition(key="document_id", match=models.MatchValue(value=str(document_id))),
+            models.FieldCondition(key="chunk_index", range=models.Range(lt=limit)),
+        ]
+    )
+
+@router.post("/extract-invoice", response_model=InvoiceData)
 async def extract_invoice(
     document_id: uuid.UUID,
     current_user: Annotated[User, Depends(get_current_user)],
@@ -50,20 +66,14 @@ async def extract_invoice(
     try:
         points, _ = await qdrant_client.scroll(
             collection_name=collection_name,
-            scroll_filter=models.Filter(
-                must=[
-                    models.FieldCondition(
-                        key="document_id",
-                        match=models.MatchValue(value=str(doc.id))
-                    )
-                ]
-            ),
+            scroll_filter=_first_chunks_filter(doc.id, 10),
             limit=10,  # Groq free tier is 6000 TPM
             with_payload=True,
             with_vectors=False
         )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to read document chunks: {e}")
+    except Exception:
+        logger.exception("Failed to read chunks of document %s", doc.id)
+        raise HTTPException(status_code=500, detail="Failed to read document chunks.")
 
     if not points:
         raise HTTPException(status_code=400, detail="No text found in document")
@@ -82,27 +92,30 @@ async def extract_invoice(
                 "tax_amount": "string or null"
             }"""
 
-    try:
-        messages = [
-            ("system", system_prompt),
-            ("human", f"Extract data from this invoice:\n\n{full_text}")
-        ]
-        
-        response = await llm.ainvoke(messages)
-        
-        response_text = response.content.strip()
-        if response_text.startswith("```json"):
-            response_text = response_text[7:]
-        if response_text.endswith("```"):
-            response_text = response_text[:-3]
-            
-        data = json.loads(response_text)
-        return data
-        
-    except json.JSONDecodeError:
-        raise HTTPException(status_code=500, detail="AI failed to return valid structured data.")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Extraction failed: {str(e)}")
+    messages = [
+        ("system", system_prompt),
+        ("human", f"Extract data from this invoice:\n\n{full_text}")
+    ]
+    json_llm = llm.bind(response_format={"type": "json_object"})
+
+    for attempt in range(1, EXTRACTION_ATTEMPTS + 1):
+        try:
+            response = await json_llm.ainvoke(messages)
+        except Exception:
+            logger.exception("Invoice extraction call failed (attempt %d)", attempt)
+            continue
+
+        try:
+            return InvoiceData.model_validate_json(response.content)
+        except ValidationError as e:
+            logger.warning("Invoice extraction returned invalid data (attempt %d): %s", attempt, e)
+            messages = [
+                *messages,
+                ("ai", response.content),
+                ("human", f"That did not match the schema:\n{e}\nReturn only the corrected JSON object."),
+            ]
+
+    raise HTTPException(status_code=502, detail="AI failed to return valid structured data.")
 
 async def _get_doc_text(db: AsyncSession, user_id: uuid.UUID, document_id: uuid.UUID, limit: int = 10) -> str:
     result = await db.execute(select(Document).where(Document.id == document_id).where(Document.user_id == user_id))
@@ -113,13 +126,14 @@ async def _get_doc_text(db: AsyncSession, user_id: uuid.UUID, document_id: uuid.
     try:
         points, _ = await qdrant_client.scroll(
             collection_name=doc.qdrant_collection,
-            scroll_filter=models.Filter(must=[models.FieldCondition(key="document_id", match=models.MatchValue(value=str(doc.id)))]),
+            scroll_filter=_first_chunks_filter(doc.id, limit),
             limit=limit,
             with_payload=True,
             with_vectors=False
         )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to read document chunks: {e}")
+    except Exception:
+        logger.exception("Failed to read chunks of document %s", doc.id)
+        raise HTTPException(status_code=500, detail="Failed to read document chunks.")
 
     if not points:
         raise HTTPException(status_code=400, detail="No text found in document")
@@ -140,8 +154,9 @@ async def executive_brief(
     try:
         response = await llm.ainvoke([("system", system_prompt), ("human", full_text)])
         return {"brief": response.content}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to generate brief: {str(e)}")
+    except Exception:
+        logger.exception("Executive brief failed for document %s", document_id)
+        raise HTTPException(status_code=500, detail="Failed to generate brief.")
 
 @router.post("/contract-diff")
 async def contract_diff(
@@ -161,5 +176,6 @@ async def contract_diff(
     try:
         response = await llm.ainvoke([("system", system_prompt), ("human", human_prompt)])
         return {"diff": response.content}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to compare contracts: {str(e)}")
+    except Exception:
+        logger.exception("Contract diff failed for documents %s and %s", doc1_id, doc2_id)
+        raise HTTPException(status_code=500, detail="Failed to compare contracts.")
