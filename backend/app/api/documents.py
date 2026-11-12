@@ -52,7 +52,6 @@ async def upload_document(
     db_document = Document(
         user_id=current_user.id,
         filename=file.filename,
-        original_filename=file.filename,
         file_size_bytes=file_size,
         qdrant_collection=collection_name,
         is_processed=False
@@ -82,7 +81,7 @@ async def upload_document(
             document_id=db_document.id,
             chunks=chunks,
             embeddings=embeddings,
-            filename=db_document.original_filename,
+            filename=db_document.filename,
             page_numbers=page_numbers
         )
 

@@ -8,7 +8,6 @@ from pydantic import BaseModel
 class DocumentResponse(BaseModel):
     id: uuid.UUID
     filename: str
-    original_filename: str
     file_size_bytes: Optional[int]
     page_count: Optional[int]
     chunk_count: Optional[int]

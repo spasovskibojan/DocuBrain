@@ -114,7 +114,7 @@ async def ask_question(
     names = {}
     if missing_ids:
         rows = await db.execute(
-            select(Document.id, Document.original_filename)
+            select(Document.id, Document.filename)
             .where(Document.id.in_(missing_ids))
             .where(Document.user_id == current_user.id)
         )

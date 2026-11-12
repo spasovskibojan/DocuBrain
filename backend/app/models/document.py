@@ -21,7 +21,6 @@ class Document(Base):
         index=True,
     )
     filename: Mapped[str] = mapped_column(String(255), nullable=False)
-    original_filename: Mapped[str] = mapped_column(String(255), nullable=False)
     file_size_bytes: Mapped[int | None] = mapped_column(Integer, nullable=True)
     page_count: Mapped[int | None] = mapped_column(Integer, nullable=True)
     chunk_count: Mapped[int | None] = mapped_column(Integer, nullable=True)
