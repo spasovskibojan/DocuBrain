@@ -117,7 +117,7 @@ async def extract_invoice(
 
     raise HTTPException(status_code=502, detail="AI failed to return valid structured data.")
 
-async def _get_doc_text(db: AsyncSession, user_id: uuid.UUID, document_id: uuid.UUID, limit: int = 10) -> str:
+async def _get_doc_text(db: AsyncSession, user_id: uuid.UUID, document_id: uuid.UUID, limit: int = 10) -> tuple[str, str]:
     result = await db.execute(select(Document).where(Document.id == document_id).where(Document.user_id == user_id))
     doc = result.scalar_one_or_none()
     if not doc:
@@ -138,7 +138,7 @@ async def _get_doc_text(db: AsyncSession, user_id: uuid.UUID, document_id: uuid.
     if not points:
         raise HTTPException(status_code=400, detail="No text found in document")
     points.sort(key=lambda p: p.payload.get("chunk_index", 0))
-    return "\n\n".join([p.payload.get("text", "") for p in points])
+    return doc.filename, "\n\n".join([p.payload.get("text", "") for p in points])
 
 @router.post("/executive-brief")
 async def executive_brief(
@@ -147,7 +147,7 @@ async def executive_brief(
     db: Annotated[AsyncSession, Depends(get_db)],
     accept_language: Annotated[str | None, Header()] = None
 ):
-    full_text = await _get_doc_text(db, current_user.id, document_id, limit=8)
+    _, full_text = await _get_doc_text(db, current_user.id, document_id, limit=8)
     system_prompt = "You are an expert financial analyst. Read the following document excerpt and provide a highly professional, 3-bullet point executive summary. Focus only on the most critical information. Use markdown formatting. "
     system_prompt += f"Respond in {_response_language(accept_language)}."
     
@@ -166,12 +166,16 @@ async def contract_diff(
     db: Annotated[AsyncSession, Depends(get_db)],
     accept_language: Annotated[str | None, Header()] = None
 ):
-    text1 = await _get_doc_text(db, current_user.id, doc1_id, limit=5)
-    text2 = await _get_doc_text(db, current_user.id, doc2_id, limit=5)
-    
-    system_prompt = "You are an expert legal auditor. Compare the two document excerpts below. Identify exactly what has changed between Document 1 and Document 2. Provide a clear markdown list of the differences. "
+    if doc1_id == doc2_id:
+        raise HTTPException(status_code=400, detail="Select two different documents.")
+
+    name1, text1 = await _get_doc_text(db, current_user.id, doc1_id, limit=5)
+    name2, text2 = await _get_doc_text(db, current_user.id, doc2_id, limit=5)
+
+    system_prompt = "You are an expert legal auditor. Compare the two document excerpts below. Identify exactly what has changed between the first and the second document. Provide a clear markdown list of the differences. "
+    system_prompt += "Refer to each document by its file name as plain text, never as 'Document 1' or 'Document 2'. "
     system_prompt += f"Respond in {_response_language(accept_language)}."
-    human_prompt = f"### Document 1:\n{text1}\n\n### Document 2:\n{text2}"
+    human_prompt = f"### {name1}:\n{text1}\n\n### {name2}:\n{text2}"
     
     try:
         response = await llm.ainvoke([("system", system_prompt), ("human", human_prompt)])

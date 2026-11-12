@@ -57,7 +57,7 @@ export default function Diff() {
                 {documents.map(doc => <option key={doc.id} value={doc.id}>{doc.filename}</option>)}
               </select>
 
-              <button className="btn btn-warning w-100" disabled={!doc1Id || !doc2Id || comparing}>
+              <button className="btn btn-warning w-100" disabled={!doc1Id || !doc2Id || doc1Id === doc2Id || comparing}>
                 {comparing ? 'Auditing...' : 'Compare Documents'}
               </button>
             </form>
