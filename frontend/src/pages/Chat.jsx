@@ -9,10 +9,15 @@ export default function Chat() {
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [documents, setDocuments] = useState([]);
+  const [selectedDocId, setSelectedDocId] = useState('');
   const endOfMessagesRef = useRef(null);
 
   useEffect(() => {
     fetchHistory();
+    api.get('/documents/')
+      .then(res => setDocuments(res.data.documents || []))
+      .catch(err => console.error('Failed to load documents', err));
   }, []);
 
   const fetchHistory = async () => {
@@ -61,7 +66,7 @@ export default function Chat() {
     try {
       const response = await api.post('/query/ask', {
         question: userMessage,
-        document_id: null
+        document_id: selectedDocId || null
       });
 
       setMessages(prev => [
@@ -86,13 +91,25 @@ export default function Chat() {
           <h5 className="mb-0 fw-bold d-flex align-items-center gap-2">
             <Bot className="text-primary" /> AI Assistant
           </h5>
-          <button 
-            onClick={handleClearChat}
-            className="btn btn-sm btn-outline-danger d-flex align-items-center gap-1"
-            title="Clear Chat History"
-          >
-            <Trash2 size={14} /> Clear
-          </button>
+          <div className="d-flex align-items-center gap-2">
+            <select
+              className="form-select form-select-sm"
+              style={{maxWidth: '240px'}}
+              value={selectedDocId}
+              onChange={e => setSelectedDocId(e.target.value)}
+              title="Search scope"
+            >
+              <option value="">All documents</option>
+              {documents.map(doc => <option key={doc.id} value={doc.id}>{doc.filename}</option>)}
+            </select>
+            <button
+              onClick={handleClearChat}
+              className="btn btn-sm btn-outline-danger d-flex align-items-center gap-1"
+              title="Clear Chat History"
+            >
+              <Trash2 size={14} /> Clear
+            </button>
+          </div>
         </div>
 
         <div className="flex-grow-1 overflow-auto p-4 d-flex flex-column gap-4">
