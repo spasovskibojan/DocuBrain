@@ -62,3 +62,6 @@ k8s/secrets-local.yaml
 
 # Misc
 *.pdf
+
+# Local demo documents
+samples/
