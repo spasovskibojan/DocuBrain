@@ -15,6 +15,9 @@ class UserCreate(BaseModel):
     def password_strength(cls, v: str) -> str:
         if len(v) < 8:
             raise ValueError("Password must be at least 8 characters long")
+        # bcrypt only uses the first 72 bytes
+        if len(v.encode()) > 72:
+            raise ValueError("Password must be at most 72 bytes long")
         return v
 
 
