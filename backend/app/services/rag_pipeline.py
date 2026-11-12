@@ -44,14 +44,14 @@ async def retrieve_node(state: GraphState):
             ]
         )
 
-    search_result = await qdrant_client.search(
+    search_result = await qdrant_client.query_points(
         collection_name=state["collection_name"],
-        query_vector=question_vector,
+        query=question_vector,
         query_filter=filter_params,
         limit=settings.TOP_K_RETRIEVAL,
     )
-    
-    docs = [{"payload": p.payload, "score": p.score} for p in search_result]
+
+    docs = [{"payload": p.payload, "score": p.score} for p in search_result.points]
     return {"retrieved_docs": docs}
 
 

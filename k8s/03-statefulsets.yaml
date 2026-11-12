@@ -135,7 +135,7 @@ spec:
     spec:
       containers:
         - name: qdrant
-          image: qdrant/qdrant:latest
+          image: qdrant/qdrant:v1.18.0
           ports:
             - containerPort: 6333
           volumeMounts:
