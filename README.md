@@ -1,4 +1,4 @@
-# DocuBrain AI
+# DocuBrain
 
 **An AI-powered document intelligence platform built with RAG, vector search, and agentic workflows.**
 

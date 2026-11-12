@@ -14,10 +14,8 @@ export default function Navbar() {
     <nav className="navbar navbar-expand-lg navbar-dark py-3">
       <div className="container">
         <Link className="navbar-brand fw-bold fs-4 d-flex align-items-center gap-2" to="/">
-          <div style={{width: 32, height: 32, borderRadius: 8, background: 'var(--accent-color)', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-            <span className="text-white fs-5">D</span>
-          </div>
-          DocuBrain AI
+          <img src="/favicon.svg" alt="" width={32} height={32} />
+          DocuBrain
         </Link>
         
         {token && (

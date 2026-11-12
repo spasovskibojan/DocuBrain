@@ -69,7 +69,7 @@ EVAL_DATASET = {
 def run_evaluation():
     """Execute the full RAGAS evaluation suite."""
     print("=" * 60)
-    print("  DocuBrain AI — RAGAS Evaluation Suite")
+    print("  DocuBrain — RAGAS Evaluation Suite")
     print("=" * 60)
 
     groq_api_key = os.getenv("GROQ_API_KEY")
