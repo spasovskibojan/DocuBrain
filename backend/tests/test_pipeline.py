@@ -7,6 +7,7 @@ from qdrant_client.http import models
 
 from app.core.config import settings
 from app.services import rag_pipeline
+from app.services.pdf_parser import with_document_title
 from app.services.rag_pipeline import generate_node, retrieve_node, route_after_rerank
 
 
@@ -115,3 +116,8 @@ async def test_retrieve_returns_nothing_when_user_has_no_collection(monkeypatch)
     result = await retrieve_node({"question": "Total?", "collection_name": "user_x_docs", "document_id": None})
 
     assert result == {"retrieved_docs": []}
+
+
+def test_chunks_are_searched_with_their_document_title():
+    assert with_document_title("Uptime 99.5%", "msa_summit_2025.pdf") == "msa summit 2025\nUptime 99.5%"
+    assert with_document_title("Uptime 99.5%", None) == "Uptime 99.5%"

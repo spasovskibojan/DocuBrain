@@ -3,6 +3,7 @@ from typing import List, Tuple
 from sentence_transformers import CrossEncoder
 
 from app.core.config import settings
+from app.services.pdf_parser import with_document_title
 
 try:
     reranker_model = CrossEncoder(settings.RERANKER_MODEL)
@@ -25,7 +26,7 @@ def rerank_documents(query: str, documents: List[dict], top_k: int = 5) -> List[
     if not documents:
         return []
 
-    pairs = [[query, doc["payload"]["text"]] for doc in documents]
+    pairs = [[query, with_document_title(doc["payload"]["text"], doc["payload"].get("filename"))] for doc in documents]
     
     with _model_lock:
         scores = reranker_model.predict(pairs)

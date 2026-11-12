@@ -15,7 +15,7 @@ from app.models.document import Document
 from app.models.user import User
 from app.schemas.document import DocumentResponse, DocumentListResponse
 from app.services.embeddings import generate_embeddings
-from app.services.pdf_parser import chunk_pages, parse_pdf_pages
+from app.services.pdf_parser import chunk_pages, parse_pdf_pages, with_document_title
 from app.services.qdrant_service import upsert_document_chunks, delete_document_chunks
 
 logger = logging.getLogger(__name__)
@@ -74,7 +74,9 @@ async def upload_document(
                 detail="No text could be extracted from this PDF. Scanned documents are not supported.",
             )
 
-        embeddings = await asyncio.to_thread(generate_embeddings, chunks)
+        embeddings = await asyncio.to_thread(
+            generate_embeddings, [with_document_title(c, file.filename) for c in chunks]
+        )
 
         await upsert_document_chunks(
             collection_name=collection_name,

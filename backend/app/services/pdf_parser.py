@@ -1,4 +1,5 @@
 import io
+from pathlib import PurePath
 from typing import List
 
 import pdfplumber
@@ -35,3 +36,12 @@ def chunk_pages(pages: List[str]) -> tuple[List[str], List[int]]:
         page_numbers.extend([page_number] * len(page_chunks))
 
     return chunks, page_numbers
+
+
+def with_document_title(chunk: str, filename: str | None) -> str:
+    """Prefixes a chunk with its document name for search, so a clause like "99.5% availability"
+    still matches a question about "the 2025 agreement"."""
+    if not filename:
+        return chunk
+    title = PurePath(filename).stem.replace("_", " ").replace("-", " ")
+    return f"{title}\n{chunk}"

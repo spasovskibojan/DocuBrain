@@ -5,6 +5,7 @@ from qdrant_client import AsyncQdrantClient
 from qdrant_client.http import models
 
 from app.core.config import settings
+from app.services.pdf_parser import with_document_title
 
 # cloud_inference lets the Qdrant server compute the BM25 vectors from text
 qdrant_client = AsyncQdrantClient(host=settings.QDRANT_HOST, port=settings.QDRANT_PORT, cloud_inference=True)
@@ -50,7 +51,7 @@ async def upsert_document_chunks(
     for i, (chunk, embedding) in enumerate(zip(chunks, embeddings)):
         point = models.PointStruct(
             id=str(uuid.uuid4()),
-            vector={DENSE_VECTOR: embedding, SPARSE_VECTOR: bm25(chunk)},
+            vector={DENSE_VECTOR: embedding, SPARSE_VECTOR: bm25(with_document_title(chunk, filename))},
             payload={
                 "document_id": str(document_id),
                 "chunk_index": i,
