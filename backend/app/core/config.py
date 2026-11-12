@@ -7,7 +7,8 @@ class Settings(BaseSettings):
     APP_VERSION: str = "1.0.0"
     DEBUG: bool = False
 
-    SECRET_KEY: str = "changeme_generate_with_openssl_rand_hex_32"
+    # No default on purpose: the app must not start with a key that is public in the repo
+    SECRET_KEY: str
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 24 hours
 
@@ -18,6 +19,9 @@ class Settings(BaseSettings):
     CACHE_TTL_SECONDS: int = 3600  # 1 hour
     RATE_LIMIT_REQUESTS: int = 10
     RATE_LIMIT_WINDOW_SECONDS: int = 60
+    AUTH_RATE_LIMIT_REQUESTS: int = 10
+
+    MAX_UPLOAD_SIZE_MB: int = 20
 
     QDRANT_HOST: str = "localhost"
     QDRANT_PORT: int = 6333

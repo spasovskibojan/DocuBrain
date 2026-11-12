@@ -4,7 +4,7 @@ from langchain_core.runnables import RunnableLambda
 
 from app.core.config import settings
 from app.services import rag_pipeline
-from app.services.rag_pipeline import generate_node, route_after_rerank
+from app.services.rag_pipeline import generate_node, retrieve_node, route_after_rerank
 
 
 def _chunk(document_id: str, index: int, text: str, score: float = 0.0) -> dict:
@@ -33,7 +33,7 @@ def test_route_falls_back_to_generate_after_rewrites():
 
 
 def test_route_returns_no_answer_without_chunks():
-    state = {"reranked_docs": [], "rewrite_attempts": settings.MAX_QUERY_REWRITES}
+    state = {"reranked_docs": [], "rewrite_attempts": 0}
     assert route_after_rerank(state) == "no_answer"
 
 
@@ -63,3 +63,20 @@ async def test_generate_keeps_document_chunks_together_and_in_order(monkeypatch)
     assert first.index("INV1-HEADER") < first.index("INV1-TOTAL")
     assert "INV2" not in first
     assert second.index("INV2-HEADER") < second.index("INV2-TOTAL")
+
+
+@pytest.mark.asyncio
+async def test_retrieve_returns_nothing_when_user_has_no_collection(monkeypatch):
+    class NoCollection:
+        async def collection_exists(self, name):
+            return False
+
+    def embeddings_must_not_run(texts):
+        raise AssertionError("nothing to search, the question should not be embedded")
+
+    monkeypatch.setattr(rag_pipeline, "qdrant_client", NoCollection())
+    monkeypatch.setattr(rag_pipeline, "generate_embeddings", embeddings_must_not_run)
+
+    result = await retrieve_node({"question": "Total?", "collection_name": "user_x_docs", "document_id": None})
+
+    assert result == {"retrieved_docs": []}

@@ -1,3 +1,4 @@
+import threading
 from typing import List, Tuple
 from sentence_transformers import CrossEncoder
 
@@ -8,6 +9,10 @@ try:
 except Exception as e:
     print(f"Warning: Could not load reranker model on startup: {e}")
     reranker_model = None
+
+# Called from worker threads; the tokenizer cannot be shared by concurrent calls
+_model_lock = threading.Lock()
+
 
 def rerank_documents(query: str, documents: List[dict], top_k: int = 5) -> List[dict]:
     """
@@ -22,7 +27,8 @@ def rerank_documents(query: str, documents: List[dict], top_k: int = 5) -> List[
 
     pairs = [[query, doc["payload"]["text"]] for doc in documents]
     
-    scores = reranker_model.predict(pairs)
+    with _model_lock:
+        scores = reranker_model.predict(pairs)
     
     for i, doc in enumerate(documents):
         doc["relevance_score"] = float(scores[i])

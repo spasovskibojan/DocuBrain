@@ -28,7 +28,8 @@ async def upsert_document_chunks(
     document_id: uuid.UUID, 
     chunks: List[str], 
     embeddings: List[List[float]],
-    filename: str | None = None
+    filename: str | None = None,
+    page_numbers: List[int] | None = None
 ) -> None:
     """Inserts chunk vectors and their payload (metadata) into Qdrant."""
     
@@ -43,6 +44,7 @@ async def upsert_document_chunks(
                 "document_id": str(document_id),
                 "chunk_index": i,
                 "filename": filename,
+                "page_number": page_numbers[i] if page_numbers else 1,
                 "text": chunk
             }
         )

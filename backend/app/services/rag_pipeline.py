@@ -1,3 +1,4 @@
+import asyncio
 import json
 from typing import TypedDict, List
 from langchain_core.prompts import ChatPromptTemplate
@@ -24,9 +25,13 @@ class GraphState(TypedDict):
 
 async def retrieve_node(state: GraphState):
     question = state.get("search_query") or state["question"]
-    
-    question_vector = generate_embeddings([question])[0]
-    
+
+    # A user who has not uploaded anything yet has no collection
+    if not await qdrant_client.collection_exists(state["collection_name"]):
+        return {"retrieved_docs": []}
+
+    question_vector = (await asyncio.to_thread(generate_embeddings, [question]))[0]
+
     filter_params = None
     if state["document_id"]:
         from qdrant_client.http import models
@@ -54,7 +59,7 @@ async def rerank_node(state: GraphState):
     question = state.get("search_query") or state["question"]
     docs = state["retrieved_docs"]
     
-    best_docs = rerank_documents(question, docs, top_k=settings.TOP_K_RERANK)
+    best_docs = await asyncio.to_thread(rerank_documents, question, docs, top_k=settings.TOP_K_RERANK)
     return {"reranked_docs": best_docs}
 
 
@@ -203,11 +208,14 @@ async def no_answer_node(state: GraphState):
 
 def route_after_rerank(state: GraphState):
     docs = state["reranked_docs"]
-    if docs and docs[0]["relevance_score"] >= settings.RELEVANCE_THRESHOLD:
+    # Vector search always returns its nearest chunks, so no chunks means there is nothing to search
+    if not docs:
+        return "no_answer"
+    if docs[0]["relevance_score"] >= settings.RELEVANCE_THRESHOLD:
         return "generate"
     if (state.get("rewrite_attempts") or 0) < settings.MAX_QUERY_REWRITES:
         return "rewrite_query"
-    return "generate" if docs else "no_answer"
+    return "generate"
 
 
 workflow = StateGraph(GraphState)
