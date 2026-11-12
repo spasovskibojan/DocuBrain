@@ -70,7 +70,7 @@ spec:
                   key: QDRANT_PORT
           readinessProbe:
             httpGet:
-              path: /api/health
+              path: /api/health/ready
               port: 8000
             initialDelaySeconds: 15
             periodSeconds: 10

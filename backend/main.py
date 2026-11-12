@@ -4,13 +4,14 @@ from pathlib import Path
 
 from alembic import command
 from alembic.config import Config
-from fastapi import FastAPI
+from fastapi import FastAPI, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
 from app.core.config import settings
 from app.core.database import engine
 from app.core.redis_client import redis_client
+from app.services.qdrant_service import qdrant_client
 from app.api.auth import router as auth_router
 from app.api.documents import router as documents_router
 from app.api.query import router as query_router
@@ -73,4 +74,36 @@ async def health_check():
         "status": "healthy",
         "redis_connected": redis_healthy,
         "version": settings.APP_VERSION,
+    }
+
+
+async def _ping_postgres() -> None:
+    async with engine.connect() as conn:
+        await conn.execute(text("SELECT 1"))
+
+
+async def _responds(check) -> bool:
+    try:
+        await asyncio.wait_for(check(), timeout=2)
+        return True
+    except Exception:
+        return False
+
+
+@app.get("/api/health/ready", tags=["Health"])
+async def readiness_check(response: Response):
+    """
+    Readiness: 503 until Postgres and Qdrant respond, so no traffic is routed to a backend that cannot serve it.
+    Redis is left out because the app keeps working without it.
+    """
+    postgres_ok, qdrant_ok = await asyncio.gather(
+        _responds(_ping_postgres), _responds(lambda: qdrant_client.get_collections())
+    )
+    ready = postgres_ok and qdrant_ok
+    if not ready:
+        response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
+    return {
+        "status": "ready" if ready else "unavailable",
+        "postgres": postgres_ok,
+        "qdrant": qdrant_ok,
     }
