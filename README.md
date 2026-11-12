@@ -10,7 +10,7 @@ DocuBrain lets users upload PDFs and interact with them through natural language
 
 | Feature | Description |
 |---|---|
-| **Document Chat** | Upload a PDF and ask questions. Answers are grounded strictly in the document — no hallucination. |
+| **Document Chat** | Upload a PDF and ask questions. Answers are generated only from the retrieved chunks and shown with their sources; if nothing relevant is found, it says so. |
 | **Invoice Extractor** | Agentic workflow that pulls structured fields (Vendor, Date, Total, Tax) from any invoice. |
 | **Contract Diff** | Side-by-side AI comparison of legal clauses across two documents. |
 | **Executive Brief** | Generates a 3-bullet financial summary from any uploaded document. |
@@ -62,7 +62,7 @@ DocuBrain lets users upload PDFs and interact with them through natural language
 | **Embeddings** | Sentence Transformers (`all-MiniLM-L6-v2`) | Fast, self-hosted, no per-query API cost |
 | **Vector DB** | Qdrant | Per-user collection isolation; async Python client |
 | **Reranking** | `cross-encoder/ms-marco-MiniLM-L-6-v2` | Reranking 50→5 candidates improves retrieval precision significantly over cosine alone |
-| **LLM** | Groq (llama-3.1-8b-instant) | Sub-second inference latency; free tier sufficient for a demo |
+| **LLM** | Groq (`openai/gpt-oss-120b` for answers, `openai/gpt-oss-20b` for query rewriting) | Low inference latency; free tier sufficient for a demo |
 | **Database** | PostgreSQL 16 + asyncpg | JSONB for source-chunk citations in query history |
 | **Cache** | Redis 7 | Rate limiting and response caching on repeated queries |
 | **Frontend** | React 19 + Vite | Fast HMR in dev; lightweight bundle for a utility-focused app |
