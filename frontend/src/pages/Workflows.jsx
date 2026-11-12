@@ -5,8 +5,8 @@ export default function Workflows() {
   const tools = [
     {
       id: 'chat',
-      title: 'Document Oracle',
-      description: 'Ask questions across your entire document library with exact source citations. Best for general research.',
+      title: 'Document Chat',
+      description: 'Ask questions across your document library and get answers with their source pages.',
       icon: <FileText size={32} className="text-primary" />,
       link: '/chat',
       status: 'Active'
@@ -14,7 +14,7 @@ export default function Workflows() {
     {
       id: 'extractor',
       title: 'Invoice Extractor',
-      description: 'Automatically pull Vendor Names, Dates, Totals, and Tax amounts from raw invoices into structured data.',
+      description: 'Extract the vendor, date, total and tax from an invoice as structured data.',
       icon: <FileSpreadsheet size={32} className="text-success" />,
       link: '/workflows/extractor',
       status: 'Active'
@@ -22,7 +22,7 @@ export default function Workflows() {
     {
       id: 'compare',
       title: 'Contract Diff',
-      description: 'Select two legal documents and have the AI highlight exactly what clauses were changed or removed.',
+      description: 'Compare two short documents, such as contract versions, and list their differences.',
       icon: <Scale size={32} className="text-warning" />,
       link: '/workflows/diff',
       status: 'Active'
@@ -30,7 +30,7 @@ export default function Workflows() {
     {
       id: 'summary',
       title: 'Executive Brief',
-      description: 'Generate a 1-page executive summary for large 100+ page financial reports in seconds.',
+      description: 'Get a three-point summary of a short document.',
       icon: <Zap size={32} className="text-danger" />,
       link: '/workflows/brief',
       status: 'Active'

@@ -72,7 +72,7 @@ async def _auth_headers(client) -> dict:
     return {"Authorization": f"Bearer {login.json()['access_token']}"}
 
 
-async def _upload(client, headers, name="invoice.pdf", text="Invoice total 1000 MKD"):
+async def _upload(client, headers, name="invoice.pdf", text="Invoice total 1000 USD"):
     files = {"file": (name, _make_pdf(text), "application/pdf")}
     return await client.post("/api/documents/upload", files=files, headers=headers)
 
@@ -88,7 +88,7 @@ async def test_upload_stores_chunks_and_lists_document(client, fake_vector_store
 
     stored = fake_vector_store[doc["id"]]
     assert stored["filename"] == "invoice.pdf"
-    assert "Invoice total 1000 MKD" in " ".join(stored["chunks"])
+    assert "Invoice total 1000 USD" in " ".join(stored["chunks"])
 
     listing = await client.get("/api/documents/", headers=headers)
     assert [d["id"] for d in listing.json()["documents"]] == [doc["id"]]
@@ -186,7 +186,7 @@ class FakeLLM:
     def bind(self, **kwargs):
         return self
 
-    async def ainvoke(self, messages):
+    async def ainvoke(self, messages, config=None):
         self.calls += 1
         return AIMessage(content=self.replies.pop(0))
 
@@ -198,7 +198,7 @@ def invoice_chunks(monkeypatch):
     async def fake_scroll(collection_name, scroll_filter, limit, with_payload, with_vectors):
         captured["filter"] = scroll_filter
         points = [
-            SimpleNamespace(payload={"chunk_index": 1, "text": "Total 1000 MKD"}),
+            SimpleNamespace(payload={"chunk_index": 1, "text": "Total 1000 USD"}),
             SimpleNamespace(payload={"chunk_index": 0, "text": "Vendor Acme"}),
         ]
         return points, None
@@ -227,7 +227,30 @@ async def test_extract_invoice_returns_validated_fields(client, fake_vector_stor
         "tax_amount": None,
     }
     assert invoice_chunks["filter"].must[1].key == "chunk_index"
-    assert invoice_chunks["filter"].must[1].range.lt == 10
+    assert 0 in invoice_chunks["filter"].must[1].match.any
+
+
+async def test_invoice_chunks_include_both_ends_of_long_document():
+    assert workflows_api._chunk_indexes(40, 6, edges_only=True) == [0, 1, 2, 37, 38, 39]
+
+
+async def test_brief_chunks_are_spread_over_whole_document():
+    indexes = workflows_api._chunk_indexes(100, 4)
+    assert indexes == [0, 25, 50, 75]
+
+
+async def test_short_document_is_read_whole():
+    assert workflows_api._chunk_indexes(3, 12) == [0, 1, 2]
+    assert workflows_api._chunk_indexes(None, 5) == [0, 1, 2, 3, 4]
+
+
+async def test_gaps_between_sampled_chunks_are_marked():
+    points = [
+        SimpleNamespace(payload={"chunk_index": 5, "text": "end"}),
+        SimpleNamespace(payload={"chunk_index": 0, "text": "start"}),
+        SimpleNamespace(payload={"chunk_index": 1, "text": "next"}),
+    ]
+    assert workflows_api._join_chunks(points) == "start\n\nnext\n\n[...]\n\nend"
 
 
 async def test_extract_invoice_retries_after_invalid_output(client, fake_vector_store, invoice_chunks, monkeypatch):

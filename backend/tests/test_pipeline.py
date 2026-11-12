@@ -1,6 +1,9 @@
+from types import SimpleNamespace
+
 import pytest
 from langchain_core.messages import AIMessage
 from langchain_core.runnables import RunnableLambda
+from qdrant_client.http import models
 
 from app.core.config import settings
 from app.services import rag_pipeline
@@ -53,7 +56,7 @@ async def test_generate_keeps_document_chunks_together_and_in_order(monkeypatch)
         _chunk("inv-1", 0, "INV1-HEADER KP-118"),
         _chunk("inv-2", 0, "INV2-HEADER OS-0147"),
     ]
-    result = await generate_node({"question": "Totals?", "reranked_docs": docs, "language": "English"})
+    result = await generate_node({"question": "Totals?", "reranked_docs": docs})
 
     assert result["answer"] == "ok"
     context = captured["prompt"].split("Context:", 1)[1].split("Question:", 1)[0]
@@ -63,6 +66,38 @@ async def test_generate_keeps_document_chunks_together_and_in_order(monkeypatch)
     assert first.index("INV1-HEADER") < first.index("INV1-TOTAL")
     assert "INV2" not in first
     assert second.index("INV2-HEADER") < second.index("INV2-TOTAL")
+    # Passage numbers follow the reranked order, which is also the order of the returned sources
+    assert "[3] INV1-HEADER" in first and "[1] INV1-TOTAL" in first
+    assert "[4] INV2-HEADER" in second and "[2] INV2-TOTAL" in second
+
+
+def test_model_specific_citation_markers_are_normalized():
+    assert rag_pipeline._normalize_citations("Total is $5【1】【3†L2-L4】.") == "Total is $5[1][3]."
+
+
+@pytest.mark.asyncio
+async def test_retrieve_fuses_dense_and_bm25_search(monkeypatch):
+    captured = {}
+
+    class FakeQdrant:
+        async def collection_exists(self, name):
+            return True
+
+        async def query_points(self, **kwargs):
+            captured.update(kwargs)
+            return SimpleNamespace(points=[SimpleNamespace(payload={"text": "x"}, score=0.5)])
+
+    monkeypatch.setattr(rag_pipeline, "qdrant_client", FakeQdrant())
+    monkeypatch.setattr(rag_pipeline, "generate_embeddings", lambda texts: [[0.1, 0.2]])
+
+    result = await retrieve_node({"question": "INV-0042 total", "collection_name": "c", "document_id": "doc-1"})
+
+    assert result["retrieved_docs"] == [{"payload": {"text": "x"}, "score": 0.5}]
+    dense, sparse = captured["prefetch"]
+    assert (dense.using, sparse.using) == ("dense", "bm25")
+    assert sparse.query.text == "INV-0042 total"
+    assert dense.filter.must[0].match.value == "doc-1" and sparse.filter == dense.filter
+    assert captured["query"].fusion == models.Fusion.RRF
 
 
 @pytest.mark.asyncio

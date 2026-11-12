@@ -11,6 +11,7 @@ from sqlalchemy import text
 from app.core.config import settings
 from app.core.database import engine
 from app.core.redis_client import redis_client
+from app.core.tracing import flush_traces
 from app.services.qdrant_service import qdrant_client
 from app.api.auth import router as auth_router
 from app.api.documents import router as documents_router
@@ -43,6 +44,7 @@ async def lifespan(app: FastAPI):
     await redis_client.connect()
     print("Connected to Redis")
     yield
+    flush_traces()
     await redis_client.disconnect()
     print("Disconnected from Redis")
 

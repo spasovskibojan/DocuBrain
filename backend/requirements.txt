@@ -30,6 +30,7 @@ torch==2.12.0+cpu
 transformers==4.57.6
 sentence-transformers==3.0.1
 qdrant-client==1.18.0
+langfuse==5.2.0
 
 # Document Parsing
 pdfplumber==0.11.1

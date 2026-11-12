@@ -32,13 +32,20 @@ class Settings(BaseSettings):
     EMBEDDING_MODEL: str = "all-MiniLM-L6-v2"
     RERANKER_MODEL: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"
 
-    CHUNK_SIZE: int = 512
-    CHUNK_OVERLAP: int = 50
+    # all-MiniLM-L6-v2 truncates input at 256 tokens (~1000 characters)
+    CHUNK_SIZE: int = 900
+    CHUNK_OVERLAP: int = 150
     TOP_K_RETRIEVAL: int = 50
     TOP_K_RERANK: int = 5
     RELEVANCE_THRESHOLD: float = -3.0
     MAX_QUERY_REWRITES: int = 1
     CHAT_HISTORY_TURNS: int = 3
+
+    # Tracing is enabled only when both keys are set
+    LANGFUSE_PUBLIC_KEY: str = ""
+    LANGFUSE_SECRET_KEY: str = ""
+    LANGFUSE_BASE_URL: str = "https://cloud.langfuse.com"
+    LANGFUSE_ENVIRONMENT: str = "development"
 
     model_config = SettingsConfigDict(
         env_file=".env",

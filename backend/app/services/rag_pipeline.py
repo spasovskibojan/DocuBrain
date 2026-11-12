@@ -1,13 +1,18 @@
 import asyncio
 import json
+import re
 from typing import TypedDict, List
 from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.runnables import RunnableConfig, RunnableLambda
 from langchain_groq import ChatGroq
 from langgraph.graph import StateGraph, END
 
 from app.core.config import settings
+from app.core.tracing import model_metadata
 from app.services.embeddings import generate_embeddings
-from app.services.qdrant_service import qdrant_client
+from qdrant_client.http import models
+
+from app.services.qdrant_service import DENSE_VECTOR, SPARSE_VECTOR, bm25, qdrant_client
 from app.services.reranker import rerank_documents
 
 
@@ -20,38 +25,47 @@ class GraphState(TypedDict):
     answer: str
     search_query: str
     rewrite_attempts: int
-    language: str
 
 
-async def retrieve_node(state: GraphState):
+async def _hybrid_search(inputs: dict) -> List[dict]:
+    question_vector = (await asyncio.to_thread(generate_embeddings, [inputs["query"]]))[0]
+
+    filter_params = None
+    if inputs["document_id"]:
+        filter_params = models.Filter(
+            must=[
+                models.FieldCondition(
+                    key="document_id",
+                    match=models.MatchValue(value=inputs["document_id"])
+                )
+            ]
+        )
+
+    # Dense search matches meaning, BM25 matches exact terms such as invoice numbers; RRF merges both rankings
+    search_result = await qdrant_client.query_points(
+        collection_name=inputs["collection_name"],
+        prefetch=[
+            models.Prefetch(query=question_vector, using=DENSE_VECTOR, filter=filter_params, limit=settings.TOP_K_RETRIEVAL),
+            models.Prefetch(query=bm25(inputs["query"]), using=SPARSE_VECTOR, filter=filter_params, limit=settings.TOP_K_RETRIEVAL),
+        ],
+        query=models.FusionQuery(fusion=models.Fusion.RRF),
+        limit=settings.TOP_K_RETRIEVAL,
+    )
+    return [{"payload": p.payload, "score": p.score} for p in search_result.points]
+
+
+async def retrieve_node(state: GraphState, config: RunnableConfig | None = None):
     question = state.get("search_query") or state["question"]
 
     # A user who has not uploaded anything yet has no collection
     if not await qdrant_client.collection_exists(state["collection_name"]):
         return {"retrieved_docs": []}
 
-    question_vector = (await asyncio.to_thread(generate_embeddings, [question]))[0]
-
-    filter_params = None
-    if state["document_id"]:
-        from qdrant_client.http import models
-        filter_params = models.Filter(
-            must=[
-                models.FieldCondition(
-                    key="document_id",
-                    match=models.MatchValue(value=state["document_id"])
-                )
-            ]
-        )
-
-    search_result = await qdrant_client.query_points(
-        collection_name=state["collection_name"],
-        query=question_vector,
-        query_filter=filter_params,
-        limit=settings.TOP_K_RETRIEVAL,
+    # Invoked as a runnable so the search is traced as its own step under "retrieve"
+    docs = await RunnableLambda(_hybrid_search).with_config(run_name="hybrid-search").ainvoke(
+        {"query": question, "collection_name": state["collection_name"], "document_id": state["document_id"]},
+        config=config,
     )
-
-    docs = [{"payload": p.payload, "score": p.score} for p in search_result.points]
     return {"retrieved_docs": docs}
 
 
@@ -63,34 +77,21 @@ async def rerank_node(state: GraphState):
     return {"reranked_docs": best_docs}
 
 
-def _is_macedonian(text: str) -> bool:
-    return any("\u0400" <= ch <= "\u04FF" for ch in text)
+def _normalize_citations(answer: str) -> str:
+    # gpt-oss sometimes cites as 【1】 or 【1†source】 instead of [1]
+    return re.sub(r"【(\d+)[^】]*】", lambda m: f"[{m.group(1)}]", answer)
 
 
-def _answer_language(state: GraphState) -> str:
-    return state.get("language") or ("Macedonian" if _is_macedonian(state["question"]) else "English")
-
-
-def _requested_language(message: str) -> str | None:
-    text = message.lower()
-    if "english" in text or "англиски" in text:
-        return "English"
-    if "macedonian" in text or "македонски" in text:
-        return "Macedonian"
-    return None
-
-
-async def condense_question(question: str, history: List[dict]) -> tuple[str, str, bool]:
-    language = _requested_language(question) or ("Macedonian" if _is_macedonian(question) else "English")
+async def condense_question(question: str, history: List[dict], config: dict | None = None) -> tuple[str, bool]:
     if not history:
-        return question, language, False
+        return question, False
 
     conversation = "\n".join(f"User: {h['question']}\nAssistant: {h['answer'][:500]}" for h in history)
     prompt = ChatPromptTemplate.from_template(
         "Classify the latest user message in this conversation about the user's documents.\n"
-        '- "reformat": it only asks to repeat, translate, shorten or reformat the previous answer.\n'
+        '- "reformat": it only asks to repeat, shorten or reformat the previous answer.\n'
         '- "question": it asks something new. Rewrite it as a standalone question, resolving references '
-        "to earlier messages, in the same language as the latest message.\n"
+        "to earlier messages.\n"
         'Return only JSON: {{"type": "reformat" or "question", "question": "..."}}\n\n'
         "Conversation:\n{conversation}\n\n"
         "Latest message: {question}"
@@ -101,25 +102,24 @@ async def condense_question(question: str, history: List[dict]) -> tuple[str, st
         groq_api_key=settings.GROQ_API_KEY,
         temperature=0.0,
         model_kwargs={"reasoning_effort": "low"}
-    )
+    ).with_config(**model_metadata(settings.GROQ_MODEL))
 
     try:
-        response = await (prompt | llm).ainvoke({"conversation": conversation, "question": question})
+        response = await (prompt | llm).with_config(run_name="condense-question").ainvoke({"conversation": conversation, "question": question}, config=config)
         content = response.content.strip().removeprefix("```json").removeprefix("```").removesuffix("```")
         data = json.loads(content)
     except Exception:
-        return question, language, False
+        return question, False
 
     if data.get("type") == "reformat":
-        if not _requested_language(question) and not _is_macedonian(question):
-            language = "Macedonian" if _is_macedonian(history[-1]["answer"]) else "English"
-        return question, language, True
-    return data.get("question") or question, language, False
+        return question, True
+    return data.get("question") or question, False
 
 
-async def reformat_answer(previous_answer: str, request: str, language: str) -> str:
+async def reformat_answer(previous_answer: str, request: str, config: dict | None = None) -> str:
     prompt = ChatPromptTemplate.from_template(
-        "Apply the user's request to the previous answer. Do not add any new facts. Respond in {language}.\n\n"
+        "Apply the user's request to the previous answer. Do not add any new facts. "
+        "Keep citation markers such as [1] next to the statements they support. Respond in English.\n\n"
         "Previous answer:\n{previous_answer}\n\n"
         "User request: {request}"
     )
@@ -129,23 +129,24 @@ async def reformat_answer(previous_answer: str, request: str, language: str) -> 
         groq_api_key=settings.GROQ_API_KEY,
         temperature=0.0,
         model_kwargs={"reasoning_effort": "low"}
-    )
+    ).with_config(**model_metadata(settings.GROQ_MODEL))
 
-    response = await (prompt | llm).ainvoke({"previous_answer": previous_answer, "request": request, "language": language})
-    return response.content
+    response = await (prompt | llm).with_config(run_name="reformat-answer").ainvoke({"previous_answer": previous_answer, "request": request}, config=config)
+    return _normalize_citations(response.content)
 
 
 async def generate_node(state: GraphState):
     question = state["question"]
     docs = state["reranked_docs"]
     
-    grouped: dict[str, List[dict]] = {}
-    for d in docs:
-        grouped.setdefault(str(d["payload"]["document_id"]), []).append(d)
+    # Passages are numbered in the same order as the sources returned to the client
+    grouped: dict[str, List[tuple[int, dict]]] = {}
+    for number, d in enumerate(docs, start=1):
+        grouped.setdefault(str(d["payload"]["document_id"]), []).append((number, d))
     sections = []
     for chunks in grouped.values():
-        chunks.sort(key=lambda d: d["payload"].get("chunk_index", 0))
-        sections.append("\n".join(c["payload"]["text"] for c in chunks))
+        chunks.sort(key=lambda c: c[1]["payload"].get("chunk_index", 0))
+        sections.append("\n".join(f"[{number}] {c['payload']['text']}" for number, c in chunks))
     context_text = "\n\n===== NEXT DOCUMENT =====\n\n".join(sections)
 
     prompt = ChatPromptTemplate.from_template(
@@ -156,7 +157,9 @@ async def generate_node(state: GraphState):
         "Use totals and amounts exactly as stated in the documents; do not recalculate them. "
         "If the context does not contain the answer, just say that you don't know. Do not hallucinate. "
         "Refer to the context as 'your documents', never as 'context' or 'retrieved context'. "
-        "Respond in {language}.\n\n"
+        "Each passage starts with its number in square brackets. After every statement, cite the passages "
+        "it comes from, like [2] or [1][3]. Cite only numbers that appear in the context. "
+        "Respond in English.\n\n"
         "Context: {context}\n\n"
         "Question: {question}\n\n"
         "Answer:"
@@ -167,13 +170,12 @@ async def generate_node(state: GraphState):
         groq_api_key=settings.GROQ_API_KEY,
         temperature=0.0,
         model_kwargs={"reasoning_effort": "low"}
-    )
+    ).with_config(**model_metadata(settings.GROQ_ANSWER_MODEL))
     
-    chain = prompt | llm
-    language = _answer_language(state)
-    response = await chain.ainvoke({"context": context_text, "question": question, "language": language})
+    chain = (prompt | llm).with_config(run_name="generate-answer")
+    response = await chain.ainvoke({"context": context_text, "question": question})
     
-    return {"answer": response.content}
+    return {"answer": _normalize_citations(response.content)}
 
 
 async def rewrite_query_node(state: GraphState):
@@ -188,9 +190,9 @@ async def rewrite_query_node(state: GraphState):
         groq_api_key=settings.GROQ_API_KEY,
         temperature=0.0,
         model_kwargs={"reasoning_effort": "low"}
-    )
+    ).with_config(**model_metadata(settings.GROQ_MODEL))
 
-    chain = prompt | llm
+    chain = (prompt | llm).with_config(run_name="rewrite-query")
     response = await chain.ainvoke({"question": state["question"]})
 
     return {
@@ -201,7 +203,7 @@ async def rewrite_query_node(state: GraphState):
 
 async def no_answer_node(state: GraphState):
     return {
-        "answer": "Не го најдов ова во вашите документи." if _answer_language(state) == "Macedonian" else "I couldn't find this in your documents.",
+        "answer": "I couldn't find this in your documents.",
         "reranked_docs": [],
     }
 

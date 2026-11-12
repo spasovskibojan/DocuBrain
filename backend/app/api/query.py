@@ -9,6 +9,7 @@ from app.core.config import settings
 from app.core.database import get_db
 from app.core.dependencies import get_current_user, rate_limit
 from app.core.redis_client import redis_client
+from app.core.tracing import trace_request
 from app.models.document import Document
 from app.models.query_history import QueryHistory
 from app.models.user import User
@@ -46,67 +47,72 @@ async def ask_question(
     )
     history_rows = list(reversed(recent.scalars().all()))
     history = [{"question": h.question, "answer": h.answer} for h in history_rows]
-    question, language, is_reformat = await condense_question(request.question, history)
+    # One trace per chat turn; the user's chat history is one session
+    with trace_request(
+        "chat-response", user_key, request.question,
+        session_id=user_key, metadata={"document_scope": document_scope or "all"},
+    ) as trace:
+        question, is_reformat = await condense_question(request.question, history, trace.config)
 
-    if is_reformat:
-        try:
-            answer = await reformat_answer(history[-1]["answer"], request.question, language)
-        except Exception:
-            logger.exception("Reformatting the previous answer failed")
-            raise HTTPException(status_code=500, detail="AI pipeline failed.")
-        sources_data = history_rows[-1].source_chunks or []
-        db_query = QueryHistory(
-            user_id=current_user.id,
-            document_id=request.document_id,
-            question=request.question,
-            answer=answer,
-            source_chunks=sources_data
-        )
-        db.add(db_query)
-        await db.commit()
-        await db.refresh(db_query)
-        return QueryResponse(
-            answer=answer,
-            sources=sources_data,
-            from_cache=False,
-            query_id=db_query.id
-        )
+        if is_reformat:
+            try:
+                answer = await reformat_answer(history[-1]["answer"], request.question, trace.config)
+            except Exception:
+                logger.exception("Reformatting the previous answer failed")
+                raise HTTPException(status_code=500, detail="AI pipeline failed.")
+            trace.set_output(answer)
+            sources_data = history_rows[-1].source_chunks or []
+            db_query = QueryHistory(
+                user_id=current_user.id,
+                document_id=request.document_id,
+                question=request.question,
+                answer=answer,
+                source_chunks=sources_data
+            )
+            db.add(db_query)
+            await db.commit()
+            await db.refresh(db_query)
+            return QueryResponse(
+                answer=answer,
+                sources=sources_data,
+                from_cache=False,
+                query_id=db_query.id
+            )
 
-    cache_question = f"{language}:{question}"
+        cached = await redis_client.get_cached_query(question, user_key, document_scope)
+        if cached:
+            trace.set_output(cached["answer"])
+            db_query = QueryHistory(
+                user_id=current_user.id,
+                document_id=request.document_id,
+                question=request.question,
+                answer=cached["answer"],
+                source_chunks=cached["sources"],
+                from_cache=True
+            )
+            db.add(db_query)
+            await db.commit()
+            await db.refresh(db_query)
+            return QueryResponse(
+                answer=cached["answer"],
+                sources=cached["sources"],
+                from_cache=True,
+                query_id=db_query.id
+            )
 
-    cached = await redis_client.get_cached_query(cache_question, user_key, document_scope)
-    if cached:
-        db_query = QueryHistory(
-            user_id=current_user.id,
-            document_id=request.document_id,
-            question=request.question,
-            answer=cached["answer"],
-            source_chunks=cached["sources"],
-            from_cache=True
-        )
-        db.add(db_query)
-        await db.commit()
-        await db.refresh(db_query)
-        return QueryResponse(
-            answer=cached["answer"],
-            sources=cached["sources"],
-            from_cache=True,
-            query_id=db_query.id
-        )
-
-    initial_state = {
-        "question": question,
-        "language": language,
-        "collection_name": collection_name,
-        "document_id": str(request.document_id) if request.document_id else None
-    }
+        initial_state = {
+            "question": question,
+            "collection_name": collection_name,
+            "document_id": str(request.document_id) if request.document_id else None
+        }
     
-    try:
-        final_state = await rag_app.ainvoke(initial_state)
-    except Exception:
-        logger.exception("RAG pipeline failed")
-        raise HTTPException(status_code=500, detail="AI pipeline failed.")
-        
+        try:
+            final_state = await rag_app.ainvoke(initial_state, config=trace.config)
+        except Exception:
+            logger.exception("RAG pipeline failed")
+            raise HTTPException(status_code=500, detail="AI pipeline failed.")
+        trace.set_output(final_state["answer"])
+
     answer = final_state["answer"]
     best_chunks = final_state["reranked_docs"]
 
@@ -143,7 +149,7 @@ async def ask_question(
     await db.refresh(db_query)
 
     await redis_client.set_cached_query(
-        cache_question, user_key, {"answer": answer, "sources": sources_data}, document_scope
+        question, user_key, {"answer": answer, "sources": sources_data}, document_scope
     )
     
     return QueryResponse(

@@ -6,10 +6,19 @@ from qdrant_client.http import models
 
 from app.core.config import settings
 
-qdrant_client = AsyncQdrantClient(host=settings.QDRANT_HOST, port=settings.QDRANT_PORT)
+# cloud_inference lets the Qdrant server compute the BM25 vectors from text
+qdrant_client = AsyncQdrantClient(host=settings.QDRANT_HOST, port=settings.QDRANT_PORT, cloud_inference=True)
 
 # Output size of all-MiniLM-L6-v2
-VECTOR_SIZE = 384 
+VECTOR_SIZE = 384
+DENSE_VECTOR = "dense"
+SPARSE_VECTOR = "bm25"
+BM25_MODEL = "qdrant/bm25"
+
+
+def bm25(text: str) -> models.Document:
+    return models.Document(text=text, model=BM25_MODEL)
+
 
 async def ensure_collection_exists(collection_name: str) -> None:
     """Creates a Qdrant collection for a specific user if it doesn't already exist."""
@@ -17,10 +26,12 @@ async def ensure_collection_exists(collection_name: str) -> None:
     if not exists:
         await qdrant_client.create_collection(
             collection_name=collection_name,
-            vectors_config=models.VectorParams(
-                size=VECTOR_SIZE,
-                distance=models.Distance.COSINE
-            )
+            vectors_config={
+                DENSE_VECTOR: models.VectorParams(size=VECTOR_SIZE, distance=models.Distance.COSINE)
+            },
+            sparse_vectors_config={
+                SPARSE_VECTOR: models.SparseVectorParams(modifier=models.Modifier.IDF)
+            },
         )
 
 async def upsert_document_chunks(
@@ -39,7 +50,7 @@ async def upsert_document_chunks(
     for i, (chunk, embedding) in enumerate(zip(chunks, embeddings)):
         point = models.PointStruct(
             id=str(uuid.uuid4()),
-            vector=embedding,
+            vector={DENSE_VECTOR: embedding, SPARSE_VECTOR: bm25(chunk)},
             payload={
                 "document_id": str(document_id),
                 "chunk_index": i,

@@ -118,7 +118,7 @@ export default function Chat() {
               <div className="d-flex align-items-end gap-2 mb-1">
                 {msg.role === 'ai' && <div className="chat-avatar bg-primary bg-opacity-25 rounded-circle"><Bot size={16} className="text-primary" /></div>}
                 <div className={msg.role === 'user' ? 'chat-user' : 'chat-ai'}>
-                  {msg.role === 'ai' ? <Markdown>{msg.content}</Markdown> : <div style={{whiteSpace: 'pre-wrap'}}>{msg.content}</div>}
+                  {msg.role === 'ai' ? <Markdown sources={msg.sources}>{msg.content}</Markdown> : <div style={{whiteSpace: 'pre-wrap'}}>{msg.content}</div>}
                 </div>
                 {msg.role === 'user' && <div className="chat-avatar bg-secondary rounded-circle"><User size={16} className="text-white" /></div>}
               </div>
@@ -129,7 +129,7 @@ export default function Chat() {
                   {msg.sources.map((source, i) => (
                     <div key={i} className="source-badge d-flex align-items-center gap-1" title={source.chunk_text}>
                       <FileText size={12} />
-                      {source.document_name} (Pg {source.page_number})
+                      [{i + 1}] {source.document_name} (Pg {source.page_number})
                     </div>
                   ))}
                 </div>

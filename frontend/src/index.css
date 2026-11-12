@@ -96,6 +96,17 @@ body {
   background: #e2e8f0;
 }
 
+.citation {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--accent-color);
+  background: #e2e8f0;
+  border-radius: 4px;
+  padding: 0 4px;
+  margin-left: 2px;
+  cursor: help;
+}
+
 .navbar {
   background-color: var(--accent-color) !important;
   border-bottom: none;
