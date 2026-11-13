@@ -89,9 +89,15 @@ spec:
                   key: postgres-db
           readinessProbe:
             exec:
-              command: ["pg_isready", "-U", "docubrain_user", "-d", "docubrain"]
-            initialDelaySeconds: 10
+              command: ["sh", "-c", "pg_isready -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\""]
+            initialDelaySeconds: 5
             periodSeconds: 5
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              memory: 512Mi
           volumeMounts:
             - name: postgres-storage
               mountPath: /var/lib/postgresql/data
@@ -138,6 +144,17 @@ spec:
           image: qdrant/qdrant:v1.18.0
           ports:
             - containerPort: 6333
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 6333
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              memory: 1Gi
           volumeMounts:
             - name: qdrant-storage
               mountPath: /qdrant/storage
@@ -191,6 +208,16 @@ spec:
                   key: redis-password
           ports:
             - containerPort: 6379
+          readinessProbe:
+            tcpSocket:
+              port: 6379
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: 50m
+              memory: 32Mi
+            limits:
+              memory: 128Mi
           volumeMounts:
             - name: redis-storage
               mountPath: /data

@@ -3,14 +3,31 @@ kind: Ingress
 metadata:
   name: docubrain-ingress
   namespace: docubrain
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-    nginx.ingress.kubernetes.io/proxy-body-size: "50m" 
 spec:
   rules:
-    - host: docubrain.local
-      http:
+    - http:
         paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend-service
+                port:
+                  number: 8000
+          - path: /docs
+            pathType: Exact
+            backend:
+              service:
+                name: backend-service
+                port:
+                  number: 8000
+          - path: /openapi.json
+            pathType: Exact
+            backend:
+              service:
+                name: backend-service
+                port:
+                  number: 8000
           - path: /
             pathType: Prefix
             backend:
@@ -18,13 +35,3 @@ spec:
                 name: frontend-service
                 port:
                   number: 80
-    - host: api.docubrain.local
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: backend-service
-                port:
-                  number: 8000

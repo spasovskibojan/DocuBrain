@@ -17,10 +17,13 @@ spec:
     spec:
       containers:
         - name: backend
-          image: docubrain-portfolio-backend:latest
+          image: docubrain-portfolio-backend:k8s
           imagePullPolicy: Never
           ports:
             - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: docubrain-config
           env:
             - name: POSTGRES_USER
               valueFrom:
@@ -42,44 +45,59 @@ spec:
                 secretKeyRef:
                   name: docubrain-secrets
                   key: redis-password
-            - name: GROQ_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: docubrain-secrets
-                  key: groq-api-key
-            - name: SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: docubrain-secrets
-                  key: secret-key
             - name: DATABASE_URL
               value: "postgresql+asyncpg://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@postgres-service:5432/$(POSTGRES_DB)"
             - name: SYNC_DATABASE_URL
               value: "postgresql+psycopg2://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@postgres-service:5432/$(POSTGRES_DB)"
             - name: REDIS_URL
               value: "redis://:$(REDIS_PASSWORD)@redis-service:6379/0"
-            - name: QDRANT_HOST
+            - name: SECRET_KEY
               valueFrom:
-                configMapKeyRef:
-                  name: docubrain-config
-                  key: QDRANT_HOST
-            - name: QDRANT_PORT
+                secretKeyRef:
+                  name: docubrain-secrets
+                  key: secret-key
+            - name: GROQ_API_KEY
               valueFrom:
-                configMapKeyRef:
-                  name: docubrain-config
-                  key: QDRANT_PORT
+                secretKeyRef:
+                  name: docubrain-secrets
+                  key: groq-api-key
+            - name: LANGFUSE_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: docubrain-secrets
+                  key: langfuse-public-key
+            - name: LANGFUSE_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: docubrain-secrets
+                  key: langfuse-secret-key
+          # Loading the models and running migrations takes a while on a cold start.
+          # The health endpoints wait up to 2s on a dependency, longer than the default probe timeout.
+          startupProbe:
+            httpGet:
+              path: /api/health
+              port: 8000
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 36
           readinessProbe:
             httpGet:
               path: /api/health/ready
               port: 8000
-            initialDelaySeconds: 15
             periodSeconds: 10
+            timeoutSeconds: 3
           livenessProbe:
             httpGet:
               path: /api/health
               port: 8000
-            initialDelaySeconds: 30
             periodSeconds: 15
+            timeoutSeconds: 3
+          resources:
+            requests:
+              cpu: 250m
+              memory: 768Mi
+            limits:
+              memory: 2Gi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -100,13 +118,18 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: docubrain-portfolio-frontend:latest
+          image: docubrain-portfolio-frontend:k8s
           imagePullPolicy: Never
           ports:
-            - containerPort: 5173
+            - containerPort: 80
           readinessProbe:
             httpGet:
               path: /
-              port: 5173
-            initialDelaySeconds: 10
+              port: 80
             periodSeconds: 10
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              memory: 64Mi

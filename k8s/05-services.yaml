@@ -23,5 +23,5 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 5173
+      targetPort: 80
   type: ClusterIP
