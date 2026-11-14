@@ -126,7 +126,7 @@ Workflows skip retrieval: they read the document's chunks directly by index. Inv
 
 - **Document title in search text.** Chunks are embedded and reranked with the file name prepended, so a clause like "99.5% availability" still matches a question about "the 2025 agreement". The stored text stays clean.
 - **Self-correcting retrieval.** When the best reranked chunk scores below a threshold, the graph rewrites the query once and searches again before generating.
-- **Prompt context grouped by document.** Retrieved passages are grouped per document and put back in reading order, so the model does not mix facts between two similar contracts.
+- **Prompt context grouped by document.** Retrieved passages are grouped per document under its file name and put back in reading order, so the model does not mix facts between two similar contracts.
 - **Cache invalidation by version.** Cache keys include a per-user version number. Uploading or deleting a document increments it, which makes all old answers unreachable without scanning keys.
 - **Redis fails open.** If Redis is unavailable, cache and rate limiting are skipped and requests still succeed; the readiness probe checks only Postgres and Qdrant.
 - **Safe migrations with replicas.** Alembic runs on startup under a Postgres advisory lock, so two backend replicas starting together do not migrate at the same time.
@@ -195,6 +195,66 @@ docker compose exec backend pytest tests/ -v
 
 ---
 
+## Evaluation
+
+The `eval/` folder measures answer quality on a golden set of 33 questions over 7 synthetic business documents (4 invoices, 2 versions of the same service agreement, 1 annual report). The questions cover exact IDs, paraphrases, reasoning, comparisons across documents and 3 questions with no answer in the documents. All questions search across every document, which is harder than choosing one document in the UI.
+
+### Retrieval
+
+`retrieval_eval.py` runs inside the backend container and needs no LLM. A chunk counts as relevant if it comes from the expected document and contains the expected fact. Hit@k is the share of questions with a relevant chunk in the top k; MRR averages 1/rank of the first relevant chunk.
+
+| Strategy | Hit@1 before | Hit@1 after title fix | Hit@3 after | MRR after |
+|---|---|---|---|---|
+| Dense | 0.50 | 0.80 | 0.93 | 0.88 |
+| BM25 | 0.73 | 0.87 | 0.97 | 0.92 |
+| **Hybrid (used)** | 0.67 | **0.97** | **1.00** | **0.98** |
+| Hybrid + reranker | 0.70 | 0.83 | 1.00 | 0.91 |
+
+The first run showed that questions like "What uptime did Summit guarantee in the 2025 agreement?" failed because the chunk with the answer never mentions 2025. Adding the document title to the search text fixed that.
+
+### End-to-end answers
+
+`run_eval.py` uploads the documents as a new user and asks every question through the real API. Deterministic checks look for the expected fact in the answer, the expected document in the sources, citation markers and refusals. RAGAS scores faithfulness and answer accuracy with `qwen/qwen3.8-27b` as the judge, a different model family from the one that writes the answers.
+
+| Metric | Result |
+|---|---|
+| Expected fact in the answer | 30 / 30 |
+| Expected document retrieved | 30 / 30 |
+| Answer has citations | 29 / 30 |
+| Unanswerable questions refused | 3 / 3 |
+| Answerable questions refused | 0 |
+| Faithfulness (RAGAS) | 0.86 (29 answers judged) |
+| Answer accuracy (RAGAS) | 0.93 |
+| Latency p50 / p95 | 8.6 s / 12.1 s |
+
+What the eval caught:
+
+- **Mixed-up contracts.** Asked about the 2025 notice period, the model answered with the 2026 value, although the right chunk was retrieved. The prompt did not say which file each passage came from, so two near-identical contracts looked the same. Passages are now grouped under their file name.
+- **Clause numbers as citations.** On contracts, the model sometimes cited section numbers like `[7.1]` instead of passage numbers. A prompt rule fixed most cases; one cross-document question still sometimes lists its sources in words instead of `[n]`.
+- **The judge had the same blind spot.** All 4 answers with faithfulness 0 are correct contract answers. The judge received the chunks without file names, so it could not confirm that a clause belongs to "the 2025 agreement". The judge now gets the same document names as the answer model: 15 answers re-judged this way all scored 1.0, and one of the four zeros went from 0 to 1.0. A full re-run with names did not fit in the Groq daily limit, so the table shows the first run.
+
+Answer accuracy is below 1.0 for 7 answers. Six are correct but leave out an extra detail of the reference, such as the 10.1% tax rate next to the tax amount; the seventh adds a difference ($250) that the reference does not state. One cross-document question could not be judged for faithfulness because its prompt exceeds the free-tier request size.
+
+Limitations of this eval:
+
+- 30 answerable questions over 31 chunks is a small set, so one question moves a score by about 3 points.
+- The title fix was designed after seeing the failing questions and measured on the same questions, so the gain is likely smaller on new data.
+- The reranker lowers Hit@1 on this small corpus. Answers are not affected because the model receives the top 5 chunks and the right one is always among them, but the reranker should be re-evaluated on a larger document set.
+- The sample documents are not included in the repository. To run the eval on your own documents, update `eval/dataset.json` and pass `--docs`.
+
+```bash
+# Retrieval, inside the backend container
+docker compose cp eval backend:/tmp/eval
+docker compose cp samples backend:/tmp/samples
+docker compose exec backend python /tmp/eval/retrieval_eval.py /tmp/samples
+
+# End-to-end, against the running API (separate environment, see eval/requirements.txt)
+python -m venv eval/.venv && eval/.venv/Scripts/pip install -r eval/requirements.txt
+GROQ_API_KEY=... eval/.venv/Scripts/python eval/run_eval.py --docs samples --label hybrid
+```
+
+---
+
 ## Project structure
 
 ```
@@ -211,6 +271,7 @@ docker compose exec backend pytest tests/ -v
 │   ├── pages/
 │   ├── components/
 │   └── services/         # Axios client with JWT interceptor
+├── eval/                 # golden set, retrieval and end-to-end evaluation
 ├── k8s/                  # Kubernetes manifests and start/stop scripts
 └── docs/
 ```

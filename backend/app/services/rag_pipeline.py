@@ -41,13 +41,14 @@ async def _hybrid_search(inputs: dict) -> List[dict]:
             ]
         )
 
+    prefetch = [models.Prefetch(query=question_vector, using=DENSE_VECTOR, filter=filter_params, limit=settings.TOP_K_RETRIEVAL)]
+    if settings.HYBRID_SEARCH:
+        prefetch.append(models.Prefetch(query=bm25(inputs["query"]), using=SPARSE_VECTOR, filter=filter_params, limit=settings.TOP_K_RETRIEVAL))
+
     # Dense search matches meaning, BM25 matches exact terms such as invoice numbers; RRF merges both rankings
     search_result = await qdrant_client.query_points(
         collection_name=inputs["collection_name"],
-        prefetch=[
-            models.Prefetch(query=question_vector, using=DENSE_VECTOR, filter=filter_params, limit=settings.TOP_K_RETRIEVAL),
-            models.Prefetch(query=bm25(inputs["query"]), using=SPARSE_VECTOR, filter=filter_params, limit=settings.TOP_K_RETRIEVAL),
-        ],
+        prefetch=prefetch,
         query=models.FusionQuery(fusion=models.Fusion.RRF),
         limit=settings.TOP_K_RETRIEVAL,
     )
@@ -146,7 +147,9 @@ async def generate_node(state: GraphState):
     sections = []
     for chunks in grouped.values():
         chunks.sort(key=lambda c: c[1]["payload"].get("chunk_index", 0))
-        sections.append("\n".join(f"[{number}] {c['payload']['text']}" for number, c in chunks))
+        # Without the name, near-identical documents (two years of the same contract) get mixed up
+        header = f"Document: {chunks[0][1]['payload'].get('filename', 'unknown')}\n"
+        sections.append(header + "\n".join(f"[{number}] {c['payload']['text']}" for number, c in chunks))
     context_text = "\n\n===== NEXT DOCUMENT =====\n\n".join(sections)
 
     prompt = ChatPromptTemplate.from_template(
@@ -158,7 +161,8 @@ async def generate_node(state: GraphState):
         "If the context does not contain the answer, just say that you don't know. Do not hallucinate. "
         "Refer to the context as 'your documents', never as 'context' or 'retrieved context'. "
         "Each passage starts with its number in square brackets. After every statement, cite the passages "
-        "it comes from, like [2] or [1][3]. Cite only numbers that appear in the context. "
+        "it comes from, like [2] or [1][3]. Cite only these passage numbers, never section or clause "
+        "numbers from the document text, such as 7.1. "
         "Respond in English.\n\n"
         "Context: {context}\n\n"
         "Question: {question}\n\n"

@@ -1,0 +1,6 @@
+# Separate from the backend: RAGAS needs langchain 1.x, the backend runs langchain 0.2
+ragas==0.4.3
+langchain-community==0.3.31
+langchain-openai==1.7.4
+openai==3.3.0
+httpx==0.28.1

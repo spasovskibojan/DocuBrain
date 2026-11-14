@@ -35,6 +35,8 @@ class Settings(BaseSettings):
     # all-MiniLM-L6-v2 truncates input at 256 tokens (~1000 characters)
     CHUNK_SIZE: int = 900
     CHUNK_OVERLAP: int = 150
+    # False searches only dense vectors; used by the eval to measure what BM25 adds
+    HYBRID_SEARCH: bool = True
     TOP_K_RETRIEVAL: int = 50
     TOP_K_RERANK: int = 5
     RELEVANCE_THRESHOLD: float = -3.0

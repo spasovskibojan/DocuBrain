@@ -35,10 +35,6 @@ langfuse==5.2.0
 # Document Parsing
 pdfplumber==0.11.1
 
-# Evaluation
-ragas==0.1.10
-pyarrow==24.0.0  # 25+ needs numpy 2, langchain 0.2 needs numpy 1.x
-
 # Testing
 pytest==8.2.2
 pytest-asyncio==0.23.7

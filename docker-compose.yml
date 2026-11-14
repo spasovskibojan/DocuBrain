@@ -58,6 +58,7 @@ services:
       - QDRANT_PORT=6333
       - SECRET_KEY=${SECRET_KEY:-docubrain_super_secret_dev_key}
       - GROQ_API_KEY=${GROQ_API_KEY}
+      - HYBRID_SEARCH=${HYBRID_SEARCH:-true}
       - LANGFUSE_PUBLIC_KEY=${LANGFUSE_PUBLIC_KEY:-}
       - LANGFUSE_SECRET_KEY=${LANGFUSE_SECRET_KEY:-}
       - LANGFUSE_BASE_URL=${LANGFUSE_BASE_URL:-https://cloud.langfuse.com}

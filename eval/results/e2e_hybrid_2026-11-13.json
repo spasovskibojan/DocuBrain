@@ -1,0 +1,1092 @@
+{
+  "label": "hybrid",
+  "judge": "qwen/qwen3.8-27b",
+  "summary": {
+    "questions": 33,
+    "faithfulness": 0.862,
+    "answer_accuracy": 0.933,
+    "facts_found": 1,
+    "source_found": 1,
+    "cited": 0.967,
+    "false_refusals": 0,
+    "correct_refusals": "3/3",
+    "latency_p50_s": 8.58,
+    "latency_p95_s": 12.06,
+    "faithfulness_scored": 29,
+    "faithfulness_named_contexts": {
+      "scored": 15,
+      "mean": 1.0
+    }
+  },
+  "rows": [
+    {
+      "type": "exact-id",
+      "question": "What is the total on invoice NWC-2026-0417?",
+      "reference": "The total due on invoice NWC-2026-0417 is $610.28.",
+      "facts": [
+        "610.28"
+      ],
+      "sources": [
+        "invoice_northwind_cloud.pdf"
+      ],
+      "answer": "The total on invoice NWC‑2026‑0417 is **$610.28**[1][4].",
+      "contexts": [
+        "Northwind Cloud Services INVOICE\nInvoice No: NWC-2026-0417\nInc.\nInvoice Date: April 17, 2026\nDue Date: May 17, 2026\n1420 Fifth Avenue, Suite 900, Seattle, WA 98101\nBilling Period: March 1 – March 31,\nbilling@northwindcloud.example · (206) 555-0142\n2026\nTax ID: 91-4827736\nBill To Account\nCrestline Accounting LLC Customer ID: CA-20931\nAttn: Accounts Payable Plan: Business Cloud\n310 Pine Street, Floor 4 Payment Terms: Net 30\nSeattle, WA 98101\n# Description Quantity Unit Price Amount\n1 Compute instances (Standard-4, us-west-2) 720 hours $0.19 $136.80\n2 Object storage 2,500 GB $0.023 $57.50\n3 Managed PostgreSQL (db.m5.large) 1 month $210.00 $210.00\n4 Premium support plan 1 month $150.00 $150.00\nSubtotal $554.30\nSales tax (10.1%) $55.98\nTotal Due (USD) $610.28\nPayment Instructions\nPay by ACH to Pacific Commerce Bank, routing number 125000105, account number 4471 0938 22.",
+        "Massachusetts meals tax (7%) $155.05\nInvoice total $2,370.05\nDeposit received (April 30, −$500.00\n2026)\nBalance Due (USD) $1,870.05\nPayment Terms\nThe balance is due within 14 days of the invoice date. Pay by check to Harbor Table Catering or by card\nat harbortable.example/pay.\nCancellations made less than 7 days before an event are charged 50% of the estimated total.",
+        "Invoice SIT-2026-0088, page 2\n# Description Quantity Rate Amount\n11 Phishing simulation campaign 1 $300.00 $300.00\n12 Domain and SSL certificate renewal 1 $189.00 $189.00\n13 After-hours incident response, June 8, 2026 2.5 hours $185.00 $462.50\n14 Quarterly security report 1 $400.00 $400.00\nSubtotal $9,635.50\nSales tax on hardware only $109.24\n(8.81% of $1,240.00)\nTotal Due (USD) $9,744.74\nNotes\nServices are not taxable in Colorado. Sales tax applies only to the hardware on line 9.\nUnder the Master Services Agreement, payment is due within 45 days of the invoice date. This invoice\nuses a 30-day due date at the client's request for Q2 budget closing.\nThe after-hours incident on June 8, 2026 was a failed VPN gateway. It was acknowledged within 25\nminutes and service was restored after 2 hours 10 minutes.",
+        "Total Due (USD) $610.28\nPayment Instructions\nPay by ACH to Pacific Commerce Bank, routing number 125000105, account number 4471 0938 22.\nReference the invoice number with your payment.\nPayments received after the due date are subject to a late fee of 1.5% per month on the outstanding\nbalance.\nQuestions about this invoice? Contact billing@northwindcloud.example within 15 days of the invoice date.",
+        "BrightDesk Office Supply Co. INVOICE\nInvoice No: BD-58213\n880 NW Everett Street, Portland, OR 97209\nInvoice Date: March 3, 2026\norders@brightdesk.example · (503) 555-0187\nDue Date: April 2, 2026\nPurchase Order: PO-7745\nBill To Ship To\nCrestline Accounting LLC Crestline Accounting LLC\n310 Pine Street, Floor 4 Portland Office\nSeattle, WA 98101 1200 SW Main Street, Suite 300\nPortland, OR 97205\nItem Description Qty Unit Price Amount\nPAP-A4-10 Copy paper, letter size, 10 reams per box 10 $42.50 $425.00\nTON-58A Toner cartridge, black, high yield 4 $89.99 $359.96\nCHR-ERG2 Ergonomic office chair, mesh back 2 $349.00 $698.00\nORG-DSK Desk organizer set 6 $18.75 $112.50\nSubtotal $1,595.46\nSales tax (Oregon, 0%) $0.00\nShipping and handling $45.00\nTotal (USD) $1,640.46\nTerms\nPayment is due within 30 days of the invoice date. Oregon does not charge sales tax on these items."
+      ],
+      "retrieved_sources": [
+        "invoice_northwind_cloud.pdf",
+        "invoice_harbor_catering.pdf",
+        "invoice_summit_it_services.pdf",
+        "invoice_northwind_cloud.pdf",
+        "invoice_brightdesk_office.pdf"
+      ],
+      "latency_s": 1.22,
+      "faithfulness": 1.0,
+      "answer_accuracy": 1.0,
+      "facts_found": true,
+      "source_found": true,
+      "cited": true,
+      "faithfulness_named_contexts": 1.0
+    },
+    {
+      "type": "factual",
+      "question": "How much sales tax was charged by Northwind Cloud Services?",
+      "reference": "Northwind Cloud Services charged $55.98 sales tax (10.1%).",
+      "facts": [
+        "55.98"
+      ],
+      "sources": [
+        "invoice_northwind_cloud.pdf"
+      ],
+      "answer": "Northwind Cloud Services charged sales tax of **$55.98**[1].",
+      "contexts": [
+        "Northwind Cloud Services INVOICE\nInvoice No: NWC-2026-0417\nInc.\nInvoice Date: April 17, 2026\nDue Date: May 17, 2026\n1420 Fifth Avenue, Suite 900, Seattle, WA 98101\nBilling Period: March 1 – March 31,\nbilling@northwindcloud.example · (206) 555-0142\n2026\nTax ID: 91-4827736\nBill To Account\nCrestline Accounting LLC Customer ID: CA-20931\nAttn: Accounts Payable Plan: Business Cloud\n310 Pine Street, Floor 4 Payment Terms: Net 30\nSeattle, WA 98101\n# Description Quantity Unit Price Amount\n1 Compute instances (Standard-4, us-west-2) 720 hours $0.19 $136.80\n2 Object storage 2,500 GB $0.023 $57.50\n3 Managed PostgreSQL (db.m5.large) 1 month $210.00 $210.00\n4 Premium support plan 1 month $150.00 $150.00\nSubtotal $554.30\nSales tax (10.1%) $55.98\nTotal Due (USD) $610.28\nPayment Instructions\nPay by ACH to Pacific Commerce Bank, routing number 125000105, account number 4471 0938 22.",
+        "Total Due (USD) $610.28\nPayment Instructions\nPay by ACH to Pacific Commerce Bank, routing number 125000105, account number 4471 0938 22.\nReference the invoice number with your payment.\nPayments received after the due date are subject to a late fee of 1.5% per month on the outstanding\nbalance.\nQuestions about this invoice? Contact billing@northwindcloud.example within 15 days of the invoice date.",
+        "Invoice SIT-2026-0088, page 2\n# Description Quantity Rate Amount\n11 Phishing simulation campaign 1 $300.00 $300.00\n12 Domain and SSL certificate renewal 1 $189.00 $189.00\n13 After-hours incident response, June 8, 2026 2.5 hours $185.00 $462.50\n14 Quarterly security report 1 $400.00 $400.00\nSubtotal $9,635.50\nSales tax on hardware only $109.24\n(8.81% of $1,240.00)\nTotal Due (USD) $9,744.74\nNotes\nServices are not taxable in Colorado. Sales tax applies only to the hardware on line 9.\nUnder the Master Services Agreement, payment is due within 45 days of the invoice date. This invoice\nuses a 30-day due date at the client's request for Q2 budget closing.\nThe after-hours incident on June 8, 2026 was a failed VPN gateway. It was acknowledged within 25\nminutes and service was restored after 2 hours 10 minutes.",
+        "Total (USD) $1,640.46\nTerms\nPayment is due within 30 days of the invoice date. Oregon does not charge sales tax on these items.\nUnopened items can be returned within 30 days for a full refund. Furniture returns are subject to a 15%\nrestocking fee.\nThank you for your order. Pay online at brightdesk.example/pay using invoice number BD-58213.",
+        "Summit IT Solutions Ltd. INVOICE\nInvoice No: SIT-2026-0088\n1700 Lincoln Street, Suite 2400, Denver, CO 80203\nInvoice Date: June 30, 2026\naccounts@summitit.example · (303) 555-0164\nTax ID: 84-3310572 Due Date: July 30, 2026\nService Period: Q2 2026 (April 1 – June 30)\nBill To Contract\nCrestline Accounting LLC Master Services Agreement, amended and\n310 Pine Street, Floor 4 restated January 1, 2026\nSeattle, WA 98101 Account Manager: Daniel Reyes\n# Description Quantity Rate Amount\n1 Managed endpoint support, 45 devices 3 months $540.00 $1,620.00\n2 Microsoft 365 Business Premium, 30 licenses 3 months $660.00 $1,980.00\n3 Firewall monitoring 3 months $250.00 $750.00\n4 Cloud backup, 1.2 TB 3 months $48.00 $144.00\n5 On-site visit, April 14, 2026 6 hours $125.00 $750.00\n6 On-site visit, May 19, 2026 4 hours $125.00 $500.00\n7 New laptop setup (Dell Latitude 5450) 5 $95.00 $475.00"
+      ],
+      "retrieved_sources": [
+        "invoice_northwind_cloud.pdf",
+        "invoice_northwind_cloud.pdf",
+        "invoice_summit_it_services.pdf",
+        "invoice_brightdesk_office.pdf",
+        "invoice_summit_it_services.pdf"
+      ],
+      "latency_s": 1.18,
+      "faithfulness": 1.0,
+      "answer_accuracy": 0.75,
+      "facts_found": true,
+      "source_found": true,
+      "cited": true,
+      "faithfulness_named_contexts": 1.0
+    },
+    {
+      "type": "paraphrase",
+      "question": "When do I have to pay the cloud provider?",
+      "reference": "The Northwind Cloud Services invoice is due on May 17, 2026 (Net 30).",
+      "facts": [
+        "May 17"
+      ],
+      "sources": [
+        "invoice_northwind_cloud.pdf"
+      ],
+      "answer": "You must pay the cloud provider by the due date shown on the invoice, which is **May 17 2026** (the invoice is dated April 17 2026 and carries Net 30 payment terms)[1].",
+      "contexts": [
+        "Northwind Cloud Services INVOICE\nInvoice No: NWC-2026-0417\nInc.\nInvoice Date: April 17, 2026\nDue Date: May 17, 2026\n1420 Fifth Avenue, Suite 900, Seattle, WA 98101\nBilling Period: March 1 – March 31,\nbilling@northwindcloud.example · (206) 555-0142\n2026\nTax ID: 91-4827736\nBill To Account\nCrestline Accounting LLC Customer ID: CA-20931\nAttn: Accounts Payable Plan: Business Cloud\n310 Pine Street, Floor 4 Payment Terms: Net 30\nSeattle, WA 98101\n# Description Quantity Unit Price Amount\n1 Compute instances (Standard-4, us-west-2) 720 hours $0.19 $136.80\n2 Object storage 2,500 GB $0.023 $57.50\n3 Managed PostgreSQL (db.m5.large) 1 month $210.00 $210.00\n4 Premium support plan 1 month $150.00 $150.00\nSubtotal $554.30\nSales tax (10.1%) $55.98\nTotal Due (USD) $610.28\nPayment Instructions\nPay by ACH to Pacific Commerce Bank, routing number 125000105, account number 4471 0938 22.",
+        "Total Due (USD) $610.28\nPayment Instructions\nPay by ACH to Pacific Commerce Bank, routing number 125000105, account number 4471 0938 22.\nReference the invoice number with your payment.\nPayments received after the due date are subject to a late fee of 1.5% per month on the outstanding\nbalance.\nQuestions about this invoice? Contact billing@northwindcloud.example within 15 days of the invoice date.",
+        "per hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal\n2.1 This Agreement starts on the Effective Date and continues for an initial term of twelve (12) months.\n2.2 The Agreement renews automatically for successive twelve (12) month terms unless either party gives\nwritten notice of non-renewal at least thirty (30) days before the end of the current term.\n3. Fees and Payment\n3.1 The Client will pay a fixed monthly fee of $3,200.00 for the services in Schedule A.\n3.2 The Provider will invoice monthly in arrears. Payment is due within thirty (30) days of the invoice\ndate.\n3.3 Late payments accrue interest at 1.5% per month on the overdue amount.\n3.4 The Provider may increase fees once per year with sixty (60) days' written notice. Any increase may\nnot exceed 5%.\n4. Service Levels",
+        "per hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal\n2.1 This Agreement starts on the Effective Date and continues for an initial term of twenty-four (24)\nmonths.\n2.2 The Agreement renews automatically for successive twelve (12) month terms unless either party gives\nwritten notice of non-renewal at least sixty (60) days before the end of the current term.\n3. Fees and Payment\n3.1 The Client will pay a fixed monthly fee of $3,450.00 for the services in Schedule A.\n3.2 The Provider will invoice monthly in arrears. Payment is due within forty-five (45) days of the invoice\ndate.\n3.3 Late payments accrue interest at 1.0% per month on the overdue amount.\n3.4 The Provider may increase fees once per year with sixty (60) days' written notice. Any increase may\nnot exceed 5%.\n4. Service Levels",
+        "Total (USD) $1,640.46\nTerms\nPayment is due within 30 days of the invoice date. Oregon does not charge sales tax on these items.\nUnopened items can be returned within 30 days for a full refund. Furniture returns are subject to a 15%\nrestocking fee.\nThank you for your order. Pay online at brightdesk.example/pay using invoice number BD-58213."
+      ],
+      "retrieved_sources": [
+        "invoice_northwind_cloud.pdf",
+        "invoice_northwind_cloud.pdf",
+        "msa_summit_2025.pdf",
+        "msa_summit_2026.pdf",
+        "invoice_brightdesk_office.pdf"
+      ],
+      "latency_s": 2.45,
+      "faithfulness": 1.0,
+      "answer_accuracy": 1.0,
+      "facts_found": true,
+      "source_found": true,
+      "cited": true,
+      "faithfulness_named_contexts": 1.0
+    },
+    {
+      "type": "factual",
+      "question": "What is the late fee if we pay Northwind after the due date?",
+      "reference": "Late payments are charged 1.5% per month on the outstanding balance.",
+      "facts": [
+        "1.5%"
+      ],
+      "sources": [
+        "invoice_northwind_cloud.pdf"
+      ],
+      "answer": "The invoice states that payments received after the due date are subject to a late fee of **1.5 % per month** on the outstanding balance[2][1].",
+      "contexts": [
+        "Total Due (USD) $610.28\nPayment Instructions\nPay by ACH to Pacific Commerce Bank, routing number 125000105, account number 4471 0938 22.\nReference the invoice number with your payment.\nPayments received after the due date are subject to a late fee of 1.5% per month on the outstanding\nbalance.\nQuestions about this invoice? Contact billing@northwindcloud.example within 15 days of the invoice date.",
+        "Northwind Cloud Services INVOICE\nInvoice No: NWC-2026-0417\nInc.\nInvoice Date: April 17, 2026\nDue Date: May 17, 2026\n1420 Fifth Avenue, Suite 900, Seattle, WA 98101\nBilling Period: March 1 – March 31,\nbilling@northwindcloud.example · (206) 555-0142\n2026\nTax ID: 91-4827736\nBill To Account\nCrestline Accounting LLC Customer ID: CA-20931\nAttn: Accounts Payable Plan: Business Cloud\n310 Pine Street, Floor 4 Payment Terms: Net 30\nSeattle, WA 98101\n# Description Quantity Unit Price Amount\n1 Compute instances (Standard-4, us-west-2) 720 hours $0.19 $136.80\n2 Object storage 2,500 GB $0.023 $57.50\n3 Managed PostgreSQL (db.m5.large) 1 month $210.00 $210.00\n4 Premium support plan 1 month $150.00 $150.00\nSubtotal $554.30\nSales tax (10.1%) $55.98\nTotal Due (USD) $610.28\nPayment Instructions\nPay by ACH to Pacific Commerce Bank, routing number 125000105, account number 4471 0938 22.",
+        "per hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal\n2.1 This Agreement starts on the Effective Date and continues for an initial term of twelve (12) months.\n2.2 The Agreement renews automatically for successive twelve (12) month terms unless either party gives\nwritten notice of non-renewal at least thirty (30) days before the end of the current term.\n3. Fees and Payment\n3.1 The Client will pay a fixed monthly fee of $3,200.00 for the services in Schedule A.\n3.2 The Provider will invoice monthly in arrears. Payment is due within thirty (30) days of the invoice\ndate.\n3.3 Late payments accrue interest at 1.5% per month on the overdue amount.\n3.4 The Provider may increase fees once per year with sixty (60) days' written notice. Any increase may\nnot exceed 5%.\n4. Service Levels",
+        "per hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal\n2.1 This Agreement starts on the Effective Date and continues for an initial term of twenty-four (24)\nmonths.\n2.2 The Agreement renews automatically for successive twelve (12) month terms unless either party gives\nwritten notice of non-renewal at least sixty (60) days before the end of the current term.\n3. Fees and Payment\n3.1 The Client will pay a fixed monthly fee of $3,450.00 for the services in Schedule A.\n3.2 The Provider will invoice monthly in arrears. Payment is due within forty-five (45) days of the invoice\ndate.\n3.3 Late payments accrue interest at 1.0% per month on the overdue amount.\n3.4 The Provider may increase fees once per year with sixty (60) days' written notice. Any increase may\nnot exceed 5%.\n4. Service Levels",
+        "Total (USD) $1,640.46\nTerms\nPayment is due within 30 days of the invoice date. Oregon does not charge sales tax on these items.\nUnopened items can be returned within 30 days for a full refund. Furniture returns are subject to a 15%\nrestocking fee.\nThank you for your order. Pay online at brightdesk.example/pay using invoice number BD-58213."
+      ],
+      "retrieved_sources": [
+        "invoice_northwind_cloud.pdf",
+        "invoice_northwind_cloud.pdf",
+        "msa_summit_2025.pdf",
+        "msa_summit_2026.pdf",
+        "invoice_brightdesk_office.pdf"
+      ],
+      "latency_s": 1.34,
+      "faithfulness": 1.0,
+      "answer_accuracy": 1.0,
+      "facts_found": true,
+      "source_found": true,
+      "cited": true,
+      "faithfulness_named_contexts": 1.0
+    },
+    {
+      "type": "factual",
+      "question": "How much did the managed PostgreSQL database cost?",
+      "reference": "Managed PostgreSQL (db.m5.large) cost $210.00 for one month.",
+      "facts": [
+        "210"
+      ],
+      "sources": [
+        "invoice_northwind_cloud.pdf"
+      ],
+      "answer": "The managed PostgreSQL database cost **$210.00**[1].",
+      "contexts": [
+        "Northwind Cloud Services INVOICE\nInvoice No: NWC-2026-0417\nInc.\nInvoice Date: April 17, 2026\nDue Date: May 17, 2026\n1420 Fifth Avenue, Suite 900, Seattle, WA 98101\nBilling Period: March 1 – March 31,\nbilling@northwindcloud.example · (206) 555-0142\n2026\nTax ID: 91-4827736\nBill To Account\nCrestline Accounting LLC Customer ID: CA-20931\nAttn: Accounts Payable Plan: Business Cloud\n310 Pine Street, Floor 4 Payment Terms: Net 30\nSeattle, WA 98101\n# Description Quantity Unit Price Amount\n1 Compute instances (Standard-4, us-west-2) 720 hours $0.19 $136.80\n2 Object storage 2,500 GB $0.023 $57.50\n3 Managed PostgreSQL (db.m5.large) 1 month $210.00 $210.00\n4 Premium support plan 1 month $150.00 $150.00\nSubtotal $554.30\nSales tax (10.1%) $55.98\nTotal Due (USD) $610.28\nPayment Instructions\nPay by ACH to Pacific Commerce Bank, routing number 125000105, account number 4471 0938 22.",
+        "Summit IT Solutions Ltd. INVOICE\nInvoice No: SIT-2026-0088\n1700 Lincoln Street, Suite 2400, Denver, CO 80203\nInvoice Date: June 30, 2026\naccounts@summitit.example · (303) 555-0164\nTax ID: 84-3310572 Due Date: July 30, 2026\nService Period: Q2 2026 (April 1 – June 30)\nBill To Contract\nCrestline Accounting LLC Master Services Agreement, amended and\n310 Pine Street, Floor 4 restated January 1, 2026\nSeattle, WA 98101 Account Manager: Daniel Reyes\n# Description Quantity Rate Amount\n1 Managed endpoint support, 45 devices 3 months $540.00 $1,620.00\n2 Microsoft 365 Business Premium, 30 licenses 3 months $660.00 $1,980.00\n3 Firewall monitoring 3 months $250.00 $750.00\n4 Cloud backup, 1.2 TB 3 months $48.00 $144.00\n5 On-site visit, April 14, 2026 6 hours $125.00 $750.00\n6 On-site visit, May 19, 2026 4 hours $125.00 $500.00\n7 New laptop setup (Dell Latitude 5450) 5 $95.00 $475.00",
+        "Invoice SIT-2026-0088, page 2\n# Description Quantity Rate Amount\n11 Phishing simulation campaign 1 $300.00 $300.00\n12 Domain and SSL certificate renewal 1 $189.00 $189.00\n13 After-hours incident response, June 8, 2026 2.5 hours $185.00 $462.50\n14 Quarterly security report 1 $400.00 $400.00\nSubtotal $9,635.50\nSales tax on hardware only $109.24\n(8.81% of $1,240.00)\nTotal Due (USD) $9,744.74\nNotes\nServices are not taxable in Colorado. Sales tax applies only to the hardware on line 9.\nUnder the Master Services Agreement, payment is due within 45 days of the invoice date. This invoice\nuses a 30-day due date at the client's request for Q2 budget closing.\nThe after-hours incident on June 8, 2026 was a failed VPN gateway. It was acknowledged within 25\nminutes and service was restored after 2 hours 10 minutes.",
+        "Master Services Agreement\nAgreement No. MSA-2025-014 · Effective Date: January 1, 2025\nThis Master Services Agreement (the \"Agreement\") is entered into between Crestline Accounting LLC,\na Washington limited liability company with offices at 310 Pine Street, Floor 4, Seattle, WA 98101 (the\n\"Client\"), and Summit IT Solutions Ltd., a Colorado corporation with offices at 1700 Lincoln Street, Suite\n2400, Denver, CO 80203 (the \"Provider\").\n1. Services\n1.1 The Provider will deliver managed IT services, including endpoint support, network monitoring, cloud\nbackup and help desk support, as described in Schedule A.\n1.2 Additional work outside Schedule A will be agreed in a written statement of work and billed at $125.00\nper hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal",
+        "Revenue by Segment and Region\nRevenue by segment\nSegment 2025 2024 Growth Share of 2025 revenue\nPlatform subscriptions $61.2 $50.6 +20.9% 72.3%\nProfessional services $14.9 $13.0 +14.6% 17.6%\nData marketplace $8.5 $8.1 +4.9% 10.0%\nTotal $84.6 $71.7 +18.0% 100%\nRevenue by region\nRegion 2025 2024 Growth\nNorth America $55.0 $48.3 +13.9%\nEurope $21.2 $16.7 +27.0%\nAsia-Pacific $8.4 $6.7 +25.4%\nTotal $84.6 $71.7 +18.0%\nPlatform subscriptions are billed annually in advance and recognized over the contract term. Professional\nservices are mostly implementation projects and are recognized as the work is delivered."
+      ],
+      "retrieved_sources": [
+        "invoice_northwind_cloud.pdf",
+        "invoice_summit_it_services.pdf",
+        "invoice_summit_it_services.pdf",
+        "msa_summit_2025.pdf",
+        "lumen_annual_report_2025.pdf"
+      ],
+      "latency_s": 1.14,
+      "faithfulness": 1.0,
+      "answer_accuracy": 1.0,
+      "facts_found": true,
+      "source_found": true,
+      "cited": true,
+      "faithfulness_named_contexts": 1.0
+    },
+    {
+      "type": "factual",
+      "question": "How much does the copy paper cost?",
+      "reference": "Copy paper costs $425.00 in total: 10 boxes at $42.50 each.",
+      "facts": [
+        "425"
+      ],
+      "sources": [
+        "invoice_brightdesk_office.pdf"
+      ],
+      "answer": "The copy paper totals $425.00 [1]",
+      "contexts": [
+        "BrightDesk Office Supply Co. INVOICE\nInvoice No: BD-58213\n880 NW Everett Street, Portland, OR 97209\nInvoice Date: March 3, 2026\norders@brightdesk.example · (503) 555-0187\nDue Date: April 2, 2026\nPurchase Order: PO-7745\nBill To Ship To\nCrestline Accounting LLC Crestline Accounting LLC\n310 Pine Street, Floor 4 Portland Office\nSeattle, WA 98101 1200 SW Main Street, Suite 300\nPortland, OR 97205\nItem Description Qty Unit Price Amount\nPAP-A4-10 Copy paper, letter size, 10 reams per box 10 $42.50 $425.00\nTON-58A Toner cartridge, black, high yield 4 $89.99 $359.96\nCHR-ERG2 Ergonomic office chair, mesh back 2 $349.00 $698.00\nORG-DSK Desk organizer set 6 $18.75 $112.50\nSubtotal $1,595.46\nSales tax (Oregon, 0%) $0.00\nShipping and handling $45.00\nTotal (USD) $1,640.46\nTerms\nPayment is due within 30 days of the invoice date. Oregon does not charge sales tax on these items.",
+        "per hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal\n2.1 This Agreement starts on the Effective Date and continues for an initial term of twelve (12) months.\n2.2 The Agreement renews automatically for successive twelve (12) month terms unless either party gives\nwritten notice of non-renewal at least thirty (30) days before the end of the current term.\n3. Fees and Payment\n3.1 The Client will pay a fixed monthly fee of $3,200.00 for the services in Schedule A.\n3.2 The Provider will invoice monthly in arrears. Payment is due within thirty (30) days of the invoice\ndate.\n3.3 Late payments accrue interest at 1.5% per month on the overdue amount.\n3.4 The Provider may increase fees once per year with sixty (60) days' written notice. Any increase may\nnot exceed 5%.\n4. Service Levels",
+        "per hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal\n2.1 This Agreement starts on the Effective Date and continues for an initial term of twenty-four (24)\nmonths.\n2.2 The Agreement renews automatically for successive twelve (12) month terms unless either party gives\nwritten notice of non-renewal at least sixty (60) days before the end of the current term.\n3. Fees and Payment\n3.1 The Client will pay a fixed monthly fee of $3,450.00 for the services in Schedule A.\n3.2 The Provider will invoice monthly in arrears. Payment is due within forty-five (45) days of the invoice\ndate.\n3.3 Late payments accrue interest at 1.0% per month on the overdue amount.\n3.4 The Provider may increase fees once per year with sixty (60) days' written notice. Any increase may\nnot exceed 5%.\n4. Service Levels",
+        "Invoice SIT-2026-0088, page 2\n# Description Quantity Rate Amount\n11 Phishing simulation campaign 1 $300.00 $300.00\n12 Domain and SSL certificate renewal 1 $189.00 $189.00\n13 After-hours incident response, June 8, 2026 2.5 hours $185.00 $462.50\n14 Quarterly security report 1 $400.00 $400.00\nSubtotal $9,635.50\nSales tax on hardware only $109.24\n(8.81% of $1,240.00)\nTotal Due (USD) $9,744.74\nNotes\nServices are not taxable in Colorado. Sales tax applies only to the hardware on line 9.\nUnder the Master Services Agreement, payment is due within 45 days of the invoice date. This invoice\nuses a 30-day due date at the client's request for Q2 budget closing.\nThe after-hours incident on June 8, 2026 was a failed VPN gateway. It was acknowledged within 25\nminutes and service was restored after 2 hours 10 minutes.",
+        "Total (USD) $1,640.46\nTerms\nPayment is due within 30 days of the invoice date. Oregon does not charge sales tax on these items.\nUnopened items can be returned within 30 days for a full refund. Furniture returns are subject to a 15%\nrestocking fee.\nThank you for your order. Pay online at brightdesk.example/pay using invoice number BD-58213."
+      ],
+      "retrieved_sources": [
+        "invoice_brightdesk_office.pdf",
+        "msa_summit_2025.pdf",
+        "msa_summit_2026.pdf",
+        "invoice_summit_it_services.pdf",
+        "invoice_brightdesk_office.pdf"
+      ],
+      "latency_s": 1.34,
+      "faithfulness": 1.0,
+      "answer_accuracy": 0.75,
+      "facts_found": true,
+      "source_found": true,
+      "cited": true,
+      "faithfulness_named_contexts": 1.0
+    },
+    {
+      "type": "exact-id",
+      "question": "Which purchase order is invoice BD-58213 for?",
+      "reference": "Invoice BD-58213 is for purchase order PO-7745.",
+      "facts": [
+        "PO-7745"
+      ],
+      "sources": [
+        "invoice_brightdesk_office.pdf"
+      ],
+      "answer": "The invoice BD‑58213 references Purchase Order **PO‑7745**[1].",
+      "contexts": [
+        "BrightDesk Office Supply Co. INVOICE\nInvoice No: BD-58213\n880 NW Everett Street, Portland, OR 97209\nInvoice Date: March 3, 2026\norders@brightdesk.example · (503) 555-0187\nDue Date: April 2, 2026\nPurchase Order: PO-7745\nBill To Ship To\nCrestline Accounting LLC Crestline Accounting LLC\n310 Pine Street, Floor 4 Portland Office\nSeattle, WA 98101 1200 SW Main Street, Suite 300\nPortland, OR 97205\nItem Description Qty Unit Price Amount\nPAP-A4-10 Copy paper, letter size, 10 reams per box 10 $42.50 $425.00\nTON-58A Toner cartridge, black, high yield 4 $89.99 $359.96\nCHR-ERG2 Ergonomic office chair, mesh back 2 $349.00 $698.00\nORG-DSK Desk organizer set 6 $18.75 $112.50\nSubtotal $1,595.46\nSales tax (Oregon, 0%) $0.00\nShipping and handling $45.00\nTotal (USD) $1,640.46\nTerms\nPayment is due within 30 days of the invoice date. Oregon does not charge sales tax on these items.",
+        "Total (USD) $1,640.46\nTerms\nPayment is due within 30 days of the invoice date. Oregon does not charge sales tax on these items.\nUnopened items can be returned within 30 days for a full refund. Furniture returns are subject to a 15%\nrestocking fee.\nThank you for your order. Pay online at brightdesk.example/pay using invoice number BD-58213.",
+        "Total Due (USD) $610.28\nPayment Instructions\nPay by ACH to Pacific Commerce Bank, routing number 125000105, account number 4471 0938 22.\nReference the invoice number with your payment.\nPayments received after the due date are subject to a late fee of 1.5% per month on the outstanding\nbalance.\nQuestions about this invoice? Contact billing@northwindcloud.example within 15 days of the invoice date.",
+        "minutes and service was restored after 2 hours 10 minutes.\nRemit to: Summit IT Solutions Ltd., Front Range Bank, routing 102000021, account 6620 1187 45.",
+        "Summit IT Solutions Ltd. INVOICE\nInvoice No: SIT-2026-0088\n1700 Lincoln Street, Suite 2400, Denver, CO 80203\nInvoice Date: June 30, 2026\naccounts@summitit.example · (303) 555-0164\nTax ID: 84-3310572 Due Date: July 30, 2026\nService Period: Q2 2026 (April 1 – June 30)\nBill To Contract\nCrestline Accounting LLC Master Services Agreement, amended and\n310 Pine Street, Floor 4 restated January 1, 2026\nSeattle, WA 98101 Account Manager: Daniel Reyes\n# Description Quantity Rate Amount\n1 Managed endpoint support, 45 devices 3 months $540.00 $1,620.00\n2 Microsoft 365 Business Premium, 30 licenses 3 months $660.00 $1,980.00\n3 Firewall monitoring 3 months $250.00 $750.00\n4 Cloud backup, 1.2 TB 3 months $48.00 $144.00\n5 On-site visit, April 14, 2026 6 hours $125.00 $750.00\n6 On-site visit, May 19, 2026 4 hours $125.00 $500.00\n7 New laptop setup (Dell Latitude 5450) 5 $95.00 $475.00"
+      ],
+      "retrieved_sources": [
+        "invoice_brightdesk_office.pdf",
+        "invoice_brightdesk_office.pdf",
+        "invoice_northwind_cloud.pdf",
+        "invoice_summit_it_services.pdf",
+        "invoice_summit_it_services.pdf"
+      ],
+      "latency_s": 1.31,
+      "faithfulness": 1.0,
+      "answer_accuracy": 1.0,
+      "facts_found": true,
+      "source_found": true,
+      "cited": true,
+      "faithfulness_named_contexts": 1.0
+    },
+    {
+      "type": "factual",
+      "question": "What is the restocking fee for returned furniture from BrightDesk?",
+      "reference": "Furniture returns are subject to a 15% restocking fee.",
+      "facts": [
+        "15%"
+      ],
+      "sources": [
+        "invoice_brightdesk_office.pdf"
+      ],
+      "answer": "The restocking fee for returned furniture from BrightDesk is 15%[2][1]",
+      "contexts": [
+        "Total (USD) $1,640.46\nTerms\nPayment is due within 30 days of the invoice date. Oregon does not charge sales tax on these items.\nUnopened items can be returned within 30 days for a full refund. Furniture returns are subject to a 15%\nrestocking fee.\nThank you for your order. Pay online at brightdesk.example/pay using invoice number BD-58213.",
+        "BrightDesk Office Supply Co. INVOICE\nInvoice No: BD-58213\n880 NW Everett Street, Portland, OR 97209\nInvoice Date: March 3, 2026\norders@brightdesk.example · (503) 555-0187\nDue Date: April 2, 2026\nPurchase Order: PO-7745\nBill To Ship To\nCrestline Accounting LLC Crestline Accounting LLC\n310 Pine Street, Floor 4 Portland Office\nSeattle, WA 98101 1200 SW Main Street, Suite 300\nPortland, OR 97205\nItem Description Qty Unit Price Amount\nPAP-A4-10 Copy paper, letter size, 10 reams per box 10 $42.50 $425.00\nTON-58A Toner cartridge, black, high yield 4 $89.99 $359.96\nCHR-ERG2 Ergonomic office chair, mesh back 2 $349.00 $698.00\nORG-DSK Desk organizer set 6 $18.75 $112.50\nSubtotal $1,595.46\nSales tax (Oregon, 0%) $0.00\nShipping and handling $45.00\nTotal (USD) $1,640.46\nTerms\nPayment is due within 30 days of the invoice date. Oregon does not charge sales tax on these items.",
+        "per hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal\n2.1 This Agreement starts on the Effective Date and continues for an initial term of twelve (12) months.\n2.2 The Agreement renews automatically for successive twelve (12) month terms unless either party gives\nwritten notice of non-renewal at least thirty (30) days before the end of the current term.\n3. Fees and Payment\n3.1 The Client will pay a fixed monthly fee of $3,200.00 for the services in Schedule A.\n3.2 The Provider will invoice monthly in arrears. Payment is due within thirty (30) days of the invoice\ndate.\n3.3 Late payments accrue interest at 1.5% per month on the overdue amount.\n3.4 The Provider may increase fees once per year with sixty (60) days' written notice. Any increase may\nnot exceed 5%.\n4. Service Levels",
+        "per hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal\n2.1 This Agreement starts on the Effective Date and continues for an initial term of twenty-four (24)\nmonths.\n2.2 The Agreement renews automatically for successive twelve (12) month terms unless either party gives\nwritten notice of non-renewal at least sixty (60) days before the end of the current term.\n3. Fees and Payment\n3.1 The Client will pay a fixed monthly fee of $3,450.00 for the services in Schedule A.\n3.2 The Provider will invoice monthly in arrears. Payment is due within forty-five (45) days of the invoice\ndate.\n3.3 Late payments accrue interest at 1.0% per month on the overdue amount.\n3.4 The Provider may increase fees once per year with sixty (60) days' written notice. Any increase may\nnot exceed 5%.\n4. Service Levels",
+        "Invoice SIT-2026-0088, page 2\n# Description Quantity Rate Amount\n11 Phishing simulation campaign 1 $300.00 $300.00\n12 Domain and SSL certificate renewal 1 $189.00 $189.00\n13 After-hours incident response, June 8, 2026 2.5 hours $185.00 $462.50\n14 Quarterly security report 1 $400.00 $400.00\nSubtotal $9,635.50\nSales tax on hardware only $109.24\n(8.81% of $1,240.00)\nTotal Due (USD) $9,744.74\nNotes\nServices are not taxable in Colorado. Sales tax applies only to the hardware on line 9.\nUnder the Master Services Agreement, payment is due within 45 days of the invoice date. This invoice\nuses a 30-day due date at the client's request for Q2 budget closing.\nThe after-hours incident on June 8, 2026 was a failed VPN gateway. It was acknowledged within 25\nminutes and service was restored after 2 hours 10 minutes."
+      ],
+      "retrieved_sources": [
+        "invoice_brightdesk_office.pdf",
+        "invoice_brightdesk_office.pdf",
+        "msa_summit_2025.pdf",
+        "msa_summit_2026.pdf",
+        "invoice_summit_it_services.pdf"
+      ],
+      "latency_s": 10.26,
+      "faithfulness": 1.0,
+      "answer_accuracy": 1.0,
+      "facts_found": true,
+      "source_found": true,
+      "cited": true,
+      "faithfulness_named_contexts": 1.0
+    },
+    {
+      "type": "paraphrase",
+      "question": "Why was no sales tax charged on the office supplies invoice?",
+      "reference": "Oregon does not charge sales tax on these items, so the tax was $0.00.",
+      "facts": [
+        "Oregon"
+      ],
+      "sources": [
+        "invoice_brightdesk_office.pdf"
+      ],
+      "answer": "The invoice notes that Oregon does not charge sales tax on these items, so no sales tax was applied to the office‑supply purchase[1].",
+      "contexts": [
+        "BrightDesk Office Supply Co. INVOICE\nInvoice No: BD-58213\n880 NW Everett Street, Portland, OR 97209\nInvoice Date: March 3, 2026\norders@brightdesk.example · (503) 555-0187\nDue Date: April 2, 2026\nPurchase Order: PO-7745\nBill To Ship To\nCrestline Accounting LLC Crestline Accounting LLC\n310 Pine Street, Floor 4 Portland Office\nSeattle, WA 98101 1200 SW Main Street, Suite 300\nPortland, OR 97205\nItem Description Qty Unit Price Amount\nPAP-A4-10 Copy paper, letter size, 10 reams per box 10 $42.50 $425.00\nTON-58A Toner cartridge, black, high yield 4 $89.99 $359.96\nCHR-ERG2 Ergonomic office chair, mesh back 2 $349.00 $698.00\nORG-DSK Desk organizer set 6 $18.75 $112.50\nSubtotal $1,595.46\nSales tax (Oregon, 0%) $0.00\nShipping and handling $45.00\nTotal (USD) $1,640.46\nTerms\nPayment is due within 30 days of the invoice date. Oregon does not charge sales tax on these items.",
+        "Total (USD) $1,640.46\nTerms\nPayment is due within 30 days of the invoice date. Oregon does not charge sales tax on these items.\nUnopened items can be returned within 30 days for a full refund. Furniture returns are subject to a 15%\nrestocking fee.\nThank you for your order. Pay online at brightdesk.example/pay using invoice number BD-58213.",
+        "Invoice SIT-2026-0088, page 2\n# Description Quantity Rate Amount\n11 Phishing simulation campaign 1 $300.00 $300.00\n12 Domain and SSL certificate renewal 1 $189.00 $189.00\n13 After-hours incident response, June 8, 2026 2.5 hours $185.00 $462.50\n14 Quarterly security report 1 $400.00 $400.00\nSubtotal $9,635.50\nSales tax on hardware only $109.24\n(8.81% of $1,240.00)\nTotal Due (USD) $9,744.74\nNotes\nServices are not taxable in Colorado. Sales tax applies only to the hardware on line 9.\nUnder the Master Services Agreement, payment is due within 45 days of the invoice date. This invoice\nuses a 30-day due date at the client's request for Q2 budget closing.\nThe after-hours incident on June 8, 2026 was a failed VPN gateway. It was acknowledged within 25\nminutes and service was restored after 2 hours 10 minutes.",
+        "Massachusetts meals tax (7%) $155.05\nInvoice total $2,370.05\nDeposit received (April 30, −$500.00\n2026)\nBalance Due (USD) $1,870.05\nPayment Terms\nThe balance is due within 14 days of the invoice date. Pay by check to Harbor Table Catering or by card\nat harbortable.example/pay.\nCancellations made less than 7 days before an event are charged 50% of the estimated total.",
+        "Summit IT Solutions Ltd. INVOICE\nInvoice No: SIT-2026-0088\n1700 Lincoln Street, Suite 2400, Denver, CO 80203\nInvoice Date: June 30, 2026\naccounts@summitit.example · (303) 555-0164\nTax ID: 84-3310572 Due Date: July 30, 2026\nService Period: Q2 2026 (April 1 – June 30)\nBill To Contract\nCrestline Accounting LLC Master Services Agreement, amended and\n310 Pine Street, Floor 4 restated January 1, 2026\nSeattle, WA 98101 Account Manager: Daniel Reyes\n# Description Quantity Rate Amount\n1 Managed endpoint support, 45 devices 3 months $540.00 $1,620.00\n2 Microsoft 365 Business Premium, 30 licenses 3 months $660.00 $1,980.00\n3 Firewall monitoring 3 months $250.00 $750.00\n4 Cloud backup, 1.2 TB 3 months $48.00 $144.00\n5 On-site visit, April 14, 2026 6 hours $125.00 $750.00\n6 On-site visit, May 19, 2026 4 hours $125.00 $500.00\n7 New laptop setup (Dell Latitude 5450) 5 $95.00 $475.00"
+      ],
+      "retrieved_sources": [
+        "invoice_brightdesk_office.pdf",
+        "invoice_brightdesk_office.pdf",
+        "invoice_summit_it_services.pdf",
+        "invoice_harbor_catering.pdf",
+        "invoice_summit_it_services.pdf"
+      ],
+      "latency_s": 9.52,
+      "faithfulness": 1.0,
+      "answer_accuracy": 1.0,
+      "facts_found": true,
+      "source_found": true,
+      "cited": true,
+      "faithfulness_named_contexts": 1.0
+    },
+    {
+      "type": "paraphrase",
+      "question": "What is the balance due on the catering invoice?",
+      "reference": "The balance due on the Harbor Table Catering invoice is $1,870.05 after a $500.00 deposit.",
+      "facts": [
+        "1,870.05"
+      ],
+      "sources": [
+        "invoice_harbor_catering.pdf"
+      ],
+      "answer": "The balance due on the catering invoice is **$1,870.05**[2][1]",
+      "contexts": [
+        "Massachusetts meals tax (7%) $155.05\nInvoice total $2,370.05\nDeposit received (April 30, −$500.00\n2026)\nBalance Due (USD) $1,870.05\nPayment Terms\nThe balance is due within 14 days of the invoice date. Pay by check to Harbor Table Catering or by card\nat harbortable.example/pay.\nCancellations made less than 7 days before an event are charged 50% of the estimated total.",
+        "Harbor Table Catering INVOICE\nInvoice No: HTC-1104\n55 Atlantic Avenue, Boston, MA 02110\nInvoice Date: May 22, 2026\nevents@harbortable.example · (617) 555-0119\nDue Date: June 5, 2026\nClient Event\nCrestline Accounting LLC Quarterly client meeting\nBoston Office Date: May 20, 2026\n200 State Street, Suite 1100 Guests: 40\nBoston, MA 02109 Venue: Client office, 11th floor\nDescription Quantity Rate Amount\nLunch buffet (two entrées, salads, dessert) 40 guests $28.50 $1,140.00\nCoffee and pastry service 40 guests $9.00 $360.00\nService staff (3 staff, 4 hours each) 12 hours $45.00 $540.00\nEquipment rental (chafing dishes, linens) 1 $175.00 $175.00\nSubtotal $2,215.00\nMassachusetts meals tax (7%) $155.05\nInvoice total $2,370.05\nDeposit received (April 30, −$500.00\n2026)\nBalance Due (USD) $1,870.05\nPayment Terms",
+        "Total Due (USD) $610.28\nPayment Instructions\nPay by ACH to Pacific Commerce Bank, routing number 125000105, account number 4471 0938 22.\nReference the invoice number with your payment.\nPayments received after the due date are subject to a late fee of 1.5% per month on the outstanding\nbalance.\nQuestions about this invoice? Contact billing@northwindcloud.example within 15 days of the invoice date.",
+        "Total (USD) $1,640.46\nTerms\nPayment is due within 30 days of the invoice date. Oregon does not charge sales tax on these items.\nUnopened items can be returned within 30 days for a full refund. Furniture returns are subject to a 15%\nrestocking fee.\nThank you for your order. Pay online at brightdesk.example/pay using invoice number BD-58213.",
+        "Invoice SIT-2026-0088, page 2\n# Description Quantity Rate Amount\n11 Phishing simulation campaign 1 $300.00 $300.00\n12 Domain and SSL certificate renewal 1 $189.00 $189.00\n13 After-hours incident response, June 8, 2026 2.5 hours $185.00 $462.50\n14 Quarterly security report 1 $400.00 $400.00\nSubtotal $9,635.50\nSales tax on hardware only $109.24\n(8.81% of $1,240.00)\nTotal Due (USD) $9,744.74\nNotes\nServices are not taxable in Colorado. Sales tax applies only to the hardware on line 9.\nUnder the Master Services Agreement, payment is due within 45 days of the invoice date. This invoice\nuses a 30-day due date at the client's request for Q2 budget closing.\nThe after-hours incident on June 8, 2026 was a failed VPN gateway. It was acknowledged within 25\nminutes and service was restored after 2 hours 10 minutes."
+      ],
+      "retrieved_sources": [
+        "invoice_harbor_catering.pdf",
+        "invoice_harbor_catering.pdf",
+        "invoice_northwind_cloud.pdf",
+        "invoice_brightdesk_office.pdf",
+        "invoice_summit_it_services.pdf"
+      ],
+      "latency_s": 6.43,
+      "faithfulness": 1.0,
+      "answer_accuracy": 1.0,
+      "facts_found": true,
+      "source_found": true,
+      "cited": true,
+      "faithfulness_named_contexts": 1.0
+    },
+    {
+      "type": "factual",
+      "question": "How much meals tax was charged for the event catering?",
+      "reference": "Massachusetts meals tax of 7%, $155.05, was charged.",
+      "facts": [
+        "155.05"
+      ],
+      "sources": [
+        "invoice_harbor_catering.pdf"
+      ],
+      "answer": "The meals tax charged for the event catering was $155.05 [2][1].",
+      "contexts": [
+        "Massachusetts meals tax (7%) $155.05\nInvoice total $2,370.05\nDeposit received (April 30, −$500.00\n2026)\nBalance Due (USD) $1,870.05\nPayment Terms\nThe balance is due within 14 days of the invoice date. Pay by check to Harbor Table Catering or by card\nat harbortable.example/pay.\nCancellations made less than 7 days before an event are charged 50% of the estimated total.",
+        "Harbor Table Catering INVOICE\nInvoice No: HTC-1104\n55 Atlantic Avenue, Boston, MA 02110\nInvoice Date: May 22, 2026\nevents@harbortable.example · (617) 555-0119\nDue Date: June 5, 2026\nClient Event\nCrestline Accounting LLC Quarterly client meeting\nBoston Office Date: May 20, 2026\n200 State Street, Suite 1100 Guests: 40\nBoston, MA 02109 Venue: Client office, 11th floor\nDescription Quantity Rate Amount\nLunch buffet (two entrées, salads, dessert) 40 guests $28.50 $1,140.00\nCoffee and pastry service 40 guests $9.00 $360.00\nService staff (3 staff, 4 hours each) 12 hours $45.00 $540.00\nEquipment rental (chafing dishes, linens) 1 $175.00 $175.00\nSubtotal $2,215.00\nMassachusetts meals tax (7%) $155.05\nInvoice total $2,370.05\nDeposit received (April 30, −$500.00\n2026)\nBalance Due (USD) $1,870.05\nPayment Terms",
+        "Invoice SIT-2026-0088, page 2\n# Description Quantity Rate Amount\n11 Phishing simulation campaign 1 $300.00 $300.00\n12 Domain and SSL certificate renewal 1 $189.00 $189.00\n13 After-hours incident response, June 8, 2026 2.5 hours $185.00 $462.50\n14 Quarterly security report 1 $400.00 $400.00\nSubtotal $9,635.50\nSales tax on hardware only $109.24\n(8.81% of $1,240.00)\nTotal Due (USD) $9,744.74\nNotes\nServices are not taxable in Colorado. Sales tax applies only to the hardware on line 9.\nUnder the Master Services Agreement, payment is due within 45 days of the invoice date. This invoice\nuses a 30-day due date at the client's request for Q2 budget closing.\nThe after-hours incident on June 8, 2026 was a failed VPN gateway. It was acknowledged within 25\nminutes and service was restored after 2 hours 10 minutes.",
+        "Total (USD) $1,640.46\nTerms\nPayment is due within 30 days of the invoice date. Oregon does not charge sales tax on these items.\nUnopened items can be returned within 30 days for a full refund. Furniture returns are subject to a 15%\nrestocking fee.\nThank you for your order. Pay online at brightdesk.example/pay using invoice number BD-58213.",
+        "per hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal\n2.1 This Agreement starts on the Effective Date and continues for an initial term of twenty-four (24)\nmonths.\n2.2 The Agreement renews automatically for successive twelve (12) month terms unless either party gives\nwritten notice of non-renewal at least sixty (60) days before the end of the current term.\n3. Fees and Payment\n3.1 The Client will pay a fixed monthly fee of $3,450.00 for the services in Schedule A.\n3.2 The Provider will invoice monthly in arrears. Payment is due within forty-five (45) days of the invoice\ndate.\n3.3 Late payments accrue interest at 1.0% per month on the overdue amount.\n3.4 The Provider may increase fees once per year with sixty (60) days' written notice. Any increase may\nnot exceed 5%.\n4. Service Levels"
+      ],
+      "retrieved_sources": [
+        "invoice_harbor_catering.pdf",
+        "invoice_harbor_catering.pdf",
+        "invoice_summit_it_services.pdf",
+        "invoice_brightdesk_office.pdf",
+        "msa_summit_2026.pdf"
+      ],
+      "latency_s": 1.27,
+      "faithfulness": 1.0,
+      "answer_accuracy": 1.0,
+      "facts_found": true,
+      "source_found": true,
+      "cited": true,
+      "faithfulness_named_contexts": 1.0
+    },
+    {
+      "type": "factual",
+      "question": "How much was charged for the Cisco network switch hardware?",
+      "reference": "The Cisco Catalyst 1000 network switch hardware cost $1,240.00.",
+      "facts": [
+        "1,240"
+      ],
+      "sources": [
+        "invoice_summit_it_services.pdf"
+      ],
+      "answer": "The Cisco Catalyst 1000 network switch hardware was charged **$1,240.00**[1].",
+      "contexts": [
+        "6 On-site visit, May 19, 2026 4 hours $125.00 $500.00\n7 New laptop setup (Dell Latitude 5450) 5 $95.00 $475.00\n8 Network switch replacement, labor 3 hours $125.00 $375.00\n9 Cisco Catalyst 1000 network switch (hardware) 1 $1,240.00 $1,240.00\n10 Security awareness training, 30 users 30 $15.00 $450.00\nContinued on page 2.",
+        "Invoice SIT-2026-0088, page 2\n# Description Quantity Rate Amount\n11 Phishing simulation campaign 1 $300.00 $300.00\n12 Domain and SSL certificate renewal 1 $189.00 $189.00\n13 After-hours incident response, June 8, 2026 2.5 hours $185.00 $462.50\n14 Quarterly security report 1 $400.00 $400.00\nSubtotal $9,635.50\nSales tax on hardware only $109.24\n(8.81% of $1,240.00)\nTotal Due (USD) $9,744.74\nNotes\nServices are not taxable in Colorado. Sales tax applies only to the hardware on line 9.\nUnder the Master Services Agreement, payment is due within 45 days of the invoice date. This invoice\nuses a 30-day due date at the client's request for Q2 budget closing.\nThe after-hours incident on June 8, 2026 was a failed VPN gateway. It was acknowledged within 25\nminutes and service was restored after 2 hours 10 minutes.",
+        "per hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal\n2.1 This Agreement starts on the Effective Date and continues for an initial term of twenty-four (24)\nmonths.\n2.2 The Agreement renews automatically for successive twelve (12) month terms unless either party gives\nwritten notice of non-renewal at least sixty (60) days before the end of the current term.\n3. Fees and Payment\n3.1 The Client will pay a fixed monthly fee of $3,450.00 for the services in Schedule A.\n3.2 The Provider will invoice monthly in arrears. Payment is due within forty-five (45) days of the invoice\ndate.\n3.3 Late payments accrue interest at 1.0% per month on the overdue amount.\n3.4 The Provider may increase fees once per year with sixty (60) days' written notice. Any increase may\nnot exceed 5%.\n4. Service Levels",
+        "per hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal\n2.1 This Agreement starts on the Effective Date and continues for an initial term of twelve (12) months.\n2.2 The Agreement renews automatically for successive twelve (12) month terms unless either party gives\nwritten notice of non-renewal at least thirty (30) days before the end of the current term.\n3. Fees and Payment\n3.1 The Client will pay a fixed monthly fee of $3,200.00 for the services in Schedule A.\n3.2 The Provider will invoice monthly in arrears. Payment is due within thirty (30) days of the invoice\ndate.\n3.3 Late payments accrue interest at 1.5% per month on the overdue amount.\n3.4 The Provider may increase fees once per year with sixty (60) days' written notice. Any increase may\nnot exceed 5%.\n4. Service Levels",
+        "Revenue by Segment and Region\nRevenue by segment\nSegment 2025 2024 Growth Share of 2025 revenue\nPlatform subscriptions $61.2 $50.6 +20.9% 72.3%\nProfessional services $14.9 $13.0 +14.6% 17.6%\nData marketplace $8.5 $8.1 +4.9% 10.0%\nTotal $84.6 $71.7 +18.0% 100%\nRevenue by region\nRegion 2025 2024 Growth\nNorth America $55.0 $48.3 +13.9%\nEurope $21.2 $16.7 +27.0%\nAsia-Pacific $8.4 $6.7 +25.4%\nTotal $84.6 $71.7 +18.0%\nPlatform subscriptions are billed annually in advance and recognized over the contract term. Professional\nservices are mostly implementation projects and are recognized as the work is delivered."
+      ],
+      "retrieved_sources": [
+        "invoice_summit_it_services.pdf",
+        "invoice_summit_it_services.pdf",
+        "msa_summit_2026.pdf",
+        "msa_summit_2025.pdf",
+        "lumen_annual_report_2025.pdf"
+      ],
+      "latency_s": 1.11,
+      "faithfulness": 1.0,
+      "answer_accuracy": 1.0,
+      "facts_found": true,
+      "source_found": true,
+      "cited": true,
+      "faithfulness_named_contexts": 1.0
+    },
+    {
+      "type": "exact-id",
+      "question": "What is the total due on invoice SIT-2026-0088?",
+      "reference": "The total due on invoice SIT-2026-0088 is $9,744.74.",
+      "facts": [
+        "9,744.74"
+      ],
+      "sources": [
+        "invoice_summit_it_services.pdf"
+      ],
+      "answer": "The total due on invoice SIT‑2026‑0088 is **$9,744.74**[1].",
+      "contexts": [
+        "Invoice SIT-2026-0088, page 2\n# Description Quantity Rate Amount\n11 Phishing simulation campaign 1 $300.00 $300.00\n12 Domain and SSL certificate renewal 1 $189.00 $189.00\n13 After-hours incident response, June 8, 2026 2.5 hours $185.00 $462.50\n14 Quarterly security report 1 $400.00 $400.00\nSubtotal $9,635.50\nSales tax on hardware only $109.24\n(8.81% of $1,240.00)\nTotal Due (USD) $9,744.74\nNotes\nServices are not taxable in Colorado. Sales tax applies only to the hardware on line 9.\nUnder the Master Services Agreement, payment is due within 45 days of the invoice date. This invoice\nuses a 30-day due date at the client's request for Q2 budget closing.\nThe after-hours incident on June 8, 2026 was a failed VPN gateway. It was acknowledged within 25\nminutes and service was restored after 2 hours 10 minutes.",
+        "Massachusetts meals tax (7%) $155.05\nInvoice total $2,370.05\nDeposit received (April 30, −$500.00\n2026)\nBalance Due (USD) $1,870.05\nPayment Terms\nThe balance is due within 14 days of the invoice date. Pay by check to Harbor Table Catering or by card\nat harbortable.example/pay.\nCancellations made less than 7 days before an event are charged 50% of the estimated total.",
+        "Summit IT Solutions Ltd. INVOICE\nInvoice No: SIT-2026-0088\n1700 Lincoln Street, Suite 2400, Denver, CO 80203\nInvoice Date: June 30, 2026\naccounts@summitit.example · (303) 555-0164\nTax ID: 84-3310572 Due Date: July 30, 2026\nService Period: Q2 2026 (April 1 – June 30)\nBill To Contract\nCrestline Accounting LLC Master Services Agreement, amended and\n310 Pine Street, Floor 4 restated January 1, 2026\nSeattle, WA 98101 Account Manager: Daniel Reyes\n# Description Quantity Rate Amount\n1 Managed endpoint support, 45 devices 3 months $540.00 $1,620.00\n2 Microsoft 365 Business Premium, 30 licenses 3 months $660.00 $1,980.00\n3 Firewall monitoring 3 months $250.00 $750.00\n4 Cloud backup, 1.2 TB 3 months $48.00 $144.00\n5 On-site visit, April 14, 2026 6 hours $125.00 $750.00\n6 On-site visit, May 19, 2026 4 hours $125.00 $500.00\n7 New laptop setup (Dell Latitude 5450) 5 $95.00 $475.00",
+        "Total Due (USD) $610.28\nPayment Instructions\nPay by ACH to Pacific Commerce Bank, routing number 125000105, account number 4471 0938 22.\nReference the invoice number with your payment.\nPayments received after the due date are subject to a late fee of 1.5% per month on the outstanding\nbalance.\nQuestions about this invoice? Contact billing@northwindcloud.example within 15 days of the invoice date.",
+        "Northwind Cloud Services INVOICE\nInvoice No: NWC-2026-0417\nInc.\nInvoice Date: April 17, 2026\nDue Date: May 17, 2026\n1420 Fifth Avenue, Suite 900, Seattle, WA 98101\nBilling Period: March 1 – March 31,\nbilling@northwindcloud.example · (206) 555-0142\n2026\nTax ID: 91-4827736\nBill To Account\nCrestline Accounting LLC Customer ID: CA-20931\nAttn: Accounts Payable Plan: Business Cloud\n310 Pine Street, Floor 4 Payment Terms: Net 30\nSeattle, WA 98101\n# Description Quantity Unit Price Amount\n1 Compute instances (Standard-4, us-west-2) 720 hours $0.19 $136.80\n2 Object storage 2,500 GB $0.023 $57.50\n3 Managed PostgreSQL (db.m5.large) 1 month $210.00 $210.00\n4 Premium support plan 1 month $150.00 $150.00\nSubtotal $554.30\nSales tax (10.1%) $55.98\nTotal Due (USD) $610.28\nPayment Instructions\nPay by ACH to Pacific Commerce Bank, routing number 125000105, account number 4471 0938 22."
+      ],
+      "retrieved_sources": [
+        "invoice_summit_it_services.pdf",
+        "invoice_harbor_catering.pdf",
+        "invoice_summit_it_services.pdf",
+        "invoice_northwind_cloud.pdf",
+        "invoice_northwind_cloud.pdf"
+      ],
+      "latency_s": 3.21,
+      "faithfulness": 1.0,
+      "answer_accuracy": 1.0,
+      "facts_found": true,
+      "source_found": true,
+      "cited": true,
+      "faithfulness_named_contexts": 1.0
+    },
+    {
+      "type": "factual",
+      "question": "What caused the after-hours incident on June 8, 2026?",
+      "reference": "It was a failed VPN gateway; it was acknowledged within 25 minutes and service was restored after 2 hours 10 minutes.",
+      "facts": [
+        "VPN"
+      ],
+      "sources": [
+        "invoice_summit_it_services.pdf"
+      ],
+      "answer": "The after‑hours incident on June 8, 2026 was caused by a failed VPN gateway. [1]",
+      "contexts": [
+        "Invoice SIT-2026-0088, page 2\n# Description Quantity Rate Amount\n11 Phishing simulation campaign 1 $300.00 $300.00\n12 Domain and SSL certificate renewal 1 $189.00 $189.00\n13 After-hours incident response, June 8, 2026 2.5 hours $185.00 $462.50\n14 Quarterly security report 1 $400.00 $400.00\nSubtotal $9,635.50\nSales tax on hardware only $109.24\n(8.81% of $1,240.00)\nTotal Due (USD) $9,744.74\nNotes\nServices are not taxable in Colorado. Sales tax applies only to the hardware on line 9.\nUnder the Master Services Agreement, payment is due within 45 days of the invoice date. This invoice\nuses a 30-day due date at the client's request for Q2 budget closing.\nThe after-hours incident on June 8, 2026 was a failed VPN gateway. It was acknowledged within 25\nminutes and service was restored after 2 hours 10 minutes.",
+        "Harbor Table Catering INVOICE\nInvoice No: HTC-1104\n55 Atlantic Avenue, Boston, MA 02110\nInvoice Date: May 22, 2026\nevents@harbortable.example · (617) 555-0119\nDue Date: June 5, 2026\nClient Event\nCrestline Accounting LLC Quarterly client meeting\nBoston Office Date: May 20, 2026\n200 State Street, Suite 1100 Guests: 40\nBoston, MA 02109 Venue: Client office, 11th floor\nDescription Quantity Rate Amount\nLunch buffet (two entrées, salads, dessert) 40 guests $28.50 $1,140.00\nCoffee and pastry service 40 guests $9.00 $360.00\nService staff (3 staff, 4 hours each) 12 hours $45.00 $540.00\nEquipment rental (chafing dishes, linens) 1 $175.00 $175.00\nSubtotal $2,215.00\nMassachusetts meals tax (7%) $155.05\nInvoice total $2,370.05\nDeposit received (April 30, −$500.00\n2026)\nBalance Due (USD) $1,870.05\nPayment Terms",
+        "Summit IT Solutions Ltd. INVOICE\nInvoice No: SIT-2026-0088\n1700 Lincoln Street, Suite 2400, Denver, CO 80203\nInvoice Date: June 30, 2026\naccounts@summitit.example · (303) 555-0164\nTax ID: 84-3310572 Due Date: July 30, 2026\nService Period: Q2 2026 (April 1 – June 30)\nBill To Contract\nCrestline Accounting LLC Master Services Agreement, amended and\n310 Pine Street, Floor 4 restated January 1, 2026\nSeattle, WA 98101 Account Manager: Daniel Reyes\n# Description Quantity Rate Amount\n1 Managed endpoint support, 45 devices 3 months $540.00 $1,620.00\n2 Microsoft 365 Business Premium, 30 licenses 3 months $660.00 $1,980.00\n3 Firewall monitoring 3 months $250.00 $750.00\n4 Cloud backup, 1.2 TB 3 months $48.00 $144.00\n5 On-site visit, April 14, 2026 6 hours $125.00 $750.00\n6 On-site visit, May 19, 2026 4 hours $125.00 $500.00\n7 New laptop setup (Dell Latitude 5450) 5 $95.00 $475.00",
+        "3.4 The Provider may increase fees once per year with sixty (60) days' written notice. Any increase may\nnot exceed 5%.\n4. Service Levels\n4.1 The Provider will acknowledge critical incidents within two (2) hours and all other incidents within one\n(1) business day.\n4.2 The Provider guarantees 99.9% monthly availability for monitored network services.\n4.3 If availability falls below the guaranteed level in a month, the Client receives a service credit of 10% of\nthat month's fee.",
+        "per hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal\n2.1 This Agreement starts on the Effective Date and continues for an initial term of twenty-four (24)\nmonths.\n2.2 The Agreement renews automatically for successive twelve (12) month terms unless either party gives\nwritten notice of non-renewal at least sixty (60) days before the end of the current term.\n3. Fees and Payment\n3.1 The Client will pay a fixed monthly fee of $3,450.00 for the services in Schedule A.\n3.2 The Provider will invoice monthly in arrears. Payment is due within forty-five (45) days of the invoice\ndate.\n3.3 Late payments accrue interest at 1.0% per month on the overdue amount.\n3.4 The Provider may increase fees once per year with sixty (60) days' written notice. Any increase may\nnot exceed 5%.\n4. Service Levels"
+      ],
+      "retrieved_sources": [
+        "invoice_summit_it_services.pdf",
+        "invoice_harbor_catering.pdf",
+        "invoice_summit_it_services.pdf",
+        "msa_summit_2026.pdf",
+        "msa_summit_2026.pdf"
+      ],
+      "latency_s": 9.29,
+      "faithfulness": 1.0,
+      "answer_accuracy": 0.75,
+      "facts_found": true,
+      "source_found": true,
+      "cited": true,
+      "faithfulness_named_contexts": 1.0
+    },
+    {
+      "type": "reasoning",
+      "question": "Why is the Summit IT invoice due in 30 days instead of 45?",
+      "reference": "The invoice uses a 30-day due date at the client's request for Q2 budget closing, although the agreement allows 45 days.",
+      "facts": [
+        "budget"
+      ],
+      "sources": [
+        "invoice_summit_it_services.pdf"
+      ],
+      "answer": "The invoice states that, although the Master Services Agreement normally requires payment within 45 days, this particular invoice uses a 30‑day due date because the client requested it to meet its Q2 budget‑closing schedule[1].",
+      "contexts": [
+        "Invoice SIT-2026-0088, page 2\n# Description Quantity Rate Amount\n11 Phishing simulation campaign 1 $300.00 $300.00\n12 Domain and SSL certificate renewal 1 $189.00 $189.00\n13 After-hours incident response, June 8, 2026 2.5 hours $185.00 $462.50\n14 Quarterly security report 1 $400.00 $400.00\nSubtotal $9,635.50\nSales tax on hardware only $109.24\n(8.81% of $1,240.00)\nTotal Due (USD) $9,744.74\nNotes\nServices are not taxable in Colorado. Sales tax applies only to the hardware on line 9.\nUnder the Master Services Agreement, payment is due within 45 days of the invoice date. This invoice\nuses a 30-day due date at the client's request for Q2 budget closing.\nThe after-hours incident on June 8, 2026 was a failed VPN gateway. It was acknowledged within 25\nminutes and service was restored after 2 hours 10 minutes.",
+        "per hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal\n2.1 This Agreement starts on the Effective Date and continues for an initial term of twenty-four (24)\nmonths.\n2.2 The Agreement renews automatically for successive twelve (12) month terms unless either party gives\nwritten notice of non-renewal at least sixty (60) days before the end of the current term.\n3. Fees and Payment\n3.1 The Client will pay a fixed monthly fee of $3,450.00 for the services in Schedule A.\n3.2 The Provider will invoice monthly in arrears. Payment is due within forty-five (45) days of the invoice\ndate.\n3.3 Late payments accrue interest at 1.0% per month on the overdue amount.\n3.4 The Provider may increase fees once per year with sixty (60) days' written notice. Any increase may\nnot exceed 5%.\n4. Service Levels",
+        "per hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal\n2.1 This Agreement starts on the Effective Date and continues for an initial term of twelve (12) months.\n2.2 The Agreement renews automatically for successive twelve (12) month terms unless either party gives\nwritten notice of non-renewal at least thirty (30) days before the end of the current term.\n3. Fees and Payment\n3.1 The Client will pay a fixed monthly fee of $3,200.00 for the services in Schedule A.\n3.2 The Provider will invoice monthly in arrears. Payment is due within thirty (30) days of the invoice\ndate.\n3.3 Late payments accrue interest at 1.5% per month on the overdue amount.\n3.4 The Provider may increase fees once per year with sixty (60) days' written notice. Any increase may\nnot exceed 5%.\n4. Service Levels",
+        "not cure the breach within thirty (30) days of written notice.\n7.3 On termination, the Provider will return all Client data within fifteen (15) business days.\n8. General\n8.1 This Agreement is governed by the laws of the State of Colorado.\n8.2 This Agreement is the entire agreement between the parties and replaces all prior proposals and\ndiscussions.\nSignatures\nCrestline Accounting LLC Summit IT Solutions Ltd.\nName: Laura Chen Name: Daniel Reyes\nTitle: Managing Partner Title: Director of Client Services\nDate: December 12, 2024 Date: December 12, 2024",
+        "minutes and service was restored after 2 hours 10 minutes.\nRemit to: Summit IT Solutions Ltd., Front Range Bank, routing 102000021, account 6620 1187 45."
+      ],
+      "retrieved_sources": [
+        "invoice_summit_it_services.pdf",
+        "msa_summit_2026.pdf",
+        "msa_summit_2025.pdf",
+        "msa_summit_2025.pdf",
+        "invoice_summit_it_services.pdf"
+      ],
+      "latency_s": 10.61,
+      "faithfulness": 1.0,
+      "answer_accuracy": 1.0,
+      "facts_found": true,
+      "source_found": true,
+      "cited": true,
+      "faithfulness_named_contexts": 1.0
+    },
+    {
+      "type": "factual",
+      "question": "What was Lumen Analytics' revenue in 2025?",
+      "reference": "Lumen Analytics' revenue in 2025 was $84.6 million, up 18.0%.",
+      "facts": [
+        "84.6"
+      ],
+      "sources": [
+        "lumen_annual_report_2025.pdf"
+      ],
+      "answer": "Lumen Analytics reported revenue of **$84.6 million** for fiscal year 2025[5].",
+      "contexts": [
+        "Letter from the Chief Executive Officer\nDear shareholders,\n2025 was the strongest year in Lumen Analytics' history. Revenue grew 18.0% to $84.6 million, and we\nreached operating profitability for the second year in a row with operating income of $9.3 million. We now\nserve 1,240 customers, up from 1,015 a year ago.\nThe most important product milestone of the year was the launch of Lumen Forecast in June 2025.\nLumen Forecast brings demand forecasting into our core platform, and by year end 310 customers had\nadopted it. Customers using Lumen Forecast expand their contracts faster than the rest of our base,\nwhich helped lift net revenue retention to 114%.\nWe also grew internationally. In September 2025 we opened our Toronto office, our first location outside\nthe United States, to serve Canadian customers and to build a second engineering hub. Europe remained",
+        "Outlook for 2026\nFor fiscal year 2026 we expect:\nRevenue between $97 million and $100 million, representing growth of 15% to 18%.\nOperating margin between 12% and 14%.\nCapital expenditures of approximately $3.5 million, mainly for data center capacity and the Toronto\noffice expansion.\nNet hiring of about 60 employees, two thirds of them in engineering.\nOur main product priority is to make Lumen Forecast available to all platform customers. Our main market\npriority is opening a sales office in Munich, Germany in the third quarter of 2026 to serve customers in\nthe DACH region.\nThis outlook assumes stable exchange rates at December 31, 2025 levels and no significant acquisitions.",
+        "Revenue by Segment and Region\nRevenue by segment\nSegment 2025 2024 Growth Share of 2025 revenue\nPlatform subscriptions $61.2 $50.6 +20.9% 72.3%\nProfessional services $14.9 $13.0 +14.6% 17.6%\nData marketplace $8.5 $8.1 +4.9% 10.0%\nTotal $84.6 $71.7 +18.0% 100%\nRevenue by region\nRegion 2025 2024 Growth\nNorth America $55.0 $48.3 +13.9%\nEurope $21.2 $16.7 +27.0%\nAsia-Pacific $8.4 $6.7 +25.4%\nTotal $84.6 $71.7 +18.0%\nPlatform subscriptions are billed annually in advance and recognized over the contract term. Professional\nservices are mostly implementation projects and are recognized as the work is delivered.",
+        "Lumen Analytics, Inc.\n2025 Annual Report\nFiscal year ended December 31, 2025 · 500 Boylston Street, Boston, MA 02116\nContents\nLetter from the Chief Executive Officer 2\nFinancial Highlights 3\nRevenue by Segment and Region 4\nOperating Expenses and Workforce 5\nRisk Factors 6\nOutlook for 2026 7\nSustainability and Governance 8",
+        "Financial Highlights\nAll amounts are in millions of US dollars, except per-share data and percentages.\nMetric 2025 2024 Change\nRevenue $84.6 $71.7 +18.0%\nGross profit $59.2 $48.8 +21.3%\nGross margin 70.0% 68.1% +1.9 pts\nOperating income $9.3 $5.0 +86.0%\nNet income $6.8 $3.6 +88.9%\nDiluted earnings per share $0.41 $0.22 +86.4%\nAnnual recurring revenue (ARR), year end $92.3 $77.4 +19.3%\nCash and cash equivalents, year end $31.5 $24.2 +30.2%\nNet revenue retention 114% 109% +5 pts\nCustomers, year end 1,240 1,015 +22.2%\nGross margin improved mainly because we moved our largest workloads to reserved cloud capacity in the\nfirst quarter, which lowered hosting costs per customer by about 11%.\nThe company has no long-term debt. Free cash flow for 2025 was $8.1 million, compared with $4.4 million\nin 2024."
+      ],
+      "retrieved_sources": [
+        "lumen_annual_report_2025.pdf",
+        "lumen_annual_report_2025.pdf",
+        "lumen_annual_report_2025.pdf",
+        "lumen_annual_report_2025.pdf",
+        "lumen_annual_report_2025.pdf"
+      ],
+      "latency_s": 10.43,
+      "faithfulness": 1.0,
+      "answer_accuracy": 0.75,
+      "facts_found": true,
+      "source_found": true,
+      "cited": true,
+      "faithfulness_named_contexts": null
+    },
+    {
+      "type": "factual",
+      "question": "Which region grew fastest for Lumen Analytics?",
+      "reference": "Europe grew fastest, at 27.0%.",
+      "facts": [
+        "Europe"
+      ],
+      "sources": [
+        "lumen_annual_report_2025.pdf"
+      ],
+      "answer": "Europe was Lumen Analytics’ fastest‑growing region, with revenue increasing 27% in 2025[2][5].",
+      "contexts": [
+        "the United States, to serve Canadian customers and to build a second engineering hub. Europe remained\nour fastest-growing region at 27% growth.\nNot everything went to plan. Our data marketplace grew more slowly than we expected because two large\ndata partners delayed their integrations to 2026. We have adjusted our partnership model and expect the\nmarketplace to recover in the second half of 2026.\nI want to thank our 412 employees for their work this year, and our customers and shareholders for their\ncontinued trust.\nSincerely,\nMaya Ortiz\nChief Executive Officer\nFebruary 26, 2026",
+        "Letter from the Chief Executive Officer\nDear shareholders,\n2025 was the strongest year in Lumen Analytics' history. Revenue grew 18.0% to $84.6 million, and we\nreached operating profitability for the second year in a row with operating income of $9.3 million. We now\nserve 1,240 customers, up from 1,015 a year ago.\nThe most important product milestone of the year was the launch of Lumen Forecast in June 2025.\nLumen Forecast brings demand forecasting into our core platform, and by year end 310 customers had\nadopted it. Customers using Lumen Forecast expand their contracts faster than the rest of our base,\nwhich helped lift net revenue retention to 114%.\nWe also grew internationally. In September 2025 we opened our Toronto office, our first location outside\nthe United States, to serve Canadian customers and to build a second engineering hub. Europe remained",
+        "Lumen Analytics, Inc.\n2025 Annual Report\nFiscal year ended December 31, 2025 · 500 Boylston Street, Boston, MA 02116\nContents\nLetter from the Chief Executive Officer 2\nFinancial Highlights 3\nRevenue by Segment and Region 4\nOperating Expenses and Workforce 5\nRisk Factors 6\nOutlook for 2026 7\nSustainability and Governance 8",
+        "Outlook for 2026\nFor fiscal year 2026 we expect:\nRevenue between $97 million and $100 million, representing growth of 15% to 18%.\nOperating margin between 12% and 14%.\nCapital expenditures of approximately $3.5 million, mainly for data center capacity and the Toronto\noffice expansion.\nNet hiring of about 60 employees, two thirds of them in engineering.\nOur main product priority is to make Lumen Forecast available to all platform customers. Our main market\npriority is opening a sales office in Munich, Germany in the third quarter of 2026 to serve customers in\nthe DACH region.\nThis outlook assumes stable exchange rates at December 31, 2025 levels and no significant acquisitions.",
+        "Revenue by Segment and Region\nRevenue by segment\nSegment 2025 2024 Growth Share of 2025 revenue\nPlatform subscriptions $61.2 $50.6 +20.9% 72.3%\nProfessional services $14.9 $13.0 +14.6% 17.6%\nData marketplace $8.5 $8.1 +4.9% 10.0%\nTotal $84.6 $71.7 +18.0% 100%\nRevenue by region\nRegion 2025 2024 Growth\nNorth America $55.0 $48.3 +13.9%\nEurope $21.2 $16.7 +27.0%\nAsia-Pacific $8.4 $6.7 +25.4%\nTotal $84.6 $71.7 +18.0%\nPlatform subscriptions are billed annually in advance and recognized over the contract term. Professional\nservices are mostly implementation projects and are recognized as the work is delivered."
+      ],
+      "retrieved_sources": [
+        "lumen_annual_report_2025.pdf",
+        "lumen_annual_report_2025.pdf",
+        "lumen_annual_report_2025.pdf",
+        "lumen_annual_report_2025.pdf",
+        "lumen_annual_report_2025.pdf"
+      ],
+      "latency_s": 7.46,
+      "faithfulness": 1.0,
+      "answer_accuracy": 1.0,
+      "facts_found": true,
+      "source_found": true,
+      "cited": true,
+      "faithfulness_named_contexts": null
+    },
+    {
+      "type": "reasoning",
+      "question": "Why did the data marketplace grow slowly?",
+      "reference": "Two large data partners delayed their integrations from 2025 to 2026, so the segment grew only 4.9%.",
+      "facts": [
+        "delayed"
+      ],
+      "sources": [
+        "lumen_annual_report_2025.pdf"
+      ],
+      "answer": "The data marketplace grew more slowly than expected because two large data partners delayed their integrations to 2026, which reduced segment growth. [4][5]",
+      "contexts": [
+        "the United States, to serve Canadian customers and to build a second engineering hub. Europe remained\nour fastest-growing region at 27% growth.\nNot everything went to plan. Our data marketplace grew more slowly than we expected because two large\ndata partners delayed their integrations to 2026. We have adjusted our partnership model and expect the\nmarketplace to recover in the second half of 2026.\nI want to thank our 412 employees for their work this year, and our customers and shareholders for their\ncontinued trust.\nSincerely,\nMaya Ortiz\nChief Executive Officer\nFebruary 26, 2026",
+        "changes to how our forecasting models are trained and explained. Compliance could increase costs and\nslow product releases in Europe.\nForeign exchange\nAbout 35% of 2025 revenue was earned outside North America and is partly billed in euros and pounds. A\nstronger US dollar would reduce reported revenue. We do not currently hedge foreign exchange\nexposure.\nData marketplace partners\nData marketplace revenue depends on a small number of data partners. Two partners delayed\nintegrations from 2025 to 2026, which reduced segment growth to 4.9%.",
+        "Revenue by Segment and Region\nRevenue by segment\nSegment 2025 2024 Growth Share of 2025 revenue\nPlatform subscriptions $61.2 $50.6 +20.9% 72.3%\nProfessional services $14.9 $13.0 +14.6% 17.6%\nData marketplace $8.5 $8.1 +4.9% 10.0%\nTotal $84.6 $71.7 +18.0% 100%\nRevenue by region\nRegion 2025 2024 Growth\nNorth America $55.0 $48.3 +13.9%\nEurope $21.2 $16.7 +27.0%\nAsia-Pacific $8.4 $6.7 +25.4%\nTotal $84.6 $71.7 +18.0%\nPlatform subscriptions are billed annually in advance and recognized over the contract term. Professional\nservices are mostly implementation projects and are recognized as the work is delivered.",
+        "Letter from the Chief Executive Officer\nDear shareholders,\n2025 was the strongest year in Lumen Analytics' history. Revenue grew 18.0% to $84.6 million, and we\nreached operating profitability for the second year in a row with operating income of $9.3 million. We now\nserve 1,240 customers, up from 1,015 a year ago.\nThe most important product milestone of the year was the launch of Lumen Forecast in June 2025.\nLumen Forecast brings demand forecasting into our core platform, and by year end 310 customers had\nadopted it. Customers using Lumen Forecast expand their contracts faster than the rest of our base,\nwhich helped lift net revenue retention to 114%.\nWe also grew internationally. In September 2025 we opened our Toronto office, our first location outside\nthe United States, to serve Canadian customers and to build a second engineering hub. Europe remained",
+        "Risk Factors\nThe following risks could materially affect our business, results of operations or financial condition.\nCustomer concentration\nOur largest customer, a national retail chain, accounted for 7% of 2025 revenue. Our ten largest\ncustomers together accounted for 26% of revenue. Losing one of these customers could reduce revenue\nand growth.\nDependence on a single cloud provider\nWe host the entire Lumen platform with one public cloud provider. A prolonged outage at that provider, or\na significant price increase, would affect our service levels and gross margin. We plan to add a second\nregion with a different provider by the end of 2027.\nData privacy and AI regulation\nNew regulations, including the EU AI Act and state privacy laws in the United States, may require\nchanges to how our forecasting models are trained and explained. Compliance could increase costs and"
+      ],
+      "retrieved_sources": [
+        "lumen_annual_report_2025.pdf",
+        "lumen_annual_report_2025.pdf",
+        "lumen_annual_report_2025.pdf",
+        "lumen_annual_report_2025.pdf",
+        "lumen_annual_report_2025.pdf"
+      ],
+      "latency_s": 9.4,
+      "faithfulness": 1.0,
+      "answer_accuracy": 0.75,
+      "facts_found": true,
+      "source_found": true,
+      "cited": true,
+      "faithfulness_named_contexts": null
+    },
+    {
+      "type": "factual",
+      "question": "Who audits Lumen Analytics and how much were the audit fees?",
+      "reference": "Hale & Brennan LLP audits Lumen Analytics; 2025 audit fees were $612,000.",
+      "facts": [
+        "Hale & Brennan",
+        "612,000"
+      ],
+      "sources": [
+        "lumen_annual_report_2025.pdf"
+      ],
+      "answer": "Lumen Analytics is audited by Hale & Brennan LLP, and the audit fees for 2025 were $612,000[1].",
+      "contexts": [
+        "Sustainability and Governance\nEnvironment\nWe have committed to running 100% of our hosted workloads in data centers powered by renewable\nenergy by the end of 2027. At the end of 2025, 78% of workloads met this standard, up from 61% in 2024.\nOur Scope 1 and Scope 2 emissions were 1,140 metric tons of CO2 equivalent in 2025.\nBoard of directors\nThe board has seven directors, four of whom are independent. The chair of the board is Richard Alvarez,\nwho is independent. The board has three committees: Audit, Compensation, and Nominating and\nGovernance.\nAuditor\nOur independent registered public accounting firm is Hale & Brennan LLP, which has audited our\nfinancial statements since 2021. Audit fees for 2025 were $612,000.\nShareholder information\nThe annual meeting of shareholders will be held online on May 14, 2026. Lumen Analytics does not",
+        "Letter from the Chief Executive Officer\nDear shareholders,\n2025 was the strongest year in Lumen Analytics' history. Revenue grew 18.0% to $84.6 million, and we\nreached operating profitability for the second year in a row with operating income of $9.3 million. We now\nserve 1,240 customers, up from 1,015 a year ago.\nThe most important product milestone of the year was the launch of Lumen Forecast in June 2025.\nLumen Forecast brings demand forecasting into our core platform, and by year end 310 customers had\nadopted it. Customers using Lumen Forecast expand their contracts faster than the rest of our base,\nwhich helped lift net revenue retention to 114%.\nWe also grew internationally. In September 2025 we opened our Toronto office, our first location outside\nthe United States, to serve Canadian customers and to build a second engineering hub. Europe remained",
+        "Operating Expenses and Workforce\nExpense 2025 2024 % of 2025 revenue\nResearch and development $21.4 $18.6 25.3%\nSales and marketing $19.8 $17.5 23.4%\nGeneral and administrative $8.7 $7.7 10.3%\nTotal operating expenses $49.9 $43.8 59.0%\nResearch and development spending rose by $2.8 million, mainly for the Lumen Forecast launch and the\nnew Toronto engineering team. Sales and marketing as a share of revenue fell from 24.4% to 23.4% as\nmore growth came from existing customers.\nWorkforce\nTeam Dec 31, 2025 Dec 31, 2024\nEngineering and product 186 158\nSales and customer success 142 125\nProfessional services 48 44\nGeneral and administrative 36 29\nTotal employees 412 356\nVoluntary employee turnover was 9.8% in 2025, down from 12.4% in 2024. The Toronto office had 34\nemployees at year end.",
+        "Revenue by Segment and Region\nRevenue by segment\nSegment 2025 2024 Growth Share of 2025 revenue\nPlatform subscriptions $61.2 $50.6 +20.9% 72.3%\nProfessional services $14.9 $13.0 +14.6% 17.6%\nData marketplace $8.5 $8.1 +4.9% 10.0%\nTotal $84.6 $71.7 +18.0% 100%\nRevenue by region\nRegion 2025 2024 Growth\nNorth America $55.0 $48.3 +13.9%\nEurope $21.2 $16.7 +27.0%\nAsia-Pacific $8.4 $6.7 +25.4%\nTotal $84.6 $71.7 +18.0%\nPlatform subscriptions are billed annually in advance and recognized over the contract term. Professional\nservices are mostly implementation projects and are recognized as the work is delivered.",
+        "Lumen Analytics, Inc.\n2025 Annual Report\nFiscal year ended December 31, 2025 · 500 Boylston Street, Boston, MA 02116\nContents\nLetter from the Chief Executive Officer 2\nFinancial Highlights 3\nRevenue by Segment and Region 4\nOperating Expenses and Workforce 5\nRisk Factors 6\nOutlook for 2026 7\nSustainability and Governance 8"
+      ],
+      "retrieved_sources": [
+        "lumen_annual_report_2025.pdf",
+        "lumen_annual_report_2025.pdf",
+        "lumen_annual_report_2025.pdf",
+        "lumen_annual_report_2025.pdf",
+        "lumen_annual_report_2025.pdf"
+      ],
+      "latency_s": 8.48,
+      "faithfulness": 1.0,
+      "answer_accuracy": 1.0,
+      "facts_found": true,
+      "source_found": true,
+      "cited": true,
+      "faithfulness_named_contexts": null
+    },
+    {
+      "type": "factual",
+      "question": "What revenue does Lumen expect for 2026?",
+      "reference": "Lumen expects 2026 revenue between $97 million and $100 million, growth of 15% to 18%.",
+      "facts": [
+        "97",
+        "100"
+      ],
+      "sources": [
+        "lumen_annual_report_2025.pdf"
+      ],
+      "answer": "Lumen expects 2026 revenue to be between **$97 million and $100 million**[1].",
+      "contexts": [
+        "Outlook for 2026\nFor fiscal year 2026 we expect:\nRevenue between $97 million and $100 million, representing growth of 15% to 18%.\nOperating margin between 12% and 14%.\nCapital expenditures of approximately $3.5 million, mainly for data center capacity and the Toronto\noffice expansion.\nNet hiring of about 60 employees, two thirds of them in engineering.\nOur main product priority is to make Lumen Forecast available to all platform customers. Our main market\npriority is opening a sales office in Munich, Germany in the third quarter of 2026 to serve customers in\nthe DACH region.\nThis outlook assumes stable exchange rates at December 31, 2025 levels and no significant acquisitions.",
+        "Letter from the Chief Executive Officer\nDear shareholders,\n2025 was the strongest year in Lumen Analytics' history. Revenue grew 18.0% to $84.6 million, and we\nreached operating profitability for the second year in a row with operating income of $9.3 million. We now\nserve 1,240 customers, up from 1,015 a year ago.\nThe most important product milestone of the year was the launch of Lumen Forecast in June 2025.\nLumen Forecast brings demand forecasting into our core platform, and by year end 310 customers had\nadopted it. Customers using Lumen Forecast expand their contracts faster than the rest of our base,\nwhich helped lift net revenue retention to 114%.\nWe also grew internationally. In September 2025 we opened our Toronto office, our first location outside\nthe United States, to serve Canadian customers and to build a second engineering hub. Europe remained",
+        "Revenue by Segment and Region\nRevenue by segment\nSegment 2025 2024 Growth Share of 2025 revenue\nPlatform subscriptions $61.2 $50.6 +20.9% 72.3%\nProfessional services $14.9 $13.0 +14.6% 17.6%\nData marketplace $8.5 $8.1 +4.9% 10.0%\nTotal $84.6 $71.7 +18.0% 100%\nRevenue by region\nRegion 2025 2024 Growth\nNorth America $55.0 $48.3 +13.9%\nEurope $21.2 $16.7 +27.0%\nAsia-Pacific $8.4 $6.7 +25.4%\nTotal $84.6 $71.7 +18.0%\nPlatform subscriptions are billed annually in advance and recognized over the contract term. Professional\nservices are mostly implementation projects and are recognized as the work is delivered.",
+        "Financial Highlights\nAll amounts are in millions of US dollars, except per-share data and percentages.\nMetric 2025 2024 Change\nRevenue $84.6 $71.7 +18.0%\nGross profit $59.2 $48.8 +21.3%\nGross margin 70.0% 68.1% +1.9 pts\nOperating income $9.3 $5.0 +86.0%\nNet income $6.8 $3.6 +88.9%\nDiluted earnings per share $0.41 $0.22 +86.4%\nAnnual recurring revenue (ARR), year end $92.3 $77.4 +19.3%\nCash and cash equivalents, year end $31.5 $24.2 +30.2%\nNet revenue retention 114% 109% +5 pts\nCustomers, year end 1,240 1,015 +22.2%\nGross margin improved mainly because we moved our largest workloads to reserved cloud capacity in the\nfirst quarter, which lowered hosting costs per customer by about 11%.\nThe company has no long-term debt. Free cash flow for 2025 was $8.1 million, compared with $4.4 million\nin 2024.",
+        "Operating Expenses and Workforce\nExpense 2025 2024 % of 2025 revenue\nResearch and development $21.4 $18.6 25.3%\nSales and marketing $19.8 $17.5 23.4%\nGeneral and administrative $8.7 $7.7 10.3%\nTotal operating expenses $49.9 $43.8 59.0%\nResearch and development spending rose by $2.8 million, mainly for the Lumen Forecast launch and the\nnew Toronto engineering team. Sales and marketing as a share of revenue fell from 24.4% to 23.4% as\nmore growth came from existing customers.\nWorkforce\nTeam Dec 31, 2025 Dec 31, 2024\nEngineering and product 186 158\nSales and customer success 142 125\nProfessional services 48 44\nGeneral and administrative 36 29\nTotal employees 412 356\nVoluntary employee turnover was 9.8% in 2025, down from 12.4% in 2024. The Toronto office had 34\nemployees at year end."
+      ],
+      "retrieved_sources": [
+        "lumen_annual_report_2025.pdf",
+        "lumen_annual_report_2025.pdf",
+        "lumen_annual_report_2025.pdf",
+        "lumen_annual_report_2025.pdf",
+        "lumen_annual_report_2025.pdf"
+      ],
+      "latency_s": 12.06,
+      "faithfulness": 1.0,
+      "answer_accuracy": 0.5,
+      "facts_found": true,
+      "source_found": true,
+      "cited": true,
+      "faithfulness_named_contexts": null
+    },
+    {
+      "type": "factual",
+      "question": "How many employees did Lumen have at the end of 2025?",
+      "reference": "Lumen had 412 employees at the end of 2025.",
+      "facts": [
+        "412"
+      ],
+      "sources": [
+        "lumen_annual_report_2025.pdf"
+      ],
+      "answer": "Lumen Analytics had **412 employees** at the end of 2025[5].",
+      "contexts": [
+        "Outlook for 2026\nFor fiscal year 2026 we expect:\nRevenue between $97 million and $100 million, representing growth of 15% to 18%.\nOperating margin between 12% and 14%.\nCapital expenditures of approximately $3.5 million, mainly for data center capacity and the Toronto\noffice expansion.\nNet hiring of about 60 employees, two thirds of them in engineering.\nOur main product priority is to make Lumen Forecast available to all platform customers. Our main market\npriority is opening a sales office in Munich, Germany in the third quarter of 2026 to serve customers in\nthe DACH region.\nThis outlook assumes stable exchange rates at December 31, 2025 levels and no significant acquisitions.",
+        "the United States, to serve Canadian customers and to build a second engineering hub. Europe remained\nour fastest-growing region at 27% growth.\nNot everything went to plan. Our data marketplace grew more slowly than we expected because two large\ndata partners delayed their integrations to 2026. We have adjusted our partnership model and expect the\nmarketplace to recover in the second half of 2026.\nI want to thank our 412 employees for their work this year, and our customers and shareholders for their\ncontinued trust.\nSincerely,\nMaya Ortiz\nChief Executive Officer\nFebruary 26, 2026",
+        "Sustainability and Governance\nEnvironment\nWe have committed to running 100% of our hosted workloads in data centers powered by renewable\nenergy by the end of 2027. At the end of 2025, 78% of workloads met this standard, up from 61% in 2024.\nOur Scope 1 and Scope 2 emissions were 1,140 metric tons of CO2 equivalent in 2025.\nBoard of directors\nThe board has seven directors, four of whom are independent. The chair of the board is Richard Alvarez,\nwho is independent. The board has three committees: Audit, Compensation, and Nominating and\nGovernance.\nAuditor\nOur independent registered public accounting firm is Hale & Brennan LLP, which has audited our\nfinancial statements since 2021. Audit fees for 2025 were $612,000.\nShareholder information\nThe annual meeting of shareholders will be held online on May 14, 2026. Lumen Analytics does not",
+        "Letter from the Chief Executive Officer\nDear shareholders,\n2025 was the strongest year in Lumen Analytics' history. Revenue grew 18.0% to $84.6 million, and we\nreached operating profitability for the second year in a row with operating income of $9.3 million. We now\nserve 1,240 customers, up from 1,015 a year ago.\nThe most important product milestone of the year was the launch of Lumen Forecast in June 2025.\nLumen Forecast brings demand forecasting into our core platform, and by year end 310 customers had\nadopted it. Customers using Lumen Forecast expand their contracts faster than the rest of our base,\nwhich helped lift net revenue retention to 114%.\nWe also grew internationally. In September 2025 we opened our Toronto office, our first location outside\nthe United States, to serve Canadian customers and to build a second engineering hub. Europe remained",
+        "Operating Expenses and Workforce\nExpense 2025 2024 % of 2025 revenue\nResearch and development $21.4 $18.6 25.3%\nSales and marketing $19.8 $17.5 23.4%\nGeneral and administrative $8.7 $7.7 10.3%\nTotal operating expenses $49.9 $43.8 59.0%\nResearch and development spending rose by $2.8 million, mainly for the Lumen Forecast launch and the\nnew Toronto engineering team. Sales and marketing as a share of revenue fell from 24.4% to 23.4% as\nmore growth came from existing customers.\nWorkforce\nTeam Dec 31, 2025 Dec 31, 2024\nEngineering and product 186 158\nSales and customer success 142 125\nProfessional services 48 44\nGeneral and administrative 36 29\nTotal employees 412 356\nVoluntary employee turnover was 9.8% in 2025, down from 12.4% in 2024. The Toronto office had 34\nemployees at year end."
+      ],
+      "retrieved_sources": [
+        "lumen_annual_report_2025.pdf",
+        "lumen_annual_report_2025.pdf",
+        "lumen_annual_report_2025.pdf",
+        "lumen_annual_report_2025.pdf",
+        "lumen_annual_report_2025.pdf"
+      ],
+      "latency_s": 8.58,
+      "faithfulness": 1.0,
+      "answer_accuracy": 1.0,
+      "facts_found": true,
+      "source_found": true,
+      "cited": true,
+      "faithfulness_named_contexts": null
+    },
+    {
+      "type": "exact-id",
+      "question": "What is the monthly fee in agreement MSA-2026-003?",
+      "reference": "The fixed monthly fee in MSA-2026-003 is $3,450.00.",
+      "facts": [
+        "3,450"
+      ],
+      "sources": [
+        "msa_summit_2026.pdf"
+      ],
+      "answer": "The monthly fee in agreement MSA‑2026‑003 is $3,450.00[4].",
+      "contexts": [
+        "per hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal\n2.1 This Agreement starts on the Effective Date and continues for an initial term of twenty-four (24)\nmonths.\n2.2 The Agreement renews automatically for successive twelve (12) month terms unless either party gives\nwritten notice of non-renewal at least sixty (60) days before the end of the current term.\n3. Fees and Payment\n3.1 The Client will pay a fixed monthly fee of $3,450.00 for the services in Schedule A.\n3.2 The Provider will invoice monthly in arrears. Payment is due within forty-five (45) days of the invoice\ndate.\n3.3 Late payments accrue interest at 1.0% per month on the overdue amount.\n3.4 The Provider may increase fees once per year with sixty (60) days' written notice. Any increase may\nnot exceed 5%.\n4. Service Levels",
+        "per hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal\n2.1 This Agreement starts on the Effective Date and continues for an initial term of twelve (12) months.\n2.2 The Agreement renews automatically for successive twelve (12) month terms unless either party gives\nwritten notice of non-renewal at least thirty (30) days before the end of the current term.\n3. Fees and Payment\n3.1 The Client will pay a fixed monthly fee of $3,200.00 for the services in Schedule A.\n3.2 The Provider will invoice monthly in arrears. Payment is due within thirty (30) days of the invoice\ndate.\n3.3 Late payments accrue interest at 1.5% per month on the overdue amount.\n3.4 The Provider may increase fees once per year with sixty (60) days' written notice. Any increase may\nnot exceed 5%.\n4. Service Levels",
+        "Master Services Agreement\nAgreement No. MSA-2025-014 · Effective Date: January 1, 2025\nThis Master Services Agreement (the \"Agreement\") is entered into between Crestline Accounting LLC,\na Washington limited liability company with offices at 310 Pine Street, Floor 4, Seattle, WA 98101 (the\n\"Client\"), and Summit IT Solutions Ltd., a Colorado corporation with offices at 1700 Lincoln Street, Suite\n2400, Denver, CO 80203 (the \"Provider\").\n1. Services\n1.1 The Provider will deliver managed IT services, including endpoint support, network monitoring, cloud\nbackup and help desk support, as described in Schedule A.\n1.2 Additional work outside Schedule A will be agreed in a written statement of work and billed at $125.00\nper hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal",
+        "Master Services Agreement\nAgreement No. MSA-2026-003 · Amended and Restated · Effective Date: January 1, 2026\nThis Amended and Restated Master Services Agreement (the \"Agreement\") is entered into between\nCrestline Accounting LLC, a Washington limited liability company with offices at 310 Pine Street, Floor\n4, Seattle, WA 98101 (the \"Client\"), and Summit IT Solutions Ltd., a Colorado corporation with offices at\n1700 Lincoln Street, Suite 2400, Denver, CO 80203 (the \"Provider\"). It replaces Agreement No. MSA-\n2025-014.\n1. Services\n1.1 The Provider will deliver managed IT services, including endpoint support, network monitoring, cloud\nbackup and help desk support, as described in Schedule A.\n1.2 Additional work outside Schedule A will be agreed in a written statement of work and billed at $125.00\nper hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal",
+        "3.4 The Provider may increase fees once per year with sixty (60) days' written notice. Any increase may\nnot exceed 5%.\n4. Service Levels\n4.1 The Provider will acknowledge critical incidents within two (2) hours and all other incidents within one\n(1) business day.\n4.2 The Provider guarantees 99.9% monthly availability for monitored network services.\n4.3 If availability falls below the guaranteed level in a month, the Client receives a service credit of 10% of\nthat month's fee."
+      ],
+      "retrieved_sources": [
+        "msa_summit_2026.pdf",
+        "msa_summit_2025.pdf",
+        "msa_summit_2025.pdf",
+        "msa_summit_2026.pdf",
+        "msa_summit_2026.pdf"
+      ],
+      "latency_s": 8.55,
+      "faithfulness": 0.0,
+      "answer_accuracy": 1.0,
+      "facts_found": true,
+      "source_found": true,
+      "cited": true,
+      "faithfulness_named_contexts": null
+    },
+    {
+      "type": "factual",
+      "question": "How quickly must Summit report a personal data breach under the 2026 agreement?",
+      "reference": "The provider must notify the client within 72 hours of becoming aware of the breach.",
+      "facts": [
+        "72"
+      ],
+      "sources": [
+        "msa_summit_2026.pdf"
+      ],
+      "answer": "Summit must notify the Client of any personal data breach within seventy‑two (72) hours of becoming aware of it[5].",
+      "contexts": [
+        "5. Confidentiality\n5.1 Each party will protect the other party's confidential information with at least reasonable care and use\nit only to perform this Agreement.\n5.2 Confidentiality obligations survive for five (5) years after the Agreement ends.\n6. Data Protection\n6.1 The Provider will process Client personal data only on the Client's documented instructions and will\nkeep it in data centers located in the United States.\n6.2 The Provider will notify the Client of any personal data breach within seventy-two (72) hours of\nbecoming aware of it.\n7. Limitation of Liability\n7.1 Neither party is liable for indirect, incidental or consequential damages, including lost profits.\n7.2 Each party's total liability under this Agreement is limited to the fees paid by the Client in the six (6)\nmonths before the event giving rise to the claim. This limit does not apply to breaches of Section 6.",
+        "months before the event giving rise to the claim. This limit does not apply to breaches of Section 6.\n8. Termination\n8.1 Either party may terminate this Agreement for convenience with ninety (90) days' written notice.\n8.2 Either party may terminate immediately if the other party materially breaches this Agreement and does\nnot cure the breach within thirty (30) days of written notice.\n8.3 On termination, the Provider will return all Client data within fifteen (15) business days.\n9. General\n9.1 This Agreement is governed by the laws of the State of Delaware.\n9.2 This Agreement is the entire agreement between the parties and replaces all prior proposals and\ndiscussions.\nSignatures\nCrestline Accounting LLC Summit IT Solutions Ltd.\nName: Laura Chen Name: Daniel Reyes\nTitle: Managing Partner Title: Director of Client Services\nDate: December 15, 2025 Date: December 15, 2025",
+        "not cure the breach within thirty (30) days of written notice.\n7.3 On termination, the Provider will return all Client data within fifteen (15) business days.\n8. General\n8.1 This Agreement is governed by the laws of the State of Colorado.\n8.2 This Agreement is the entire agreement between the parties and replaces all prior proposals and\ndiscussions.\nSignatures\nCrestline Accounting LLC Summit IT Solutions Ltd.\nName: Laura Chen Name: Daniel Reyes\nTitle: Managing Partner Title: Director of Client Services\nDate: December 12, 2024 Date: December 12, 2024",
+        "5. Confidentiality\n5.1 Each party will protect the other party's confidential information with at least reasonable care and use\nit only to perform this Agreement.\n5.2 Confidentiality obligations survive for three (3) years after the Agreement ends.\n6. Limitation of Liability\n6.1 Neither party is liable for indirect, incidental or consequential damages, including lost profits.\n6.2 Each party's total liability under this Agreement is limited to the fees paid by the Client in the twelve\n(12) months before the event giving rise to the claim.\n7. Termination\n7.1 Either party may terminate this Agreement for convenience with sixty (60) days' written notice.\n7.2 Either party may terminate immediately if the other party materially breaches this Agreement and does\nnot cure the breach within thirty (30) days of written notice.",
+        "3.4 The Provider may increase fees once per year with sixty (60) days' written notice. Any increase may\nnot exceed 5%.\n4. Service Levels\n4.1 The Provider will acknowledge critical incidents within two (2) hours and all other incidents within one\n(1) business day.\n4.2 The Provider guarantees 99.9% monthly availability for monitored network services.\n4.3 If availability falls below the guaranteed level in a month, the Client receives a service credit of 10% of\nthat month's fee."
+      ],
+      "retrieved_sources": [
+        "msa_summit_2026.pdf",
+        "msa_summit_2026.pdf",
+        "msa_summit_2025.pdf",
+        "msa_summit_2025.pdf",
+        "msa_summit_2026.pdf"
+      ],
+      "latency_s": 8.32,
+      "faithfulness": 1.0,
+      "answer_accuracy": 1.0,
+      "facts_found": true,
+      "source_found": true,
+      "cited": true,
+      "faithfulness_named_contexts": null
+    },
+    {
+      "type": "factual",
+      "question": "Which state's law governs the 2026 Master Services Agreement?",
+      "reference": "The 2026 agreement is governed by the laws of the State of Delaware.",
+      "facts": [
+        "Delaware"
+      ],
+      "sources": [
+        "msa_summit_2026.pdf"
+      ],
+      "answer": "The 2026 Master Services Agreement is governed by the laws of the State of Delaware[1].",
+      "contexts": [
+        "Master Services Agreement\nAgreement No. MSA-2026-003 · Amended and Restated · Effective Date: January 1, 2026\nThis Amended and Restated Master Services Agreement (the \"Agreement\") is entered into between\nCrestline Accounting LLC, a Washington limited liability company with offices at 310 Pine Street, Floor\n4, Seattle, WA 98101 (the \"Client\"), and Summit IT Solutions Ltd., a Colorado corporation with offices at\n1700 Lincoln Street, Suite 2400, Denver, CO 80203 (the \"Provider\"). It replaces Agreement No. MSA-\n2025-014.\n1. Services\n1.1 The Provider will deliver managed IT services, including endpoint support, network monitoring, cloud\nbackup and help desk support, as described in Schedule A.\n1.2 Additional work outside Schedule A will be agreed in a written statement of work and billed at $125.00\nper hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal",
+        "Master Services Agreement\nAgreement No. MSA-2025-014 · Effective Date: January 1, 2025\nThis Master Services Agreement (the \"Agreement\") is entered into between Crestline Accounting LLC,\na Washington limited liability company with offices at 310 Pine Street, Floor 4, Seattle, WA 98101 (the\n\"Client\"), and Summit IT Solutions Ltd., a Colorado corporation with offices at 1700 Lincoln Street, Suite\n2400, Denver, CO 80203 (the \"Provider\").\n1. Services\n1.1 The Provider will deliver managed IT services, including endpoint support, network monitoring, cloud\nbackup and help desk support, as described in Schedule A.\n1.2 Additional work outside Schedule A will be agreed in a written statement of work and billed at $125.00\nper hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal",
+        "months before the event giving rise to the claim. This limit does not apply to breaches of Section 6.\n8. Termination\n8.1 Either party may terminate this Agreement for convenience with ninety (90) days' written notice.\n8.2 Either party may terminate immediately if the other party materially breaches this Agreement and does\nnot cure the breach within thirty (30) days of written notice.\n8.3 On termination, the Provider will return all Client data within fifteen (15) business days.\n9. General\n9.1 This Agreement is governed by the laws of the State of Delaware.\n9.2 This Agreement is the entire agreement between the parties and replaces all prior proposals and\ndiscussions.\nSignatures\nCrestline Accounting LLC Summit IT Solutions Ltd.\nName: Laura Chen Name: Daniel Reyes\nTitle: Managing Partner Title: Director of Client Services\nDate: December 15, 2025 Date: December 15, 2025",
+        "not cure the breach within thirty (30) days of written notice.\n7.3 On termination, the Provider will return all Client data within fifteen (15) business days.\n8. General\n8.1 This Agreement is governed by the laws of the State of Colorado.\n8.2 This Agreement is the entire agreement between the parties and replaces all prior proposals and\ndiscussions.\nSignatures\nCrestline Accounting LLC Summit IT Solutions Ltd.\nName: Laura Chen Name: Daniel Reyes\nTitle: Managing Partner Title: Director of Client Services\nDate: December 12, 2024 Date: December 12, 2024",
+        "Summit IT Solutions Ltd. INVOICE\nInvoice No: SIT-2026-0088\n1700 Lincoln Street, Suite 2400, Denver, CO 80203\nInvoice Date: June 30, 2026\naccounts@summitit.example · (303) 555-0164\nTax ID: 84-3310572 Due Date: July 30, 2026\nService Period: Q2 2026 (April 1 – June 30)\nBill To Contract\nCrestline Accounting LLC Master Services Agreement, amended and\n310 Pine Street, Floor 4 restated January 1, 2026\nSeattle, WA 98101 Account Manager: Daniel Reyes\n# Description Quantity Rate Amount\n1 Managed endpoint support, 45 devices 3 months $540.00 $1,620.00\n2 Microsoft 365 Business Premium, 30 licenses 3 months $660.00 $1,980.00\n3 Firewall monitoring 3 months $250.00 $750.00\n4 Cloud backup, 1.2 TB 3 months $48.00 $144.00\n5 On-site visit, April 14, 2026 6 hours $125.00 $750.00\n6 On-site visit, May 19, 2026 4 hours $125.00 $500.00\n7 New laptop setup (Dell Latitude 5450) 5 $95.00 $475.00"
+      ],
+      "retrieved_sources": [
+        "msa_summit_2026.pdf",
+        "msa_summit_2025.pdf",
+        "msa_summit_2026.pdf",
+        "msa_summit_2025.pdf",
+        "invoice_summit_it_services.pdf"
+      ],
+      "latency_s": 12.42,
+      "faithfulness": 1.0,
+      "answer_accuracy": 1.0,
+      "facts_found": true,
+      "source_found": true,
+      "cited": true,
+      "faithfulness_named_contexts": null
+    },
+    {
+      "type": "factual",
+      "question": "What uptime did Summit guarantee in the 2025 agreement?",
+      "reference": "The 2025 agreement guarantees 99.5% monthly availability for monitored network services.",
+      "facts": [
+        "99.5%"
+      ],
+      "sources": [
+        "msa_summit_2025.pdf"
+      ],
+      "answer": "Summit guaranteed 99.5% monthly availability for monitored network services in the 2025 agreement[4].",
+      "contexts": [
+        "3.4 The Provider may increase fees once per year with sixty (60) days' written notice. Any increase may\nnot exceed 5%.\n4. Service Levels\n4.1 The Provider will acknowledge critical incidents within four (4) hours and all other incidents within\none (1) business day.\n4.2 The Provider guarantees 99.5% monthly availability for monitored network services.\n4.3 If availability falls below the guaranteed level in a month, the Client receives a service credit of 5% of\nthat month's fee.",
+        "3.4 The Provider may increase fees once per year with sixty (60) days' written notice. Any increase may\nnot exceed 5%.\n4. Service Levels\n4.1 The Provider will acknowledge critical incidents within two (2) hours and all other incidents within one\n(1) business day.\n4.2 The Provider guarantees 99.9% monthly availability for monitored network services.\n4.3 If availability falls below the guaranteed level in a month, the Client receives a service credit of 10% of\nthat month's fee.",
+        "per hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal\n2.1 This Agreement starts on the Effective Date and continues for an initial term of twelve (12) months.\n2.2 The Agreement renews automatically for successive twelve (12) month terms unless either party gives\nwritten notice of non-renewal at least thirty (30) days before the end of the current term.\n3. Fees and Payment\n3.1 The Client will pay a fixed monthly fee of $3,200.00 for the services in Schedule A.\n3.2 The Provider will invoice monthly in arrears. Payment is due within thirty (30) days of the invoice\ndate.\n3.3 Late payments accrue interest at 1.5% per month on the overdue amount.\n3.4 The Provider may increase fees once per year with sixty (60) days' written notice. Any increase may\nnot exceed 5%.\n4. Service Levels",
+        "Master Services Agreement\nAgreement No. MSA-2025-014 · Effective Date: January 1, 2025\nThis Master Services Agreement (the \"Agreement\") is entered into between Crestline Accounting LLC,\na Washington limited liability company with offices at 310 Pine Street, Floor 4, Seattle, WA 98101 (the\n\"Client\"), and Summit IT Solutions Ltd., a Colorado corporation with offices at 1700 Lincoln Street, Suite\n2400, Denver, CO 80203 (the \"Provider\").\n1. Services\n1.1 The Provider will deliver managed IT services, including endpoint support, network monitoring, cloud\nbackup and help desk support, as described in Schedule A.\n1.2 Additional work outside Schedule A will be agreed in a written statement of work and billed at $125.00\nper hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal",
+        "not cure the breach within thirty (30) days of written notice.\n7.3 On termination, the Provider will return all Client data within fifteen (15) business days.\n8. General\n8.1 This Agreement is governed by the laws of the State of Colorado.\n8.2 This Agreement is the entire agreement between the parties and replaces all prior proposals and\ndiscussions.\nSignatures\nCrestline Accounting LLC Summit IT Solutions Ltd.\nName: Laura Chen Name: Daniel Reyes\nTitle: Managing Partner Title: Director of Client Services\nDate: December 12, 2024 Date: December 12, 2024"
+      ],
+      "retrieved_sources": [
+        "msa_summit_2025.pdf",
+        "msa_summit_2026.pdf",
+        "msa_summit_2025.pdf",
+        "msa_summit_2025.pdf",
+        "msa_summit_2025.pdf"
+      ],
+      "latency_s": 8.76,
+      "faithfulness": 0.0,
+      "answer_accuracy": 1.0,
+      "facts_found": true,
+      "source_found": true,
+      "cited": true,
+      "faithfulness_named_contexts": null
+    },
+    {
+      "type": "factual",
+      "question": "How much notice was needed to terminate the 2025 agreement for convenience?",
+      "reference": "Either party could terminate for convenience with 60 days' written notice.",
+      "facts": [
+        "60"
+      ],
+      "sources": [
+        "msa_summit_2025.pdf"
+      ],
+      "answer": "The 2025 agreement could be terminated for convenience with sixty (60) days’ written notice[7].",
+      "contexts": [
+        "months before the event giving rise to the claim. This limit does not apply to breaches of Section 6.\n8. Termination\n8.1 Either party may terminate this Agreement for convenience with ninety (90) days' written notice.\n8.2 Either party may terminate immediately if the other party materially breaches this Agreement and does\nnot cure the breach within thirty (30) days of written notice.\n8.3 On termination, the Provider will return all Client data within fifteen (15) business days.\n9. General\n9.1 This Agreement is governed by the laws of the State of Delaware.\n9.2 This Agreement is the entire agreement between the parties and replaces all prior proposals and\ndiscussions.\nSignatures\nCrestline Accounting LLC Summit IT Solutions Ltd.\nName: Laura Chen Name: Daniel Reyes\nTitle: Managing Partner Title: Director of Client Services\nDate: December 15, 2025 Date: December 15, 2025",
+        "5. Confidentiality\n5.1 Each party will protect the other party's confidential information with at least reasonable care and use\nit only to perform this Agreement.\n5.2 Confidentiality obligations survive for three (3) years after the Agreement ends.\n6. Limitation of Liability\n6.1 Neither party is liable for indirect, incidental or consequential damages, including lost profits.\n6.2 Each party's total liability under this Agreement is limited to the fees paid by the Client in the twelve\n(12) months before the event giving rise to the claim.\n7. Termination\n7.1 Either party may terminate this Agreement for convenience with sixty (60) days' written notice.\n7.2 Either party may terminate immediately if the other party materially breaches this Agreement and does\nnot cure the breach within thirty (30) days of written notice.",
+        "not cure the breach within thirty (30) days of written notice.\n7.3 On termination, the Provider will return all Client data within fifteen (15) business days.\n8. General\n8.1 This Agreement is governed by the laws of the State of Colorado.\n8.2 This Agreement is the entire agreement between the parties and replaces all prior proposals and\ndiscussions.\nSignatures\nCrestline Accounting LLC Summit IT Solutions Ltd.\nName: Laura Chen Name: Daniel Reyes\nTitle: Managing Partner Title: Director of Client Services\nDate: December 12, 2024 Date: December 12, 2024",
+        "per hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal\n2.1 This Agreement starts on the Effective Date and continues for an initial term of twelve (12) months.\n2.2 The Agreement renews automatically for successive twelve (12) month terms unless either party gives\nwritten notice of non-renewal at least thirty (30) days before the end of the current term.\n3. Fees and Payment\n3.1 The Client will pay a fixed monthly fee of $3,200.00 for the services in Schedule A.\n3.2 The Provider will invoice monthly in arrears. Payment is due within thirty (30) days of the invoice\ndate.\n3.3 Late payments accrue interest at 1.5% per month on the overdue amount.\n3.4 The Provider may increase fees once per year with sixty (60) days' written notice. Any increase may\nnot exceed 5%.\n4. Service Levels",
+        "per hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal\n2.1 This Agreement starts on the Effective Date and continues for an initial term of twenty-four (24)\nmonths.\n2.2 The Agreement renews automatically for successive twelve (12) month terms unless either party gives\nwritten notice of non-renewal at least sixty (60) days before the end of the current term.\n3. Fees and Payment\n3.1 The Client will pay a fixed monthly fee of $3,450.00 for the services in Schedule A.\n3.2 The Provider will invoice monthly in arrears. Payment is due within forty-five (45) days of the invoice\ndate.\n3.3 Late payments accrue interest at 1.0% per month on the overdue amount.\n3.4 The Provider may increase fees once per year with sixty (60) days' written notice. Any increase may\nnot exceed 5%.\n4. Service Levels"
+      ],
+      "retrieved_sources": [
+        "msa_summit_2026.pdf",
+        "msa_summit_2025.pdf",
+        "msa_summit_2025.pdf",
+        "msa_summit_2025.pdf",
+        "msa_summit_2026.pdf"
+      ],
+      "latency_s": 9.66,
+      "faithfulness": 0.0,
+      "answer_accuracy": 1.0,
+      "facts_found": true,
+      "source_found": true,
+      "cited": true,
+      "faithfulness_named_contexts": null
+    },
+    {
+      "type": "exact-id",
+      "question": "What is the hourly rate for after-hours work in agreement MSA-2025-014?",
+      "reference": "After-hours work is billed at $185.00 per hour.",
+      "facts": [
+        "185"
+      ],
+      "sources": [
+        "msa_summit_2025.pdf"
+      ],
+      "answer": "The hourly rate for after‑hours work in agreement MSA‑2025‑014 is **$185.00 per hour**[3].",
+      "contexts": [
+        "per hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal\n2.1 This Agreement starts on the Effective Date and continues for an initial term of twelve (12) months.\n2.2 The Agreement renews automatically for successive twelve (12) month terms unless either party gives\nwritten notice of non-renewal at least thirty (30) days before the end of the current term.\n3. Fees and Payment\n3.1 The Client will pay a fixed monthly fee of $3,200.00 for the services in Schedule A.\n3.2 The Provider will invoice monthly in arrears. Payment is due within thirty (30) days of the invoice\ndate.\n3.3 Late payments accrue interest at 1.5% per month on the overdue amount.\n3.4 The Provider may increase fees once per year with sixty (60) days' written notice. Any increase may\nnot exceed 5%.\n4. Service Levels",
+        "per hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal\n2.1 This Agreement starts on the Effective Date and continues for an initial term of twenty-four (24)\nmonths.\n2.2 The Agreement renews automatically for successive twelve (12) month terms unless either party gives\nwritten notice of non-renewal at least sixty (60) days before the end of the current term.\n3. Fees and Payment\n3.1 The Client will pay a fixed monthly fee of $3,450.00 for the services in Schedule A.\n3.2 The Provider will invoice monthly in arrears. Payment is due within forty-five (45) days of the invoice\ndate.\n3.3 Late payments accrue interest at 1.0% per month on the overdue amount.\n3.4 The Provider may increase fees once per year with sixty (60) days' written notice. Any increase may\nnot exceed 5%.\n4. Service Levels",
+        "Master Services Agreement\nAgreement No. MSA-2025-014 · Effective Date: January 1, 2025\nThis Master Services Agreement (the \"Agreement\") is entered into between Crestline Accounting LLC,\na Washington limited liability company with offices at 310 Pine Street, Floor 4, Seattle, WA 98101 (the\n\"Client\"), and Summit IT Solutions Ltd., a Colorado corporation with offices at 1700 Lincoln Street, Suite\n2400, Denver, CO 80203 (the \"Provider\").\n1. Services\n1.1 The Provider will deliver managed IT services, including endpoint support, network monitoring, cloud\nbackup and help desk support, as described in Schedule A.\n1.2 Additional work outside Schedule A will be agreed in a written statement of work and billed at $125.00\nper hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal",
+        "Master Services Agreement\nAgreement No. MSA-2026-003 · Amended and Restated · Effective Date: January 1, 2026\nThis Amended and Restated Master Services Agreement (the \"Agreement\") is entered into between\nCrestline Accounting LLC, a Washington limited liability company with offices at 310 Pine Street, Floor\n4, Seattle, WA 98101 (the \"Client\"), and Summit IT Solutions Ltd., a Colorado corporation with offices at\n1700 Lincoln Street, Suite 2400, Denver, CO 80203 (the \"Provider\"). It replaces Agreement No. MSA-\n2025-014.\n1. Services\n1.1 The Provider will deliver managed IT services, including endpoint support, network monitoring, cloud\nbackup and help desk support, as described in Schedule A.\n1.2 Additional work outside Schedule A will be agreed in a written statement of work and billed at $125.00\nper hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal",
+        "Invoice SIT-2026-0088, page 2\n# Description Quantity Rate Amount\n11 Phishing simulation campaign 1 $300.00 $300.00\n12 Domain and SSL certificate renewal 1 $189.00 $189.00\n13 After-hours incident response, June 8, 2026 2.5 hours $185.00 $462.50\n14 Quarterly security report 1 $400.00 $400.00\nSubtotal $9,635.50\nSales tax on hardware only $109.24\n(8.81% of $1,240.00)\nTotal Due (USD) $9,744.74\nNotes\nServices are not taxable in Colorado. Sales tax applies only to the hardware on line 9.\nUnder the Master Services Agreement, payment is due within 45 days of the invoice date. This invoice\nuses a 30-day due date at the client's request for Q2 budget closing.\nThe after-hours incident on June 8, 2026 was a failed VPN gateway. It was acknowledged within 25\nminutes and service was restored after 2 hours 10 minutes."
+      ],
+      "retrieved_sources": [
+        "msa_summit_2025.pdf",
+        "msa_summit_2026.pdf",
+        "msa_summit_2025.pdf",
+        "msa_summit_2026.pdf",
+        "invoice_summit_it_services.pdf"
+      ],
+      "latency_s": 11.76,
+      "faithfulness": 1.0,
+      "answer_accuracy": 1.0,
+      "facts_found": true,
+      "source_found": true,
+      "cited": true,
+      "faithfulness_named_contexts": null
+    },
+    {
+      "type": "multi-doc",
+      "question": "How did the monthly fee change between the 2025 and 2026 Summit agreements?",
+      "reference": "The monthly fee rose from $3,200.00 in the 2025 agreement to $3,450.00 in the 2026 agreement.",
+      "facts": [
+        "3,200",
+        "3,450"
+      ],
+      "sources": [
+        "msa_summit_2025.pdf",
+        "msa_summit_2026.pdf"
+      ],
+      "answer": "The monthly fee rose from $3,200.00 under the 2025 agreement to $3,450.00 under the 2026 agreement, an increase of $250.00 [2][5].",
+      "contexts": [
+        "per hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal\n2.1 This Agreement starts on the Effective Date and continues for an initial term of twenty-four (24)\nmonths.\n2.2 The Agreement renews automatically for successive twelve (12) month terms unless either party gives\nwritten notice of non-renewal at least sixty (60) days before the end of the current term.\n3. Fees and Payment\n3.1 The Client will pay a fixed monthly fee of $3,450.00 for the services in Schedule A.\n3.2 The Provider will invoice monthly in arrears. Payment is due within forty-five (45) days of the invoice\ndate.\n3.3 Late payments accrue interest at 1.0% per month on the overdue amount.\n3.4 The Provider may increase fees once per year with sixty (60) days' written notice. Any increase may\nnot exceed 5%.\n4. Service Levels",
+        "per hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal\n2.1 This Agreement starts on the Effective Date and continues for an initial term of twelve (12) months.\n2.2 The Agreement renews automatically for successive twelve (12) month terms unless either party gives\nwritten notice of non-renewal at least thirty (30) days before the end of the current term.\n3. Fees and Payment\n3.1 The Client will pay a fixed monthly fee of $3,200.00 for the services in Schedule A.\n3.2 The Provider will invoice monthly in arrears. Payment is due within thirty (30) days of the invoice\ndate.\n3.3 Late payments accrue interest at 1.5% per month on the overdue amount.\n3.4 The Provider may increase fees once per year with sixty (60) days' written notice. Any increase may\nnot exceed 5%.\n4. Service Levels",
+        "3.4 The Provider may increase fees once per year with sixty (60) days' written notice. Any increase may\nnot exceed 5%.\n4. Service Levels\n4.1 The Provider will acknowledge critical incidents within two (2) hours and all other incidents within one\n(1) business day.\n4.2 The Provider guarantees 99.9% monthly availability for monitored network services.\n4.3 If availability falls below the guaranteed level in a month, the Client receives a service credit of 10% of\nthat month's fee.",
+        "3.4 The Provider may increase fees once per year with sixty (60) days' written notice. Any increase may\nnot exceed 5%.\n4. Service Levels\n4.1 The Provider will acknowledge critical incidents within four (4) hours and all other incidents within\none (1) business day.\n4.2 The Provider guarantees 99.5% monthly availability for monitored network services.\n4.3 If availability falls below the guaranteed level in a month, the Client receives a service credit of 5% of\nthat month's fee.",
+        "Master Services Agreement\nAgreement No. MSA-2026-003 · Amended and Restated · Effective Date: January 1, 2026\nThis Amended and Restated Master Services Agreement (the \"Agreement\") is entered into between\nCrestline Accounting LLC, a Washington limited liability company with offices at 310 Pine Street, Floor\n4, Seattle, WA 98101 (the \"Client\"), and Summit IT Solutions Ltd., a Colorado corporation with offices at\n1700 Lincoln Street, Suite 2400, Denver, CO 80203 (the \"Provider\"). It replaces Agreement No. MSA-\n2025-014.\n1. Services\n1.1 The Provider will deliver managed IT services, including endpoint support, network monitoring, cloud\nbackup and help desk support, as described in Schedule A.\n1.2 Additional work outside Schedule A will be agreed in a written statement of work and billed at $125.00\nper hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal"
+      ],
+      "retrieved_sources": [
+        "msa_summit_2026.pdf",
+        "msa_summit_2025.pdf",
+        "msa_summit_2026.pdf",
+        "msa_summit_2025.pdf",
+        "msa_summit_2026.pdf"
+      ],
+      "latency_s": 8.66,
+      "answer_accuracy": 0.75,
+      "facts_found": true,
+      "source_found": true,
+      "cited": true,
+      "faithfulness": null,
+      "faithfulness_named_contexts": null
+    },
+    {
+      "type": "multi-doc",
+      "question": "How did the notice period for terminating for convenience change from the 2025 to the 2026 agreement?",
+      "reference": "It increased from 60 days in the 2025 agreement to 90 days in the 2026 agreement.",
+      "facts": [
+        "60",
+        "90"
+      ],
+      "sources": [
+        "msa_summit_2025.pdf",
+        "msa_summit_2026.pdf"
+      ],
+      "answer": "The notice period for terminating the agreement for convenience was increased.  \n- In the 2025 agreement, either party could terminate for convenience with **sixty (60) days’ written notice**.  \n- In the 2026 agreement, the required notice was extended to **ninety (90) days’ written notice**.  \n\nThus, the notice period changed from 60 days to 90 days, an increase of 30 days.  \n\nSources: 2025 agreement termination clause showing a 60‑day notice period; 2026 agreement termination clause showing a 90‑day notice period.",
+      "contexts": [
+        "months before the event giving rise to the claim. This limit does not apply to breaches of Section 6.\n8. Termination\n8.1 Either party may terminate this Agreement for convenience with ninety (90) days' written notice.\n8.2 Either party may terminate immediately if the other party materially breaches this Agreement and does\nnot cure the breach within thirty (30) days of written notice.\n8.3 On termination, the Provider will return all Client data within fifteen (15) business days.\n9. General\n9.1 This Agreement is governed by the laws of the State of Delaware.\n9.2 This Agreement is the entire agreement between the parties and replaces all prior proposals and\ndiscussions.\nSignatures\nCrestline Accounting LLC Summit IT Solutions Ltd.\nName: Laura Chen Name: Daniel Reyes\nTitle: Managing Partner Title: Director of Client Services\nDate: December 15, 2025 Date: December 15, 2025",
+        "5. Confidentiality\n5.1 Each party will protect the other party's confidential information with at least reasonable care and use\nit only to perform this Agreement.\n5.2 Confidentiality obligations survive for three (3) years after the Agreement ends.\n6. Limitation of Liability\n6.1 Neither party is liable for indirect, incidental or consequential damages, including lost profits.\n6.2 Each party's total liability under this Agreement is limited to the fees paid by the Client in the twelve\n(12) months before the event giving rise to the claim.\n7. Termination\n7.1 Either party may terminate this Agreement for convenience with sixty (60) days' written notice.\n7.2 Either party may terminate immediately if the other party materially breaches this Agreement and does\nnot cure the breach within thirty (30) days of written notice.",
+        "not cure the breach within thirty (30) days of written notice.\n7.3 On termination, the Provider will return all Client data within fifteen (15) business days.\n8. General\n8.1 This Agreement is governed by the laws of the State of Colorado.\n8.2 This Agreement is the entire agreement between the parties and replaces all prior proposals and\ndiscussions.\nSignatures\nCrestline Accounting LLC Summit IT Solutions Ltd.\nName: Laura Chen Name: Daniel Reyes\nTitle: Managing Partner Title: Director of Client Services\nDate: December 12, 2024 Date: December 12, 2024",
+        "per hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal\n2.1 This Agreement starts on the Effective Date and continues for an initial term of twenty-four (24)\nmonths.\n2.2 The Agreement renews automatically for successive twelve (12) month terms unless either party gives\nwritten notice of non-renewal at least sixty (60) days before the end of the current term.\n3. Fees and Payment\n3.1 The Client will pay a fixed monthly fee of $3,450.00 for the services in Schedule A.\n3.2 The Provider will invoice monthly in arrears. Payment is due within forty-five (45) days of the invoice\ndate.\n3.3 Late payments accrue interest at 1.0% per month on the overdue amount.\n3.4 The Provider may increase fees once per year with sixty (60) days' written notice. Any increase may\nnot exceed 5%.\n4. Service Levels",
+        "per hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal\n2.1 This Agreement starts on the Effective Date and continues for an initial term of twelve (12) months.\n2.2 The Agreement renews automatically for successive twelve (12) month terms unless either party gives\nwritten notice of non-renewal at least thirty (30) days before the end of the current term.\n3. Fees and Payment\n3.1 The Client will pay a fixed monthly fee of $3,200.00 for the services in Schedule A.\n3.2 The Provider will invoice monthly in arrears. Payment is due within thirty (30) days of the invoice\ndate.\n3.3 Late payments accrue interest at 1.5% per month on the overdue amount.\n3.4 The Provider may increase fees once per year with sixty (60) days' written notice. Any increase may\nnot exceed 5%.\n4. Service Levels"
+      ],
+      "retrieved_sources": [
+        "msa_summit_2026.pdf",
+        "msa_summit_2025.pdf",
+        "msa_summit_2025.pdf",
+        "msa_summit_2026.pdf",
+        "msa_summit_2025.pdf"
+      ],
+      "latency_s": 9.68,
+      "faithfulness": 0.0,
+      "answer_accuracy": 1.0,
+      "facts_found": true,
+      "source_found": true,
+      "cited": false,
+      "faithfulness_named_contexts": null
+    },
+    {
+      "type": "multi-doc",
+      "question": "Which of our invoices has the largest total, and how much is it?",
+      "reference": "Summit IT Solutions invoice SIT-2026-0088 has the largest total, $9,744.74.",
+      "facts": [
+        "9,744.74"
+      ],
+      "sources": [
+        "invoice_summit_it_services.pdf"
+      ],
+      "answer": "The invoice with the largest total is the Summit IT Services invoice (SIT‑2026‑0088), which has a Total Due of **$9,744.74**[1].",
+      "contexts": [
+        "Invoice SIT-2026-0088, page 2\n# Description Quantity Rate Amount\n11 Phishing simulation campaign 1 $300.00 $300.00\n12 Domain and SSL certificate renewal 1 $189.00 $189.00\n13 After-hours incident response, June 8, 2026 2.5 hours $185.00 $462.50\n14 Quarterly security report 1 $400.00 $400.00\nSubtotal $9,635.50\nSales tax on hardware only $109.24\n(8.81% of $1,240.00)\nTotal Due (USD) $9,744.74\nNotes\nServices are not taxable in Colorado. Sales tax applies only to the hardware on line 9.\nUnder the Master Services Agreement, payment is due within 45 days of the invoice date. This invoice\nuses a 30-day due date at the client's request for Q2 budget closing.\nThe after-hours incident on June 8, 2026 was a failed VPN gateway. It was acknowledged within 25\nminutes and service was restored after 2 hours 10 minutes.",
+        "Massachusetts meals tax (7%) $155.05\nInvoice total $2,370.05\nDeposit received (April 30, −$500.00\n2026)\nBalance Due (USD) $1,870.05\nPayment Terms\nThe balance is due within 14 days of the invoice date. Pay by check to Harbor Table Catering or by card\nat harbortable.example/pay.\nCancellations made less than 7 days before an event are charged 50% of the estimated total.",
+        "Total (USD) $1,640.46\nTerms\nPayment is due within 30 days of the invoice date. Oregon does not charge sales tax on these items.\nUnopened items can be returned within 30 days for a full refund. Furniture returns are subject to a 15%\nrestocking fee.\nThank you for your order. Pay online at brightdesk.example/pay using invoice number BD-58213.",
+        "Total Due (USD) $610.28\nPayment Instructions\nPay by ACH to Pacific Commerce Bank, routing number 125000105, account number 4471 0938 22.\nReference the invoice number with your payment.\nPayments received after the due date are subject to a late fee of 1.5% per month on the outstanding\nbalance.\nQuestions about this invoice? Contact billing@northwindcloud.example within 15 days of the invoice date.",
+        "Northwind Cloud Services INVOICE\nInvoice No: NWC-2026-0417\nInc.\nInvoice Date: April 17, 2026\nDue Date: May 17, 2026\n1420 Fifth Avenue, Suite 900, Seattle, WA 98101\nBilling Period: March 1 – March 31,\nbilling@northwindcloud.example · (206) 555-0142\n2026\nTax ID: 91-4827736\nBill To Account\nCrestline Accounting LLC Customer ID: CA-20931\nAttn: Accounts Payable Plan: Business Cloud\n310 Pine Street, Floor 4 Payment Terms: Net 30\nSeattle, WA 98101\n# Description Quantity Unit Price Amount\n1 Compute instances (Standard-4, us-west-2) 720 hours $0.19 $136.80\n2 Object storage 2,500 GB $0.023 $57.50\n3 Managed PostgreSQL (db.m5.large) 1 month $210.00 $210.00\n4 Premium support plan 1 month $150.00 $150.00\nSubtotal $554.30\nSales tax (10.1%) $55.98\nTotal Due (USD) $610.28\nPayment Instructions\nPay by ACH to Pacific Commerce Bank, routing number 125000105, account number 4471 0938 22."
+      ],
+      "retrieved_sources": [
+        "invoice_summit_it_services.pdf",
+        "invoice_harbor_catering.pdf",
+        "invoice_brightdesk_office.pdf",
+        "invoice_northwind_cloud.pdf",
+        "invoice_northwind_cloud.pdf"
+      ],
+      "latency_s": 13.47,
+      "faithfulness": 1.0,
+      "answer_accuracy": 1.0,
+      "facts_found": true,
+      "source_found": true,
+      "cited": true,
+      "faithfulness_named_contexts": null
+    },
+    {
+      "type": "unanswerable",
+      "question": "What is the CEO's salary at Lumen Analytics?",
+      "reference": null,
+      "facts": [],
+      "sources": [],
+      "answer": "I don't know.",
+      "contexts": [
+        "Letter from the Chief Executive Officer\nDear shareholders,\n2025 was the strongest year in Lumen Analytics' history. Revenue grew 18.0% to $84.6 million, and we\nreached operating profitability for the second year in a row with operating income of $9.3 million. We now\nserve 1,240 customers, up from 1,015 a year ago.\nThe most important product milestone of the year was the launch of Lumen Forecast in June 2025.\nLumen Forecast brings demand forecasting into our core platform, and by year end 310 customers had\nadopted it. Customers using Lumen Forecast expand their contracts faster than the rest of our base,\nwhich helped lift net revenue retention to 114%.\nWe also grew internationally. In September 2025 we opened our Toronto office, our first location outside\nthe United States, to serve Canadian customers and to build a second engineering hub. Europe remained",
+        "Sustainability and Governance\nEnvironment\nWe have committed to running 100% of our hosted workloads in data centers powered by renewable\nenergy by the end of 2027. At the end of 2025, 78% of workloads met this standard, up from 61% in 2024.\nOur Scope 1 and Scope 2 emissions were 1,140 metric tons of CO2 equivalent in 2025.\nBoard of directors\nThe board has seven directors, four of whom are independent. The chair of the board is Richard Alvarez,\nwho is independent. The board has three committees: Audit, Compensation, and Nominating and\nGovernance.\nAuditor\nOur independent registered public accounting firm is Hale & Brennan LLP, which has audited our\nfinancial statements since 2021. Audit fees for 2025 were $612,000.\nShareholder information\nThe annual meeting of shareholders will be held online on May 14, 2026. Lumen Analytics does not",
+        "Lumen Analytics, Inc.\n2025 Annual Report\nFiscal year ended December 31, 2025 · 500 Boylston Street, Boston, MA 02116\nContents\nLetter from the Chief Executive Officer 2\nFinancial Highlights 3\nRevenue by Segment and Region 4\nOperating Expenses and Workforce 5\nRisk Factors 6\nOutlook for 2026 7\nSustainability and Governance 8",
+        "Operating Expenses and Workforce\nExpense 2025 2024 % of 2025 revenue\nResearch and development $21.4 $18.6 25.3%\nSales and marketing $19.8 $17.5 23.4%\nGeneral and administrative $8.7 $7.7 10.3%\nTotal operating expenses $49.9 $43.8 59.0%\nResearch and development spending rose by $2.8 million, mainly for the Lumen Forecast launch and the\nnew Toronto engineering team. Sales and marketing as a share of revenue fell from 24.4% to 23.4% as\nmore growth came from existing customers.\nWorkforce\nTeam Dec 31, 2025 Dec 31, 2024\nEngineering and product 186 158\nSales and customer success 142 125\nProfessional services 48 44\nGeneral and administrative 36 29\nTotal employees 412 356\nVoluntary employee turnover was 9.8% in 2025, down from 12.4% in 2024. The Toronto office had 34\nemployees at year end.",
+        "Shareholder information\nThe annual meeting of shareholders will be held online on May 14, 2026. Lumen Analytics does not\ncurrently pay a dividend and has no plans to start one in 2026.\nLumen Analytics, Inc. is a fictional company. This report was created as sample data for DocuBrain."
+      ],
+      "retrieved_sources": [
+        "lumen_annual_report_2025.pdf",
+        "lumen_annual_report_2025.pdf",
+        "lumen_annual_report_2025.pdf",
+        "lumen_annual_report_2025.pdf",
+        "lumen_annual_report_2025.pdf"
+      ],
+      "latency_s": 8.68,
+      "refused": true
+    },
+    {
+      "type": "unanswerable",
+      "question": "What is the IBAN of BrightDesk Office Supply?",
+      "reference": null,
+      "facts": [],
+      "sources": [],
+      "answer": "I don't know.",
+      "contexts": [
+        "BrightDesk Office Supply Co. INVOICE\nInvoice No: BD-58213\n880 NW Everett Street, Portland, OR 97209\nInvoice Date: March 3, 2026\norders@brightdesk.example · (503) 555-0187\nDue Date: April 2, 2026\nPurchase Order: PO-7745\nBill To Ship To\nCrestline Accounting LLC Crestline Accounting LLC\n310 Pine Street, Floor 4 Portland Office\nSeattle, WA 98101 1200 SW Main Street, Suite 300\nPortland, OR 97205\nItem Description Qty Unit Price Amount\nPAP-A4-10 Copy paper, letter size, 10 reams per box 10 $42.50 $425.00\nTON-58A Toner cartridge, black, high yield 4 $89.99 $359.96\nCHR-ERG2 Ergonomic office chair, mesh back 2 $349.00 $698.00\nORG-DSK Desk organizer set 6 $18.75 $112.50\nSubtotal $1,595.46\nSales tax (Oregon, 0%) $0.00\nShipping and handling $45.00\nTotal (USD) $1,640.46\nTerms\nPayment is due within 30 days of the invoice date. Oregon does not charge sales tax on these items.",
+        "Total (USD) $1,640.46\nTerms\nPayment is due within 30 days of the invoice date. Oregon does not charge sales tax on these items.\nUnopened items can be returned within 30 days for a full refund. Furniture returns are subject to a 15%\nrestocking fee.\nThank you for your order. Pay online at brightdesk.example/pay using invoice number BD-58213.",
+        "Letter from the Chief Executive Officer\nDear shareholders,\n2025 was the strongest year in Lumen Analytics' history. Revenue grew 18.0% to $84.6 million, and we\nreached operating profitability for the second year in a row with operating income of $9.3 million. We now\nserve 1,240 customers, up from 1,015 a year ago.\nThe most important product milestone of the year was the launch of Lumen Forecast in June 2025.\nLumen Forecast brings demand forecasting into our core platform, and by year end 310 customers had\nadopted it. Customers using Lumen Forecast expand their contracts faster than the rest of our base,\nwhich helped lift net revenue retention to 114%.\nWe also grew internationally. In September 2025 we opened our Toronto office, our first location outside\nthe United States, to serve Canadian customers and to build a second engineering hub. Europe remained",
+        "Master Services Agreement\nAgreement No. MSA-2026-003 · Amended and Restated · Effective Date: January 1, 2026\nThis Amended and Restated Master Services Agreement (the \"Agreement\") is entered into between\nCrestline Accounting LLC, a Washington limited liability company with offices at 310 Pine Street, Floor\n4, Seattle, WA 98101 (the \"Client\"), and Summit IT Solutions Ltd., a Colorado corporation with offices at\n1700 Lincoln Street, Suite 2400, Denver, CO 80203 (the \"Provider\"). It replaces Agreement No. MSA-\n2025-014.\n1. Services\n1.1 The Provider will deliver managed IT services, including endpoint support, network monitoring, cloud\nbackup and help desk support, as described in Schedule A.\n1.2 Additional work outside Schedule A will be agreed in a written statement of work and billed at $125.00\nper hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal",
+        "Master Services Agreement\nAgreement No. MSA-2025-014 · Effective Date: January 1, 2025\nThis Master Services Agreement (the \"Agreement\") is entered into between Crestline Accounting LLC,\na Washington limited liability company with offices at 310 Pine Street, Floor 4, Seattle, WA 98101 (the\n\"Client\"), and Summit IT Solutions Ltd., a Colorado corporation with offices at 1700 Lincoln Street, Suite\n2400, Denver, CO 80203 (the \"Provider\").\n1. Services\n1.1 The Provider will deliver managed IT services, including endpoint support, network monitoring, cloud\nbackup and help desk support, as described in Schedule A.\n1.2 Additional work outside Schedule A will be agreed in a written statement of work and billed at $125.00\nper hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal"
+      ],
+      "retrieved_sources": [
+        "invoice_brightdesk_office.pdf",
+        "invoice_brightdesk_office.pdf",
+        "lumen_annual_report_2025.pdf",
+        "msa_summit_2026.pdf",
+        "msa_summit_2025.pdf"
+      ],
+      "latency_s": 10.87,
+      "refused": true
+    },
+    {
+      "type": "unanswerable",
+      "question": "Does the 2026 agreement include a non-compete clause?",
+      "reference": null,
+      "facts": [],
+      "sources": [],
+      "answer": "Your documents do not contain any non‑compete clause in the 2026 Master Services Agreement.",
+      "contexts": [
+        "5. Confidentiality\n5.1 Each party will protect the other party's confidential information with at least reasonable care and use\nit only to perform this Agreement.\n5.2 Confidentiality obligations survive for five (5) years after the Agreement ends.\n6. Data Protection\n6.1 The Provider will process Client personal data only on the Client's documented instructions and will\nkeep it in data centers located in the United States.\n6.2 The Provider will notify the Client of any personal data breach within seventy-two (72) hours of\nbecoming aware of it.\n7. Limitation of Liability\n7.1 Neither party is liable for indirect, incidental or consequential damages, including lost profits.\n7.2 Each party's total liability under this Agreement is limited to the fees paid by the Client in the six (6)\nmonths before the event giving rise to the claim. This limit does not apply to breaches of Section 6.",
+        "months before the event giving rise to the claim. This limit does not apply to breaches of Section 6.\n8. Termination\n8.1 Either party may terminate this Agreement for convenience with ninety (90) days' written notice.\n8.2 Either party may terminate immediately if the other party materially breaches this Agreement and does\nnot cure the breach within thirty (30) days of written notice.\n8.3 On termination, the Provider will return all Client data within fifteen (15) business days.\n9. General\n9.1 This Agreement is governed by the laws of the State of Delaware.\n9.2 This Agreement is the entire agreement between the parties and replaces all prior proposals and\ndiscussions.\nSignatures\nCrestline Accounting LLC Summit IT Solutions Ltd.\nName: Laura Chen Name: Daniel Reyes\nTitle: Managing Partner Title: Director of Client Services\nDate: December 15, 2025 Date: December 15, 2025",
+        "Master Services Agreement\nAgreement No. MSA-2026-003 · Amended and Restated · Effective Date: January 1, 2026\nThis Amended and Restated Master Services Agreement (the \"Agreement\") is entered into between\nCrestline Accounting LLC, a Washington limited liability company with offices at 310 Pine Street, Floor\n4, Seattle, WA 98101 (the \"Client\"), and Summit IT Solutions Ltd., a Colorado corporation with offices at\n1700 Lincoln Street, Suite 2400, Denver, CO 80203 (the \"Provider\"). It replaces Agreement No. MSA-\n2025-014.\n1. Services\n1.1 The Provider will deliver managed IT services, including endpoint support, network monitoring, cloud\nbackup and help desk support, as described in Schedule A.\n1.2 Additional work outside Schedule A will be agreed in a written statement of work and billed at $125.00\nper hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal",
+        "5. Confidentiality\n5.1 Each party will protect the other party's confidential information with at least reasonable care and use\nit only to perform this Agreement.\n5.2 Confidentiality obligations survive for three (3) years after the Agreement ends.\n6. Limitation of Liability\n6.1 Neither party is liable for indirect, incidental or consequential damages, including lost profits.\n6.2 Each party's total liability under this Agreement is limited to the fees paid by the Client in the twelve\n(12) months before the event giving rise to the claim.\n7. Termination\n7.1 Either party may terminate this Agreement for convenience with sixty (60) days' written notice.\n7.2 Either party may terminate immediately if the other party materially breaches this Agreement and does\nnot cure the breach within thirty (30) days of written notice.",
+        "per hour during business hours and $185.00 per hour after hours.\n2. Term and Renewal\n2.1 This Agreement starts on the Effective Date and continues for an initial term of twenty-four (24)\nmonths.\n2.2 The Agreement renews automatically for successive twelve (12) month terms unless either party gives\nwritten notice of non-renewal at least sixty (60) days before the end of the current term.\n3. Fees and Payment\n3.1 The Client will pay a fixed monthly fee of $3,450.00 for the services in Schedule A.\n3.2 The Provider will invoice monthly in arrears. Payment is due within forty-five (45) days of the invoice\ndate.\n3.3 Late payments accrue interest at 1.0% per month on the overdue amount.\n3.4 The Provider may increase fees once per year with sixty (60) days' written notice. Any increase may\nnot exceed 5%.\n4. Service Levels"
+      ],
+      "retrieved_sources": [
+        "msa_summit_2026.pdf",
+        "msa_summit_2026.pdf",
+        "msa_summit_2026.pdf",
+        "msa_summit_2025.pdf",
+        "msa_summit_2026.pdf"
+      ],
+      "latency_s": 5.56,
+      "refused": true
+    }
+  ],
+  "note": "faithfulness was judged on raw chunk text. faithfulness_named_contexts re-judges with each chunk's document name, as the answer model sees it; the Groq daily limit stopped it after 15 answers."
+}
